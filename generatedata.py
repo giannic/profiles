@@ -23,6 +23,9 @@ def main():
 		print str(timedelta(seconds=end - start))
 	'''
 
+	print data["Facebook"]["open"][:4]
+	print data["Facebook"]["close"][:4]
+
 	with open('usage_data.json', 'w') as outfile:
 		json.dump(data, outfile)
 
