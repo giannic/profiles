@@ -1,6 +1,25 @@
+$(document).ready(function() {
+
 var jsonStats = loadJSON();
-var usageStats = getDurationAndLastVisitStats(jsonStats); 
+var usageStats = getDurationAndLastVisitStats(jsonStats);
 console.log(usageStats);
+
+var circle = d3.selectAll("circle");
+circle.style("fill", "steelblue");
+
+var svgcontext = d3.select("body").append("svg")
+                                  .attr("width", 800)
+                                  .attr("height", 800);
+
+for (var entry in usageStats) {
+    svgcontext.append("circle")
+              .attr("cx", usageStats[entry].duration*0.00006)
+              .attr("cy", usageStats[entry].duration*0.00006)
+              .attr("r", usageStats[entry].duration*0.000005)
+              .attr("stroke", "black")
+              .attr("fill", "steelblue");
+    console.log(usageStats[entry].duration);
+}
 
 function getDurationAndLastVisitStats(jsonStats) {
     var output = {};
@@ -11,8 +30,9 @@ function getDurationAndLastVisitStats(jsonStats) {
         for (var i = 0; i < openList.length; i++) {
             duration += closeList[i] - openList[i];
         }
-        output[site] = {"duration": duration, "last_visit": closeList[closeList.length - 1]};
-    } 
+        output[site] = {"duration": duration,
+                        "last_visit": closeList[closeList.length - 1]};
+    }
     return output;
 }
 
@@ -21,7 +41,7 @@ function loadJSON() {
     $.ajaxSetup( {"async": false} );
 
     var stats = null;
-    // load json 
+    // load json
     $.getJSON('./data/usage_data.json', function(data) {
         stats = data;
     });
@@ -30,3 +50,6 @@ function loadJSON() {
 
     return stats;
 }
+
+});
+
