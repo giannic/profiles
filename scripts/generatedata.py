@@ -35,7 +35,7 @@ def main():
 
     # print_stuff(data)
 
-    with open('usage_data.json', 'w') as outfile:
+    with open('../data/usage_data.json', 'w') as outfile:
         json.dump(data, outfile)
 
 def add_variance(data):
