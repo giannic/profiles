@@ -1,4 +1,6 @@
 $(document).ready(function() {
+var CENTER = 250;
+var theta, x, y, duration;
 
 var jsonStats = loadJSON();
 var usageStats = getDurationAndLastVisitStats(jsonStats);
@@ -12,13 +14,18 @@ var svgcontext = d3.select("body").append("svg")
                                   .attr("height", 800);
 
 for (var entry in usageStats) {
+    theta = Math.random()*2*Math.PI;
+    x = Math.cos(theta);
+    y = Math.sin(theta);
+
+    duration = usageStats[entry].duration
     svgcontext.append("circle")
-              .attr("cx", usageStats[entry].duration*0.00006)
-              .attr("cy", usageStats[entry].duration*0.00006)
-              .attr("r", usageStats[entry].duration*0.000005)
+              .attr("cx", CENTER + duration*0.00003*x)
+              .attr("cy", CENTER + duration*0.00003*y)
+              .attr("r", duration*0.000005)
               .attr("stroke", "black")
-              .attr("fill", "steelblue");
-    console.log(usageStats[entry].duration);
+              .attr("fill", "steelblue")
+              .attr("opacity", duration*0.0000001);
 }
 
 function getDurationAndLastVisitStats(jsonStats) {
