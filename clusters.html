@@ -1,81 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
         <script type="text/javascript" src="js/lib/jquery-1.9.1.min.js"></script>
         <script type="text/javascript" src="js/categories.js"></script>
-        <script src="http://d3js.org/d3.v3.min.js"></script>
     </head>
     <body>
     <div id = "circles">
     </div>
-    <script type="text/javascript">
-        var dataset = [{
-                        name: "test",
-                        x: 200,
-                        y: 300,
-                        r: 25,
-                        apps: [{
-                                x: 100,
-                                y: 30,
-                                r: 10
-                               },
-                               {
-                                x: 200,
-                                y: 40,
-                                r: 20
-                               }
-                              ]
-                        }
-                        ];
-        var svg = d3.select("#circles")
-            .append("svg")
-            .attr("width", 400)
-            .attr("height", 400)
-            
-        var circle = svg.selectAll("circle")
-            .data(dataset)
-            .enter().append("circle")
-            .style("stroke", "gray")
-            .style("fill", "white")
-            .attr("r", function(x){return x.r})
-            .attr("cx", function(x){return x.x})
-            .attr("cy", function(x){return x.y})
-            .on("mouseover", function(x){
-                svg.selectAll("#circles")
-                    .data(function(d, i){return x.apps})
-                    .enter().append("circle")
-                    .style("stroke", "gray")
-                    .style("fill", "white")
-                    .attr("class", function(d, i){return x.name})
-                    .attr("r", function(d, i){return d.r})
-                    .attr("cx", function(d, i){return d.x})
-                    .attr("cy", function(d, i){return d.y})
-                    .style("fill", "aliceblue");})
-            .on("mouseout", function(x){
-                var c = svg.selectAll("." + x.name).data([])
-                c.exit().remove();})
-            .on("mousedown", animateFirstStep);
 
-        function remove() {
-        
-        }
-        
-        function animateFirstStep(){
-            d3.select(this)
-              .transition()
-                .delay(0)
-                .duration(1000)
-                .attr("r", 10)
-                .each("end", animateSecondStep);
-        };
-
-        function animateSecondStep(){
-            d3.select(this)
-              .transition()
-                .duration(1000)
-                .attr("r", 40);
-        };
-    </script>       
+        <svg width="400" height="400">
+            <circle cx="25" cy="25" r="25" fill="purple" />
+        </svg>
     </body>
 
 </html>
