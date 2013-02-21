@@ -26,6 +26,8 @@ $(function(){
     .append("svg")
     .attr("width", 400)
     .attr("height", 400);
+  console.log(svg);
+  console.log(d3.select('#circles'));
       
   var circle = svg.selectAll("circle")
     .data(dataset)
@@ -36,7 +38,7 @@ $(function(){
     .attr("cx", function(x){return x.x;})
     .attr("cy", function(x){return x.y;})
     .on("mouseover", function(x){
-        svg.selectAll("#circles")
+        svg.selectAll()
             .data(x.apps)
             .enter().append("circle")
             .style("stroke", "gray")
@@ -57,10 +59,6 @@ $(function(){
         })
     .on("mousedown", animateRadius);
 
-  function remove() {
-  
-  }
-  
   function animateRadius(rad){
     rad = typeof rad !== 'undefined' ? 0 : rad;
     d3.select(this)
