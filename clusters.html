@@ -7,10 +7,10 @@
     </head>
     <body>
     <div id = "circles">
-        <div id = "apps-circles"></div>
     </div>
     <script type="text/javascript">
         var dataset = [{
+                        name: "test",
                         x: 200,
                         y: 300,
                         r: 25,
@@ -41,19 +41,19 @@
             .attr("cx", function(x){return x.x})
             .attr("cy", function(x){return x.y})
             .on("mouseover", function(x){
-                svg.selectAll("apps-circles")
+                svg.selectAll("#circles")
                     .data(function(d, i){return x.apps})
                     .enter().append("circle")
                     .style("stroke", "gray")
                     .style("fill", "white")
-                    .attr("r", function(d, i){console.log(d); return d.r})
-                    .attr("cx", function(d, i){console.log(d + " cx"); return d.x})
-                    .attr("cy", function(d, i){console.log(d + " cy"); return d.y})
+                    .attr("class", function(d, i){return x.name})
+                    .attr("r", function(d, i){return d.r})
+                    .attr("cx", function(d, i){return d.x})
+                    .attr("cy", function(d, i){return d.y})
                     .style("fill", "aliceblue");})
             .on("mouseout", function(x){
-                svg.selectAll("apps-circles")
-                    .data([])
-                    .exit().remove();})
+                var c = svg.selectAll("." + x.name).data([])
+                c.exit().remove();})
             .on("mousedown", animateFirstStep);
 
         function remove() {
