@@ -22,7 +22,7 @@ var dataset =
   window.App = function(json) {
     this.x = json.x;
     this.y = json.y;
-    this.r = json.r;
+    this.r = 10;
     this.img = json.img;
   };
 })();
@@ -31,9 +31,9 @@ var dataset =
 (function(){
   window.Cluster = function(name, json) {
     this.name = name;
-    this.x = undefined;
-    this.y = undefined;
-    this.r = undefined;
+    this.x = Math.random() * 600;
+    this.y = Math.random() * 500;
+    this.r = 100;
     this.apps = [];
     var that = this;
 

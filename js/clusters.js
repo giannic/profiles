@@ -3,7 +3,7 @@ $(function(){
     console.log(json); // this will show the info it in firebug console
     // grab the categories
     var new_json = {};
-    var data_objects = [];
+    var dataset = [];
     var categories = _.unique(_.pluck(_.values(json), 'category'));
     _.each(categories, function(cat){
       new_json[cat] = [];
@@ -16,33 +16,11 @@ $(function(){
     console.log(new_json);
 
     _.each(new_json, function(obj, key){
-      data_objects.push(new window.Cluster(key, obj));
+      dataset.push(new window.Cluster(key, obj));
     });
+    console.log(dataset)
 
-  });
-<<<<<<< Updated upstream
-  
-
-=======
-  var dataset = 
-  [{
-    name: "socialNetwork",
-    x: 200,
-    y: 300,
-    r: 100,
-    apps: [{r: 10}, {r: 10}, {r: 10}, {r: 10}, {r: 10}, {r: 10}, {r: 10}, {r: 10}, {r: 10}
-          ]
-    },
-    {
-    name: "finance",
-    x: 500,
-    y: 500,
-    r: 100,
-    apps: [{r: 10}, {r: 10}, {r: 10}, {r: 10}, {r: 10}, {r: 10}, {r: 10}, {r: 10}, {r: 10}
-          ]
-    }];
->>>>>>> Stashed changes
-
+    
   var selected = "";
   
   var svg = d3.select("#circles")
@@ -60,6 +38,7 @@ $(function(){
     .attr("cx", function(x){return x.x;})
     .attr("cy", function(x){return x.y;})
     .on("mousedown", function(x, i){
+    console.log(x.apps)
         d3.select(this).transition().attr('r', 0);
         var angle = 360/x.apps.length;
         var pad = 5;
@@ -72,6 +51,8 @@ $(function(){
             .attr("class", function(d, i){return x.name;})
             .attr("r", function(d, i){return 0;})
             .attr("cx", function(d, i){
+                console.log(d)
+                console.log('hi')
                 var dist = d.r + x.r + pad;
                 return x.x + Math.cos(angle*i)*dist;
             })
@@ -91,5 +72,7 @@ $(function(){
         else
             selected = x.name;
       });
+  });
+  
 });
 
