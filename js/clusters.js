@@ -3,25 +3,27 @@
 $(function(){
   $.getJSON("scripts/usage_data.json", function(json) {
     console.log(json); // this will show the info it in firebug console
+    // grab the categories
+    var new_json = {};
+    var data_objects = [];
+    var categories = _.unique(_.pluck(_.values(json), 'category'));
+    _.each(categories, function(cat){
+      new_json[cat] = [];
+    });
+    // create new json to pass in to constructors
+    _.each(json, function(obj){
+      new_json[obj.category].push(obj);
+    });
+
+    console.log(new_json);
+
+    _.each(new_json, function(obj, key){
+      data_objects.push(new window.Cluster(key, obj));
+    });
+
   });
-  var dataset = 
-  [{
-    name: "test",
-    x: 200,
-    y: 300,
-    r: 25,
-    apps: [{
-            x: 100,
-            y: 30,
-            r: 10
-           },
-           {
-            x: 200,
-            y: 40,
-            r: 20
-           }
-          ]
-    }];
+  
+
 
   var svg = d3.select("#circles")
     .append("svg")
