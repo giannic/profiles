@@ -22,12 +22,11 @@ $(function(){
            }
           ]
     }];
+
   var svg = d3.select("#circles")
     .append("svg")
     .attr("width", 400)
     .attr("height", 400);
-  console.log(svg);
-  console.log(d3.select('#circles'));
       
   var circle = svg.selectAll("circle")
     .data(dataset)
@@ -38,6 +37,7 @@ $(function(){
     .attr("cx", function(x){return x.x;})
     .attr("cy", function(x){return x.y;})
     .on("mouseover", function(x){
+        d3.select(this).transition().attr('r', 0); 
         svg.selectAll()
             .data(x.apps)
             .enter().append("circle")
@@ -55,6 +55,7 @@ $(function(){
     .on("mouseout", function(x){
         var c = svg.selectAll("." + x.name);
         c.transition().attr('r', 0).remove();
+        d3.select(this).transition().attr('r', x.r); 
 
         })
     .on("mousedown", animateRadius);
