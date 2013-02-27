@@ -13,80 +13,70 @@ $(function(){
       .attr("width", 1000)
       .attr("height", 1000);
       
-    var circle = svg.selectAll("circle")
-      .data(dataset)
-      .enter().append("circle")
+    var groups = svg.selectAll("g")
+        .data(dataset)
+        .enter()
+        .append("g")
+        .attr("id", function(x){
+            return x.id;
+        })
+        .attr("transform", function(x) {
+            return "translate(" + [x.x,x.y] + ")";
+        })   
+        .on("mousedown", function(x, i){
+            deselect_old_cluster(svg);
+            selected_category = $(this).attr('id');
+
+            var angle = 360/x.apps.length;
+            var pad = 5;
+            // assign the created objects into the corresponding cluster_objects
+            cluster_objects[selected_category] = 
+                svg.selectAll()
+                    .data(x.apps)
+                    .enter().append("circle")
+                    .classed(x.id, true)
+                    .style("stroke", "gray")
+                    .style("fill", "white")
+                    .attr("href", "google.com")
+                    .attr("data-category", function(d, i){
+                      return x.name;
+                    })
+                    .attr("r", function(d, i){
+                      return 0;
+                    })
+                    .attr("cx", function(d, i){
+                      var dist = d.r + x.r + pad;
+                      return x.x + Math.cos(angle*i)*dist;
+                    })
+                    .attr("cy", function(d, i){
+                      var dist = d.r + x.r + pad;
+                      return x.y + Math.sin(angle*i)*dist;
+                    })
+                    .style("fill", "rgba(32,43,213,0.13)")
+                    .transition()
+                    .attr('r', function(d, i){
+                      return d.r;
+                    })
+                    ;
+                    console.log(cluster_objects);
+        });       
+        
+    var circles = groups.append("circle")
       .style("stroke", "gray")
       .style("fill", "white")
-      .attr("id", function(x){
-        return x.id;
-      })
       .attr("r", function(x){
-        return x.r;
+          return x.r;
       })
-      .attr("cx", function(x){
-        return x.x;
-      })
-      .attr("cy", function(x){
-        return x.y;
-      })
-      .on("mousedown", function(x, i){
-          deselect_old_cluster(svg);
-          
-          selected_category = $(this).attr('id');
-          d3.select(this).transition().attr('r', 0);
-          d3.select(this).classed('selected', true);
-
-          var angle = 360/x.apps.length;
-          var pad = 5;
-          // assign the created objects into the corresponding cluster_objects
-          cluster_objects[selected_category] = 
-            svg.selectAll()
-              .data(x.apps)
-              .enter().append("circle")
-                .classed(x.id, true)
-                .style("stroke", "gray")
-                .style("fill", "white")
-                .attr("href", "google.com")
-                .attr("data-category", function(d, i){
-                  return x.name;
-                })
-                .attr("r", function(d, i){
-                  return 0;
-                })
-                .attr("cx", function(d, i){
-                  var dist = d.r + x.r + pad;
-                  return x.x + Math.cos(angle*i)*dist;
-                })
-                .attr("cy", function(d, i){
-                  var dist = d.r + x.r + pad;
-                  return x.y + Math.sin(angle*i)*dist;
-                })
-                .style("fill", "rgba(32,43,213,0.13)")
-                .transition()
-                .attr('r', function(d, i){
-                  return d.r;
-                })
-                ;
-                console.log(cluster_objects);
-                console.log('hihihi');
-
-            _.each(cluster_objects[selected_category][0], function(ind){
-              console.log(ind);
-              
-              d3.select(ind).append("svg:pattern")
-                .attr("xlink:href", function(d, i){
-                  console.log(d.img);
-                  return d.img;
-                })
-                .attr("x", d3.select(ind).attr('cx'))
-                .attr("y", d3.select(ind).attr('cy'))
-                .attr("width", 150)
-                .attr("height", 200);
-            });
-
-
-        });
+    var label = groups.append("text")
+        .text(function(x){
+            console.log(x.name);
+            return x.name;
+        })
+        .attr({
+            "alignment-baseline": "middle",
+            "text-anchor": "middle",
+            "font-size": "20"
+        })
   });
 
   function deselect_old_cluster(svg){
@@ -94,10 +84,11 @@ $(function(){
     // re-show the previous selected circle if it exists
     var old_cluster = typeof selected_category === 'undefined' ? svg.selectAll() :
       svg.selectAll("#" + selected_category); 
-    old_cluster.classed('selected', false)
-      .transition()
+    var selected_obj = old_cluster.classed('selected', false)
+      .transition();
+    if
       .attr('r', function(d, i){
-        return d.r;   
+        return d.r;
       });
     var old_apps = typeof selected_category === 'undefined' ? svg.selectAll() 
       : svg.selectAll("." + selected_category); 
