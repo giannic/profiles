@@ -1,10 +1,11 @@
-import datetime, time
+import datetime
+import time
 from datetime import timedelta
 import random
 import json
 
 now = datetime.datetime.now()
-start_of_time = now - timedelta(365) # one year ago from now
+start_of_time = now - timedelta(365)  # one year ago from now
 
 
 def main():
@@ -15,10 +16,7 @@ def main():
              "Entertainment2", "Entertainment3", "Entertainment4",
              "Entertainment5"]
 
-
     data = {site: generate_times() for site in sites}
-    data = add_categories(data)
-    data = add_id(data)
 
     '''
     for site in data:
@@ -26,6 +24,8 @@ def main():
     '''
 
     data = add_variance(data)
+    data = add_categories(data)
+    data = add_images(data)
 
     '''
     print "\n\nafter variance"
@@ -38,6 +38,7 @@ def main():
 
     with open('usage_data.json', 'w') as outfile:
         json.dump(data, outfile)
+
 
 def add_variance(data):
     '''Makes some apps less frequently used.
@@ -82,6 +83,12 @@ def print_stuff(data):
         print str(timedelta(seconds=end - start))
 
 
+def add_images(data):
+    for i in data:
+        data[i]['img'] = 'http://placekitten.com/50/50?image=5'
+    return data
+
+
 def add_categories(data):
     categories = ['Social Networks', 'Professional', 'Entertainment']
 
@@ -118,11 +125,12 @@ def generate_times():
     # and records open/close times in arrays, returning as a dict
     while t < now:
         open_times.append(time.mktime(t.timetuple()))
-        t += random_timedelta(10, 3600 * 2) # assume 10 seconds to 2 hours spent on site
+        t += random_timedelta(10, 3600 * 2)  # assume 10 seconds to 2 hours spent on site
         close_times.append(time.mktime(t.timetuple()))
-        t += random_timedelta(10, 3600 * 9) # assume next access is between 10 seconds and 9 hours later
+        t += random_timedelta(10, 3600 * 9)  # assume next access is between 10 seconds and 9 hours later
 
     return {"open": open_times, "close": close_times}
+
 
 def random_timedelta(lower, upper):
     '''Returns a timedelta in seconds between lower and upper'''
