@@ -18,6 +18,7 @@ def main():
 
     data = {site: generate_times() for site in sites}
     data = add_categories(data)
+    data = add_id(data)
 
     '''
     for site in data:
@@ -71,10 +72,6 @@ def add_variance(data):
     return data
 
 
-
-
-
-
 def print_stuff(data):
     # prints the number of visits for Facebook
     print len(data["Facebook"]["open"])
@@ -83,6 +80,7 @@ def print_stuff(data):
     # prints the duration of each visit to Facebook in H:M:S
     for start, end in zip(data["Facebook"]["open"], data["Facebook"]["close"]):
         print str(timedelta(seconds=end - start))
+
 
 def add_categories(data):
     categories = ['Social Networks', 'Professional', 'Entertainment']
