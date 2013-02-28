@@ -24,6 +24,7 @@ var dataset =
     this.y = json.y;
     this.r = 50;
     this.img = json.img;
+    this.url = json.url;
     this.id = json.id;
   };
 })();
