@@ -6,6 +6,7 @@ import json
 
 now = datetime.datetime.now()
 start_of_time = now - timedelta(365)  # one year ago from now
+app_id = 0  # unique id of the app
 
 
 def main():
@@ -26,6 +27,7 @@ def main():
     data = add_variance(data)
     data = add_categories(data)
     data = add_images(data)
+    data = add_id(data)
 
     '''
     print "\n\nafter variance"
@@ -86,6 +88,14 @@ def print_stuff(data):
 def add_images(data):
     for i in data:
         data[i]['img'] = 'http://placekitten.com/50/50?image=5'
+    return data
+
+
+def add_id(data):
+    global app_id
+    for i in data:
+        data[i]['id'] = 'app' + str(app_id)
+        app_id += 1
     return data
 
 

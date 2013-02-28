@@ -1,18 +1,59 @@
 $(function(){
 
   var selected_category;
-  var cluster_objects = {};
+  var cluster_apps = {};
 
   $.getJSON("scripts/usage_data.json", function(json) {
     var dataset = parse_data(json);
-    
+    console.log(dataset);
+
     var selected;
   
+    var all_images = [];
     var svg = d3.select("#circles")
       .append("svg")
       .attr("width", 1000)
       .attr("height", 1000);
-      
+    var defs = svg.append('defs');
+    // create the images
+    // for the category, run through each app and generate its corresponding image
+    // {
+    //   id: url
+    // }
+    // TODO: refactor? is this necessary
+    all_images = _.object(_.map(_.flatten(_.pluck(dataset, 'apps')), function(val){
+                   return [val.id, val.img];
+                 }));
+
+    console.log(defs.selectAll()
+      .data(all_images));
+
+    console.log(defs.selectAll()
+      .data(['hi', 'hihi', 'hihihi','hihihihi']));
+    defs.selectAll()
+      .data(_.pairs(all_images))  // index 0 is id, index 1 is url TODO: refactor
+      .enter().append('svg:pattern')
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", 50)
+        .attr("height", 50)
+        .attr("data-image-id", function(d){
+          return d[0];  
+        })
+        // now append the image....
+      .append('image')
+        .attr('xlink:href', function(d, i){
+          console.log(d);
+          console.log(d);
+          return d[1];
+        })
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", 50)
+        .attr("height", 50)
+
+        ;
+
     var groups = svg.selectAll("g")
         .data(dataset)
         .enter()
@@ -29,36 +70,69 @@ $(function(){
 
             var angle = 360/x.apps.length;
             var pad = 5;
+
             // assign the created objects into the corresponding cluster_objects
-            cluster_objects[selected_category] = 
+            cluster_apps[selected_category] = 
                 svg.selectAll()
                     .data(x.apps)
-                    .enter().append("circle")
-                    .classed(x.id, true)
-                    .style("stroke", "gray")
-                    .style("fill", "white")
-                    .attr("href", "google.com")
+                    .enter()
+                    .append("a")
+                    .attr("id", function(x){
+                        return x.id;
+                    })
                     .attr("data-category", function(d, i){
                       return x.name;
                     })
-                    .attr("r", function(d, i){
-                      return 0;
-                    })
-                    .attr("cx", function(d, i){
-                      var dist = d.r + x.r + pad;
-                      return x.x + Math.cos(angle*i)*dist;
-                    })
-                    .attr("cy", function(d, i){
-                      var dist = d.r + x.r + pad;
-                      return x.y + Math.sin(angle*i)*dist;
-                    })
-                    .style("fill", "rgba(32,43,213,0.13)")
-                    .transition()
-                    .attr('r', function(d, i){
-                      return d.r;
-                    })
-                    ;
-                    console.log(cluster_objects);
+                    .attr("xlink:href", "http://www.google.com")
+                    .classed(x.id, true);
+
+                    // append each app
+            cluster_apps[selected_category].append("circle")
+                      .style("stroke", "gray")
+                      .style("fill", "white")
+                      .attr("href", "google.com")
+                      .classed(x.id, true)
+                      .attr("r", function(d, i){
+                        return 0;
+                      })
+                      .attr("id", function(d, i){
+                        return d.id;
+                      })
+                      .attr("cx", function(d, i){
+                        var dist = d.r + x.r + pad;
+                        d.x = x.x + Math.cos(angle*i)*dist
+                        return d.x;
+                      })
+                      .attr("cy", function(d, i){
+                        var dist = d.r + x.r + pad;
+                        d.y = x.y + Math.sin(angle*i)*dist
+                        return d.y;
+                      })
+                      .style("fill", "rgba(32,43,213,0.13)")
+
+                      .transition()
+                      .attr('r', function(d, i){
+                        return d.r;
+                      });
+              cluster_apps[selected_category]  // append each image
+                        .append('image')
+                        .attr('xlink:href', function(d, i){
+                          console.log('HERE')
+                          console.log(d)
+                          return d.img;
+                        })
+                        .attr("x", function(d, i){
+                          return d.x;
+                        })
+                        .attr("y", function(d, i){
+                          return d.y;
+                        })
+                        .attr("width", 50)
+                        .attr("height", 50)
+                        .classed(x.id, true)
+                        ;
+                      console.log('this is')
+                      console.log(cluster_apps);
         });       
         
     var circles = groups.append("circle")
@@ -66,7 +140,8 @@ $(function(){
       .style("fill", "white")
       .attr("r", function(x){
           return x.r;
-      })
+      });
+
     var label = groups.append("text")
         .text(function(x){
             console.log(x.name);
@@ -76,7 +151,7 @@ $(function(){
             "alignment-baseline": "middle",
             "text-anchor": "middle",
             "font-size": "20"
-        })
+        });
   });
 
   function deselect_old_cluster(svg){
@@ -85,8 +160,7 @@ $(function(){
     var old_cluster = typeof selected_category === 'undefined' ? svg.selectAll() :
       svg.selectAll("#" + selected_category); 
     var selected_obj = old_cluster.classed('selected', false)
-      .transition();
-    if
+      .transition()
       .attr('r', function(d, i){
         return d.r;
       });

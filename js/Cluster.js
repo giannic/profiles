@@ -22,8 +22,9 @@ var dataset =
   window.App = function(json) {
     this.x = json.x;
     this.y = json.y;
-    this.r = 10;
+    this.r = 50;
     this.img = json.img;
+    this.id = json.id;
   };
 })();
 
