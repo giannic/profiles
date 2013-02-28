@@ -1,17 +1,34 @@
 $(document).ready(function() {
+    $(document).mousemove(function(e){
+        $("#stats").css({
+            position: 'absolute',
+            top: e.pageY+1,
+            left: e.pageX+1
+        });
+    });
+
 var CENTER = 250;
 var theta, x, y, duration, current;
 
 var jsonStats = loadJSON();
 var usageStats = getDurationAndLastVisitStats(jsonStats);
-console.log(usageStats);
-
-var circle = d3.selectAll("circle");
-circle.style("fill", "steelblue");
 
 var svgcontext = d3.select("body").append("svg")
                                   .attr("width", 800)
                                   .attr("height", 800);
+
+//https://gist.github.com/sfrdmn/1437516
+var myfun = function() {
+    var that = d3.select(this);
+    that.attr("fill", "red");
+    $("#stats").show();
+}
+
+var mynotfun = function() {
+    var that = d3.select(this);
+    that.attr("fill", "steelblue");
+    $("#stats").hide();
+}
 
 for (var entry in usageStats) {
     theta = Math.random()*2*Math.PI;
@@ -25,7 +42,11 @@ for (var entry in usageStats) {
                         .attr("r", duration*0.000005)
                         .attr("stroke", "black")
                         .attr("fill", "steelblue")
-                        .attr("opacity", duration*0.0000001);
+                        .attr("opacity", duration*0.0000001)
+                        .attr("class", "test")
+                        .on("mouseover", myfun)
+                        .on("mouseout", mynotfun);
+
     if (usageStats[entry].active === 0) {
         current.transition()
                .duration(10000)
@@ -44,6 +65,8 @@ for (var entry in usageStats) {
                .attr("r", duration*0.00001);
     }
 }
+
+
 
 function getDurationAndLastVisitStats(jsonStats) {
     var output = {};
@@ -79,4 +102,3 @@ function loadJSON() {
 }
 
 });
-
