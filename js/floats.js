@@ -12,29 +12,42 @@ circle.style("fill", "steelblue");
 
 var svgcontext = d3.select("body").append("svg")
                                   .attr("width", svg_w)
-                                  .attr("height", svg_h);
+                                  .attr("height", svg_h)
 
 for (var entry in usageStats) {
     duration = usageStats[entry].duration
     r = duration * 0.000005;
-    var node = svgcontext.append("g")
-                .attr("class", "nodes")
-                .selectAll("circle")
-                .data([0])
-                .enter()
-                .append("g")
-                //.attr("transform", "translate(200,200)");
-                .attr("transform", function(d, i) {
-                    theta = Math.random()*2*Math.PI;
-                    var x = CENTER + duration*0.00003 * Math.cos(theta);
-                    var y = CENTER + duration*0.00003 * Math.sin(theta);
-                    /*
-                    d.x = 200,
-                    d.y = svg_h / 2;
-                    */
-                    //return "translate(" + d.x + "," + d.y + ")";
-                    return "translate(" + x + "," + y + ")";
-                })
+    /*
+    var node = svgcontext.append("a")
+                .attr("xmlns", "http://www.w3.org/2000/svg")
+                .attr("xmlns:xlink", "http://www.w3.org/1999/xlink")
+                .attr("version", "1.1");
+    */
+
+    var node = svgcontext.append("a")
+        //.attr("xmlns", "http://www.w3.org/2000/svg")
+        .attr("xlink", "http://www.w3.org/1999/xlink")
+        .attr("version", "1.1")
+        .attr("xlink:href", jsonStats[entry]["url"])
+    /*
+        .attr("class", "nodes")
+        .selectAll("circle")
+        .data([0])
+        .enter()
+        */
+        //.append("g")
+        //.attr("transform", "translate(200,200)");
+        .attr("transform", function(d, i) {
+            theta = Math.random()*2*Math.PI;
+            var x = CENTER + duration*0.00003 * Math.cos(theta);
+            var y = CENTER + duration*0.00003 * Math.sin(theta);
+            /*
+            d.x = 200,
+            d.y = svg_h / 2;
+            */
+            //return "translate(" + d.x + "," + d.y + ")";
+            return "translate(" + x + "," + y + ")";
+        })
 
     // Add a circle element to the previously added g element
     node.append("circle")
@@ -46,8 +59,11 @@ for (var entry in usageStats) {
 
     // Add text element to previously added g element
     node.append("text")
-        .attr("text-anchor", "middle")
-        .attr("color", "#ffffff")
+        .attr( {
+            "text-anchor": "middle",
+            "color": "#ffffff",
+            "class": "label"
+        })
         .text(function(d) {
             return entry;
         });
@@ -58,6 +74,14 @@ for (var entry in usageStats) {
         transitionToCenter(node, r);
     }
 }
+
+// This will break if elements are added to the g element parent before
+// the text element
+$("circle").click(function(e) {
+    var siteName = $(this).parent().children()[1];
+    console.log(jQuery.type(siteName));
+    console.log(siteName);
+});
 
 function transitionToCenter(context, r) {
     transition(context, 0.5, r);

@@ -18,6 +18,7 @@ def main():
 
     data = {site: generate_times() for site in sites}
     data = add_categories(data)
+    data = add_urls(data)
 
     '''
     for site in data:
@@ -107,6 +108,18 @@ def add_categories(data):
     data['Entertainment4']['category'] = categories[2]
     data['Entertainment5']['category'] = categories[2]
 
+    return data
+
+def add_urls(data):
+    for site in data:
+        data[site]['url'] = 'http://www.google.com'
+    data['Facebook']['url'] = 'http://www.facebook.com' 
+    data['Twitter']['url'] = 'http://www.twitter.com' 
+    data['LinkedIn']['url'] = 'http://www.linkedin.com' 
+    data['Pinterest']['url'] = 'http://www.pinterest.com' 
+    data['Tumblr']['url'] = 'http://www.tumblr.com' 
+    data['Spotify']['url'] = 'http://www.spotify.com' 
+    data['LastFM']['url'] = 'http://www.last.fm' 
     return data
 
 
