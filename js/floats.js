@@ -55,7 +55,7 @@ function changeCircleSize(context, multiplier, r) {
     context.selectAll("circle")
            .transition()
            .ease(Math.sqrt)
-           .duration(2000)
+           .duration(5000)
            .attr("r", r*multiplier);
 }
 
