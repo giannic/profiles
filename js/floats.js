@@ -39,9 +39,11 @@ $(document).mousemove(function(e){
 
 // This will break if elements are added to the g element parent before
 // the text element
+/*
 $("circle").click(function(e) {
     site_name = $(this).parent().children()[1];
 });
+*/
 
 function transitionToCenter(context, r) {
     transition(context, 0.5, r);
@@ -136,7 +138,9 @@ for (entry in usageStats) {
                x = center + duration*0.00003 * Math.cos(theta);
                y = center + duration*0.00003 * Math.sin(theta);
                return "translate(" + x + "," + y + ")";
-           })
+            })
+            .on("mouseover", show_stats)
+            .on("mouseout", hide_stats);
 
     // Add a circle element to the previously added g element
     node.append("circle")
@@ -145,8 +149,6 @@ for (entry in usageStats) {
         .attr("fill", "steelblue")
         .attr("opacity", duration*0.0000001)
         .attr("class", "bubble")
-        .on("mouseover", show_stats)
-        .on("mouseout", hide_stats);
 
     // Add text element to previously added g element
     node.append("text")
