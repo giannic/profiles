@@ -95,11 +95,12 @@ function transition(context, multiplier, r) {
     theta = Math.random()*2*Math.PI;
     var x = Math.cos(theta);
     var y = Math.sin(theta);
+    console.log("r: " + r);
 
     context.transition()
            .duration(10000)
            .ease(Math.sqrt) // absolutely terrible formulas here also
-           .attr("r", duration*0.00001)
+           //.attr("r", duration*0.00001)
            .attr("transform", function(d, i) {
                 x = CENTER + duration*0.00003*x*multiplier;
                 y = CENTER + duration*0.00003*y*multiplier;
