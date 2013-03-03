@@ -1,7 +1,7 @@
 My personal boilerplate for Express.
 
 #Versions:
-master: Coffeescript, Mongodb, Handlebars
+master: Coffeescript, Mongodb, Handlebars, SASS (with a build script)
 
 #package.json
 underscore
@@ -10,3 +10,7 @@ hbs
 js2coffee
 socket.io
 
+#javascripts
+jquery
+bootstrap
+backbone
