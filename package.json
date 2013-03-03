@@ -10,6 +10,7 @@
     "js2coffee": "*",
     "socket.io": "*",
     "underscore": "*",
-    "hbs": "*"
+    "hbs": "*",
+    "mongoose": "*"
   }
 }
