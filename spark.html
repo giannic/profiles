@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/styles.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="jquery.sparkline.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            var myvalues = [];
+            for (var i=0; i < 200; i++) {
+                myvalues[i] = Math.floor((Math.random()*5)+1);
+                if (i == 100) {
+                    myvalues[i] = 20;
+                }
+            }
+
+            $('.inlinesparkline').sparkline(myvalues, {fillColor:'white', lineColor:'#aaa', height:'40px'});
+
+            $('#timeline_step_back').click(function () {
+                alert('rewind');
+            });
+
+            $('#timeline_play_pause').click(function () {
+                alert('play/pause');
+            });
+
+            $('#timeline_step_forward').click(function () {
+                alert('forward');
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="wrapper">
+        <div id="timeline_panel">
+            <p id="timeline"><span class="inlinesparkline">1,2,3,4,5,6,7</span></p>
+            <p id="timeline_details">
+                <span id="timeline_date">Jan 2, 2013 &bull; </span>
+                <span id="timeline_time">4:00 pm</span>
+                <span id="timeline_step_back" class="timeline_controls"> </span>
+                <span id="timeline_play_pause" class="timeline_controls"> </span>
+                <span id="timeline_step_forward" class="timeline_controls"> </span>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
