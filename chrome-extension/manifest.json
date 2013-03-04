@@ -1,0 +1,15 @@
+{
+	"manifest_version": 2,
+	
+	"name": "Profile Manager Chrome Extension",
+	"description": "Tracks trends in your online app usage.",
+	"version": "1.0",
+
+	"background": {
+		"scripts": ["jquery-1.9.1.min.js", "purl.js", "background.js"]
+	},
+
+	"permissions": [
+		"tabs"
+	]
+}
