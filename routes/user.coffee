@@ -24,7 +24,10 @@ exports.register_get = (req, res) ->
 exports.login_post = (req, res) ->
   user.findOne email: req.body.email, (err, result) ->
     if result and result.authenticate(req.body.password)
+      # set session user id
+      req.session.user_id = result._id
       console.log 'logged in!'
+      console.log req.session.user_id
       res.redirect '/'
     else
       console.log 'incorrect password'
