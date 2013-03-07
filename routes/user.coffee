@@ -28,10 +28,13 @@ exports.login_post = (req, res) ->
       req.session.user_id = result._id
       console.log 'logged in!'
       console.log req.session.user_id
-      res.redirect '/'
+      res.send {userid: result._id}
+      # TODO: check if it's the chrome extension, if not, redirect
+      # res.redirect '/'
     else
       console.log 'incorrect password'
-      res.redirect 'login'
+      res.send {error: 'Incorrect password'}
+      # res.redirect 'login'
 
 exports.login_get = (req, res) ->
   console.log 'reached here'

@@ -4,6 +4,7 @@ Module dependencies.
 express = require("express")
 home = require("./routes/index")
 user = require("./routes/user")
+application = require("./routes/application")
 http = require("http")
 path = require("path")
 mongoose = require("mongoose")
@@ -43,7 +44,6 @@ app.configure ->
 app.configure "development", ->
   app.use express.errorHandler()
 
-
 db_uri = 'mongodb://'
 # if username and password exist
 if conf.db.username and conf.db.password
@@ -65,6 +65,10 @@ app.get "/register", user.register_get
 app.post "/register", user.register_post
 app.get "/login", user.login_get
 app.post "/login", user.login_post
+app.get "/apps.json", application.json_all
+app.post "/apps/open", application.open
+app.post "/apps/close", application.close
+app.get "/apps/new", application.new_test  # just for testing
 
 
 server = http.createServer(app).listen app.get("port"), ->
