@@ -61,6 +61,7 @@ db.once 'open', ->
 app.get "/", home.index
 app.get "/users", user.list
 app.get "/users.json", user.json_all
+app.get "/users/:id.json", user.view
 app.get "/register", user.register_get
 app.post "/register", user.register_post
 app.get "/login", user.login_get
@@ -69,6 +70,7 @@ app.get "/apps.json", application.json_all
 app.post "/apps/open", application.open
 app.post "/apps/close", application.close
 app.get "/apps/new", application.new_test  # just for testing
+app.get "/apps/:id.json", application.view
 
 
 server = http.createServer(app).listen app.get("port"), ->

@@ -48,3 +48,16 @@ exports.new_test = (req, res) ->
   # res.render "hi"
   res.render "application"
 
+exports.view = (req, res) ->
+  # res.render "hi"
+  app_id = req.params.id
+  Application.findOne({_id: app_id}, (err, result) ->
+    if err
+      res.send(error: err)
+    if not result
+      res.send(error: "Could not find any application with id: " + app_id)
+
+    res.json result
+  )
+
+
