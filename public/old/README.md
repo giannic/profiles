@@ -7,4 +7,3 @@ Style Guide
 /*  
     Multiline comment start/end on own lines.  
 */
-
