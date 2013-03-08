@@ -1,13 +1,5 @@
 Application = require('../models/application')
 
-#
-# * GET users listing.
-#
-exports.json_all = (req, res) ->
-    Application.find().exec (err, results) ->
-        if(!res.headerSent)
-          res.json(results)
-
 # App = new mongoose.Schema
   # category: String,
   # user: Number,  # user id
@@ -16,7 +8,18 @@ exports.json_all = (req, res) ->
   # img: String,  # url
   # url: String  # DOMAIN url
 
-
+###
+# json of all apps
+###
+exports.json_all = (req, res) ->
+    Application.find().exec (err, results) ->
+        if(!res.headerSent)
+          res.json(results)
+###
+# /apps/open
+# req.body:
+# userid, url, open_date, category, img_url
+###
 exports.open = (req, res) ->
   # res.render "hi"
   console.log req.body
@@ -30,7 +33,11 @@ exports.open = (req, res) ->
         res.send({appid: results.id})
   )
 
-
+###
+# /apps/close
+# req.body:
+# close, appid
+###
 exports.close = (req, res) ->
   # res.render "hi"
   Application.findByIdAndUpdate(req.body.appid,
@@ -43,11 +50,16 @@ exports.close = (req, res) ->
         res.send(success: "Database updated: App close")
   )
 
-
+###
+# testing purposes only
+###
 exports.new_test = (req, res) ->
   # res.render "hi"
   res.render "application"
 
+###
+# /apps/:id.json
+###
 exports.view = (req, res) ->
   # res.render "hi"
   app_id = req.params.id

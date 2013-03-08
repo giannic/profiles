@@ -58,6 +58,7 @@ db.once 'open', ->
   console.log 'Connected to the database.'
 
 
+# existing routes
 app.get "/", home.index
 app.get "/users", user.list
 app.get "/users.json", user.json_all

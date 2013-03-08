@@ -1,27 +1,50 @@
 User = require('../models/user')
 Application = require('../models/application')
 
-#
-# * GET users listing.
-#
+
+###
+# /users
+# TODO: as of right now, it's nothing
+###
 exports.list = (req, res) ->
   res.send "respond with a resource"
 
+###
+# /users.json
+# The json of all existing users
+###
 exports.json_all = (req, res) ->
     User.find().exec (err, results) ->
         if(!res.headerSent)
           res.json(results)
 
+###
+# /register
+# The post request for registration
+# req.body:
+# email, password
+###
 exports.register_post = (req, res) ->
   # res.render "hi"
   console.log req.body
   new User(req.body).save (err) ->
-    if err then console.log 'ERROR'
+    if err
+      console.log 'ERROR'
+      res.sent(error: err)
     else console.log 'yeaaah'
 
+###
+# /register
+# The form for registration
+###
 exports.register_get = (req, res) ->
   res.render "register"
 
+###
+# /login
+# The post request for logging in
+# Takes in a email, userid
+###
 exports.login_post = (req, res) ->
   User.findOne email: req.body.email, (err, result) ->
     if result and result.authenticate(req.body.password)
@@ -37,10 +60,18 @@ exports.login_post = (req, res) ->
       res.send {error: 'Incorrect password'}
       # res.redirect 'login'
 
+###
+# /login
+# The view for the login form
+###
 exports.login_get = (req, res) ->
   console.log 'reached here'
   res.render "login"
 
+###
+# /user/:id.json
+# gives back a json view
+###
 exports.view = (req, res) ->
   console.log 'Viewing user'
   user_id = req.params.id
