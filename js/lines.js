@@ -1,3 +1,4 @@
+$(document).ready(function() {
 var numberOfLines = 1300;
 
 $.ajaxSetup({
@@ -26,7 +27,7 @@ var lineGraphHeight = 600;
         startTime = startVal;
         difference = endTime - startTime;
         for(var i = 0; i < openArray.length; i++){
-            renderArray[i] = ((openArray[i]-startTime)/(difference/lineGraphWidth)); 
+            renderArray[i] = ((openArray[i]-startTime)/(difference/lineGraphWidth));
         }
     }
 
@@ -80,3 +81,4 @@ changeColor(allTheLines, 1.0);
 //        changeColor(allTheLines, 1.0);
     }
 
+});
