@@ -7,16 +7,7 @@
     <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script>
     <script type="text/javascript" src="js/jquery.sparkline.js"></script>
     <script type="text/javascript" src="js/lines.js"></script>
-    <script type="text/javascript">
-        $(function() {
-            var myvalues = [];
-            for (var i=0; i < 200; i+=1) {
-                myvalues[i] = Math.floor((Math.random()*20)+1);
-            }
-
-            $('.inlinesparkline').sparkline(myvalues, {fillColor:'white', lineColor:'#aaa', height:'40px'});
-        });
-    </script>
+    <script type="text/javascript" src="js/sparklines.js"></script>
 </head>
 
 <body id="wrapper">
