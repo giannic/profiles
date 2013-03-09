@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Express Boilerplate</title>
+  <link href="/stylesheets/styles.css" rel="stylesheet">
+  <!-- Third party libraries-->
+  <script src="/javascripts/lib/jquery-1.9.1.min.js"></script>
+  <script src="/javascripts/lib/underscore-min.js"></script>
+  <script src="/javascripts/lib/backbone-min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/javascripts/scripts.js"></script>
+</head>
+
+<body>
+  <h1>{{{title}}}</h1>
+</body>
+</html>
