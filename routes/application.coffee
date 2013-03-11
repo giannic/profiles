@@ -44,8 +44,8 @@ exports.close = (req, res) ->
   {$push: {close: req.body.close_date}}, {upsert: true},
       (err, results) ->
         console.log('close updated!')
-        console.log(results)
-        console.log(err)
+        console.log('results: ' + results)
+        console.log('error: ' + err)
         if err then res.send(error: "Could not update database: App Close")
         res.send(success: "Database updated: App close")
   )

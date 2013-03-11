@@ -8,9 +8,16 @@
       - [1]: http://developer.chrome.com/extensions/contentSecurityPolicy.html
      -->
     <script src="jquery-1.9.1.min.js"></script>
-    <script src="background.js"></script>
   </head>
   <body>
+    <form id="loginform">
+      <label>Username</label>
+        <input type="text" name="email" /><br>
+      <label>Password</label>
+        <input type="text" name="password" /><br>
+    </form>
+    <button id="submit-button">Login</button>
   </body>
+  <script src="popup.js"></script>
 </html>
 
