@@ -12,6 +12,7 @@
 	"permissions": [
 		"tabs",
 		"storage",
+		"management",
 		"http://127.0.0.1:3000/*"
 	],
 	"browser_action": {
