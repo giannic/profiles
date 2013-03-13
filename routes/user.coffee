@@ -29,8 +29,8 @@ exports.register_post = (req, res) ->
   console.log req.body
   new User(req.body).save (err) ->
     if err
-      console.log 'ERROR'
-      res.sent(error: err)
+      console.log 'Error in saving user'
+      res.send(error: err)
     else console.log 'yeaaah'
 
 ###
