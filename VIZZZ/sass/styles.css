@@ -1,0 +1,37 @@
+#wrapper {
+  height: 100%;
+  text-align: center;
+  font-family: Helvetica, sans-serif;
+  font-weight: 300;
+  color: #4d4d4d; }
+
+#timeline_panel {
+  width: 90%;
+  margin: 0 auto; }
+
+#timeline {
+  padding-bottom: 22px; }
+
+#timeline_details {
+  text-align: right;
+  height: 20px;
+  font-size: 0.8em;
+  font-variant: small-caps; }
+  #timeline_details span {
+    display: inline-block;
+    height: 20px;
+    line-height: 20px;
+    margin-bottom: -4px; }
+
+.timeline_controls {
+  height: 20px;
+  background-repeat: no-repeat;
+  background-position: 0 0; }
+  .timeline_controls:hover {
+    background-position: -31px 0; }
+
+#timeline_date {
+  color: #A51515; }
+
+#timeline_time {
+  color: #A51515; }
