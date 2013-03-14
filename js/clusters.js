@@ -6,14 +6,15 @@ $(function(){
     var cluster_fill = 'rgba(223, 255, 255, 0.3)';
     var app_fill = 'rgba(232, 251, 255, 0.7)';
     var text_color = 'rgba(166,214,255,1.0)';
-    var selected_category;
+    var selected_category;  // selected on hover
+    var clicked_category;
     var cluster_apps = {};
     var pad = 5; // padding for boundary circle + app circles
 
     $.getJSON("scripts/usage_data.json", function(json) {
         var dataset = parse_data(json);
         console.log(dataset);
-    
+
         var all_images = [];
         var svg = d3.select("#circles")
             .append("svg")
@@ -31,13 +32,23 @@ $(function(){
         .attr("transform", function(x) {
             return "translate(" + [x.x,x.y] + ")";
         })
+        .on("mousedown", function(x, i){
+            // clicked should only keep everything expanded
+            // set a boolean and check in deselect
+            // deselect previously clicked one
+            deselect_old_cluster(svg, x, clicked_category);
+            clicked_category = x.id;
+            // TODO: move so focuses in center?
+        })
         .on("mouseenter", function(x, i){
-            selected_category = $(this).attr('id');
-            select_new_cluster(svg, x);
+            selected_category = x.id;
+            if (!clicked_category || (clicked_category != selected_category))
+                select_new_cluster(svg, x);
         })
         .on("mouseleave", function(x, i){
-            // TODO: fix so not accessed after clicking on link?
-            deselect_old_cluster(svg, x);
+            // TODO: double check if access after clicking on link
+            if (clicked_category != selected_category)
+                deselect_old_cluster(svg, x, selected_category);
         });
 
     // TODO: use if contracting category circle
@@ -51,20 +62,13 @@ $(function(){
             return "hidden_" + x.id;
         });
     */
-    //groups.selectAll("circle").data();
+
     // category circles
     var circles = groups.append("circle")
         .style("stroke", stroke_color)
         .style("fill", cluster_fill)
         .attr("r", function(x){
             return x.r;
-        })
-        .on("mousedown", function(x, i){
-            // TODO: fix
-            selected_category = $(this).attr('id');
-            select_new_cluster(svg, x);
-            deselect_old_cluster(svg, x);
-            //console.log("hi");
         })
         .attr("id", function(x){
             return "circle_" + x.id;
@@ -87,12 +91,11 @@ $(function(){
     });
 
     function select_new_cluster(svg, x){
-        
         var angle = 360/x.apps.length;
 
         var selected_circle = d3.select("#circle_" + selected_category);
         var selected_text = d3.select("#text_" + selected_category);
-        
+
         selected_circle.transition()
             .attr("r", function(x){
                 return x.r + image_width + pad*2;
@@ -164,75 +167,75 @@ $(function(){
             ;
     }
 
-  function deselect_old_cluster(svg, x){
-    /* CLEAN UP OLD CIRCLES */
-    // re-show the previous selected circle if it exists
-    
-    // first deselect the circle
-    var old_cluster = typeof selected_category === 'undefined' ? svg.selectAll() :
-      svg.selectAll("#circle_" + selected_category); 
-    var selected_obj = old_cluster.classed('selected', false)
-      .transition()
-      .attr('r', function(d){
-        return d.r;
-      });
-    
-    // TODO: use if contracting category circle
-    // then deselect the circle's text
-    /*old_cluster = typeof selected_category === 'undefined' ? svg.selectAll() :
-        svg.selectAll("#text_" + selected_category); 
-    selected_obj = old_cluster.classed('selected', false)
-        .transition()
-        .attr('font-size', fsize);
-    */
-    
-    // then deselect the circle's images
-    old_cluster = typeof selected_category === 'undefined' ? svg.selectAll() :
-        svg.selectAll(".image_" + selected_category); 
-    selected_obj = old_cluster.classed('selected', false)
-        .transition()
-        .attr('width', 0)
-        .attr('height', 0);
-    
-    // TODO: use if contracting category circle
-    // decrease the bound of the hidden circle
-    /*svg.selectAll("#hidden_" + selected_category)
-        .attr("r", function(x){
-            return x.r;
-        }); 
-    */
-    var old_apps = typeof selected_category === 'undefined' ? svg.selectAll() 
-      : svg.selectAll("." + selected_category); 
-    old_apps.transition().attr('r', 0).remove();
-  }
+    function deselect_old_cluster(svg, x, old_category){
+        /* CLEAN UP OLD CIRCLES */
+        // old_category represents cluster to deselect (either clicked or selected)
+
+        // first deselect the circle
+        var old_cluster = typeof old_category === 'undefined' ? svg.selectAll() :
+            svg.selectAll("#circle_" + old_category); 
+        var selected_obj = old_cluster.classed('selected', false)
+            .transition()
+            .attr('r', function(d){
+                return d.r;
+            });
+
+        // TODO: use if contracting category circle
+        // then deselect the circle's text
+        /*old_cluster = typeof selected_category === 'undefined' ? svg.selectAll() :
+            svg.selectAll("#text_" + selected_category); 
+        selected_obj = old_cluster.classed('selected', false)
+            .transition()
+            .attr('font-size', fsize);
+        */
+
+        // then deselect the circle's images
+        old_cluster = typeof old_category === 'undefined' ? svg.selectAll() :
+            svg.selectAll(".image_" + old_category);
+        selected_obj = old_cluster.classed('selected', false)
+            .transition()
+            .attr('width', 0)
+            .attr('height', 0);
+
+        // TODO: use if contracting category circle
+        // decrease the bound of the hidden circle
+        /*svg.selectAll("#hidden_" + selected_category)
+            .attr("r", function(x){
+                return x.r;
+            }); 
+        */
+        var old_apps = typeof old_category === 'undefined' ? svg.selectAll() 
+            : svg.selectAll("." + old_category); 
+        old_apps.transition().attr('r', 0).remove();
+    }
   
-  function parse_data(json){
-    console.log(json); // this will show the info it in firebug console
-    // grab the categories
-    var new_json = {};
-    var dataset = [];
-    var categories = _.unique(_.pluck(_.values(json), 'category'));
+    function parse_data(json){
+        console.log(json); // this will show the info it in firebug console
+        // grab the categories
+        var new_json = {};
+        var dataset = [];
+        var categories = _.unique(_.pluck(_.values(json), 'category'));
 
-    _.each(categories, function(cat, i){
-      new_json[cat] = [];
-    });
+        _.each(categories, function(cat, i){
+            new_json[cat] = [];
+        });
 
-    // create new json to pass in to constructors
-    _.each(json, function(obj){
-      new_json[obj.category].push(obj);
-    });
+        // create new json to pass in to constructors
+        _.each(json, function(obj){
+            new_json[obj.category].push(obj);
+        });
 
-    // TEMPORARY WAY TO CREATE UNIQUE ID'S
-    var id_index = 0;
-    _.each(new_json, function(obj, key, list){
-      var new_cluster = new window.Cluster(key, obj);
-      new_cluster.id = 'category' + id_index;
-      dataset.push(new_cluster);
-      id_index += 1;
-    });
+        // TEMPORARY WAY TO CREATE UNIQUE ID'S
+        var id_index = 0;
+        _.each(new_json, function(obj, key, list){
+            var new_cluster = new window.Cluster(key, obj);
+            new_cluster.id = 'category' + id_index;
+            dataset.push(new_cluster);
+            id_index += 1;
+        });
 
-    return dataset;
-  }
+        return dataset;
+    }
 });
 
 
