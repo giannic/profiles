@@ -15,6 +15,13 @@ $.ajaxSetup({
 $.getJSON('usage_data.json', function(data) {
     stats = data;
     console.log('loaded');
+
+$("#timeline").rangeSlider({
+    arrows : false,
+    defaultValues: {min: 50, max: 100},
+    valueLabels: "hide"
+});
+
 });
 
 // put the stage dimensions here
@@ -35,7 +42,10 @@ endTime = closeArray[closeArray.length-1];
 difference = endTime - startTime;
 
 //here's where to put Gabys input
-//calculateRender(1100, 1140);
+$("#timeline").on("valuesChanging", function(e, data) {
+    console.log("min: " + data.values.min + " max: " + data.values.max);
+    //calculateRender(data.values.min, data.values.max);
+}); 
 
 // array to store the lines
 allTheLines = [];
@@ -96,3 +106,4 @@ function getInfo(){
     var range2 = prompt("enter a number between " + range1 + " and 1369");
     calculateRender(range1, range2);
  }
+

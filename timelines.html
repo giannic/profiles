@@ -3,7 +3,7 @@
 <head>
     <title>Timelines</title>
     <link rel="stylesheet" type="text/css" href="sass/styles.css" />
-    <link rel="stylesheet" href="sass/classic.css">
+    <link rel="stylesheet" href="sass/slider.css">
     <link rel="stylesheet" href="sass/lib/jquery-ui/css/smoothness/jquery-ui-1.8.10.custom.css">
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
@@ -15,12 +15,11 @@
 
 <body id="wrapper">
     <!-- ok, lets use a clear div here -->
-    <br/><br/><br/><br/><br/><br/>
+    <br/><br/><br/><br/>
     <div id="D3line" style="margin: 0px auto;"></div>
 
     <div id="timeline_panel">
         <div id="timeline"></div>
-        <!-- <input type="button" onclick= "getInfo();" value="Ask me Something!" /> -->
         <p id="timeline_details">
             <span id="timeline_date">Jan 2, 2013 &bull;</span>
             <span id="timeline_time">4:00 pm</span>
@@ -39,10 +38,5 @@
             </img>
         </p>
     </div>
-    <script>
-            //<!--
-            $("#timeline").rangeSlider({arrows:false});
-            //-->
-        </script>
 </body>
 </html>
