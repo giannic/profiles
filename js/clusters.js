@@ -2,10 +2,12 @@ $(function(){
     var fsize = 16;
     var image_width = 100;
     var image_height = 100;
+    var window_width = $(window).width() - 20;
+    var window_height = $(window).height() - 20;
     var stroke_color = 'rgba(201, 219, 242, 0.8)';
-    var cluster_fill = 'rgba(223, 255, 255, 0.3)';
+    var cluster_fill = 'rgba(200, 220, 255, 0.4)';
     var app_fill = 'rgba(232, 251, 255, 0.7)';
-    var text_color = 'rgba(166,214,255,1.0)';
+    var text_color = 'rgba(120,174,255,1.0)';
     var selected_category;  // selected on hover
     var clicked_category;
     var cluster_apps = {};
@@ -18,10 +20,10 @@ $(function(){
         var all_images = [];
         var svg = d3.select("#circles")
             .append("svg")
-            .attr("width", 1000)
-            .attr("height", 1000);
+            .attr("width", window_width)
+            .attr("height", window_height);
         var defs = svg.append('defs');
-
+    
     var groups = svg.selectAll("g")
         .data(dataset)
         .enter()
@@ -30,7 +32,20 @@ $(function(){
             return x.id;
         })
         .attr("transform", function(x) {
-            return "translate(" + [x.x,x.y] + ")";
+            var size =  x.r + image_width + pad*2;
+            var transx = x.x*window_width;
+            var transy = x.y*window_height;
+            // cap the circle positions
+            if (transx - size < 0)
+                transx += size;
+            else if (transx + size > $(window).width())
+                transx -= size;
+            if (transy - size < 0)
+                transy += size;
+            else if (transy + size > $(window).height())
+                transy -= size;
+            // TODO: fix overlap
+            return "translate(" + [transx, transy] + ")";
         })
         .on("mousedown", function(x, i){
             // clicked should only keep everything expanded
