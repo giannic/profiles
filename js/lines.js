@@ -43,9 +43,9 @@ difference = endTime - startTime;
 
 //here's where to put Gabys input
 $("#timeline").on("valuesChanging", function(e, data) {
-    console.log("min: " + data.values.min + " max: " + data.values.max);
-    //calculateRender(data.values.min, data.values.max);
-}); 
+    //console.log("min: " + data.values.min + " max: " + data.values.max);
+    calculateRender(data.values.min, data.values.max);
+});
 
 // array to store the lines
 allTheLines = [];
