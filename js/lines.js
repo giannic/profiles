@@ -14,7 +14,7 @@ $.ajaxSetup({
 
 $.getJSON('usage_data.json', function(data) {
     stats = data;
-    console.log('loaded');
+    //console.log('loaded');
 
 $("#timeline").rangeSlider({
     arrows : false,
@@ -44,7 +44,7 @@ difference = endTime - startTime;
 //here's where to put Gabys input
 $("#timeline").on("valuesChanging", function(e, data) {
     //console.log("min: " + data.values.min + " max: " + data.values.max);
-    calculateRender(data.values.min, data.values.max);
+    calculateRender(Math.round(data.values.min), Math.round(data.values.max));
 });
 
 // array to store the lines
@@ -96,8 +96,8 @@ function calculateRender(startValIndex, endValIndex) {
         renderArray[i] = ((openArray[i]-startTime)/(difference/lineGraphWidth));
     }
     generateLines(renderArray);
-    console.log(startValIndex);
-    console.log(endValIndex);
+    //console.log(startValIndex);
+    //console.log(endValIndex);
     changeColor(allTheLines, 1.0);
 }
 
