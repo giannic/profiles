@@ -11,49 +11,16 @@ $(function(){
     var pad = 5; // padding for boundary circle + app circles
 
     $.getJSON("scripts/usage_data.json", function(json) {
-      var dataset = parse_data(json);
-      console.log(dataset);
+        var dataset = parse_data(json);
+        console.log(dataset);
     
-      var all_images = [];
-      var svg = d3.select("#circles")
-        .append("svg")
-        .attr("width", 1000)
-        .attr("height", 1000);
-      var defs = svg.append('defs');
-      // create the images
-      // for the category, run through each app and generate its corresponding image
-      // {
-      //   id: url
-      // }
-      // TODO: refactor? is this necessary
-      /*all_images = _.object(_.map(_.flatten(_.pluck(dataset, 'apps')), function(val){
-                     return [val.id, val.img];
-                   }));
-      */
-      // console.log(defs.selectAll()
-      //     .data(all_images));
+        var all_images = [];
+        var svg = d3.select("#circles")
+            .append("svg")
+            .attr("width", 1000)
+            .attr("height", 1000);
+        var defs = svg.append('defs');
 
-      // console.log(defs.selectAll()
-      //     .data(['hi', 'hihi', 'hihihi','hihihihi']));
-      
-      /* unnecessary?
-      defs.selectAll()
-        .data(_.pairs(all_images))  // index 0 is id, index 1 is url TODO: refactor
-        .enter().append('svg:pattern')
-          .attr("x", 0)
-          .attr("y", 0)
-          .attr("data-image-id", function(d){
-            return d[0];  
-          })
-          // now append the image....
-        .append('image')
-          .attr('xlink:href', function(d, i){
-            return d[1];
-          })
-          .attr("x", 0)
-          .attr("y", 0)
-          ;
-        */
     var groups = svg.selectAll("g")
         .data(dataset)
         .enter()
@@ -63,13 +30,6 @@ $(function(){
         })
         .attr("transform", function(x) {
             return "translate(" + [x.x,x.y] + ")";
-        })
-        .on("mousedown", function(x, i){
-            // TODO: fix
-            selected_category = $(this).attr('id');
-            select_new_cluster(svg, x);
-            deselect_old_cluster(svg, x);
-            //console.log("hi");
         })
         .on("mouseenter", function(x, i){
             selected_category = $(this).attr('id');
@@ -91,13 +51,20 @@ $(function(){
             return "hidden_" + x.id;
         });
     */
-    groups.selectAll("circle").data();
+    //groups.selectAll("circle").data();
     // category circles
     var circles = groups.append("circle")
         .style("stroke", stroke_color)
         .style("fill", cluster_fill)
         .attr("r", function(x){
             return x.r;
+        })
+        .on("mousedown", function(x, i){
+            // TODO: fix
+            selected_category = $(this).attr('id');
+            select_new_cluster(svg, x);
+            deselect_old_cluster(svg, x);
+            //console.log("hi");
         })
         .attr("id", function(x){
             return "circle_" + x.id;
