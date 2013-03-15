@@ -1,24 +1,23 @@
-import datetime, time
+import datetime
+import time
 from datetime import timedelta
 import random
 import json
 
 now = datetime.datetime.now()
-start_of_time = now - timedelta(365) # one year ago from now
+start_of_time = now - timedelta(365)  # one year ago from now
+app_id = 0  # unique id of the app
 
 
 def main():
     sites = ["Facebook", "Twitter", "LinkedIn", "Pinterest", "Tumblr",
-             "Spotify", "LastFM", "SocialNetwork1", "SocialNetwork2",
-             "SocialNetwork3", "Professional1", "Professional2",
-             "Professional3", "Professional4", "Entertainment1",
-             "Entertainment2", "Entertainment3", "Entertainment4",
-             "Entertainment5"]
-
+             "Spotify", "LastFM", "Behance", "Blogger",
+             "Google Plus", "Instagram", "Livejournal",
+             "Myspace", "Orkut", "Picasa",
+             "Vimeo", "Youtube", "Stumbleupon",
+             "RSS"]
 
     data = {site: generate_times() for site in sites}
-    data = add_categories(data)
-    data = add_urls(data)
 
     '''
     for site in data:
@@ -26,6 +25,10 @@ def main():
     '''
 
     data = add_variance(data)
+    data = add_categories(data)
+    data = add_images(data)
+    data = add_id(data)
+    data = add_url(data)
 
     '''
     print "\n\nafter variance"
@@ -36,8 +39,9 @@ def main():
 
     # print_stuff(data)
 
-    with open('../data/usage_data.json', 'w') as outfile:
+    with open('usage_data.json', 'w') as outfile:
         json.dump(data, outfile)
+
 
 def add_variance(data):
     '''Makes some apps less frequently used.
@@ -72,10 +76,6 @@ def add_variance(data):
     return data
 
 
-
-
-
-
 def print_stuff(data):
     # prints the number of visits for Facebook
     print len(data["Facebook"]["open"])
@@ -85,41 +85,91 @@ def print_stuff(data):
     for start, end in zip(data["Facebook"]["open"], data["Facebook"]["close"]):
         print str(timedelta(seconds=end - start))
 
-def add_categories(data):
+
+def add_images(data):
+
+    data['Facebook']['img'] = 'img/facebook.png'
+    data['Twitter']['img'] = 'img/twitter.png'
+    data['LinkedIn']['img'] = 'img/linkedin.png'
+    data['Pinterest']['img'] = 'img/pinterest.png'
+    data['Tumblr']['img'] = 'img/tumblr.png'
+    data['Spotify']['img'] = 'img/spotify.png'
+    data['LastFM']['img'] = 'img/lastfm.png'
+    data['Behance']['img'] = 'img/behance.png'
+    data['Blogger']['img'] = 'img/blogger.png'
+    data['Google Plus']['img'] = 'img/googleplus-revised.png'
+    data['Instagram']['img'] = 'img/instagram.png'
+    data['Livejournal']['img'] = 'img/livejournal.png'
+    data['Myspace']['img'] = 'img/myspace.png'
+    data['Orkut']['img'] = 'img/orkut.png'
+    data['Picasa']['img'] = 'img/picasa.png'
+    data['Vimeo']['img'] = 'img/vimeo.png'
+    data['Youtube']['img'] = 'img/youtube.png'
+    data['Stumbleupon']['img'] = 'img/stumbleupon.png'
+    data['RSS']['img'] = 'img/rss.png'
+
+    # for i in data:
+    #     data[i]['img'] = 'http://placekitten.com/50/50?image=5'
+    return data
+
+
+def add_id(data):
+    global app_id
+    for i in data:
+        data[i]['id'] = 'app' + str(app_id)
+        app_id += 1
+    return data
+
+
+def add_url(data):
     categories = ['Social Networks', 'Professional', 'Entertainment']
+
+    data['Facebook']['url'] = 'http://www.facebook.com'
+    data['Twitter']['url'] = 'http://www.twitter.com'
+    data['LinkedIn']['url'] = 'http://www.linkedin.com'
+    data['Pinterest']['url'] = 'http://www.pinterest.com'
+    data['Tumblr']['url'] = 'http://www.tumblr.com'
+    data['Spotify']['url'] = 'http://www.spotify.com'
+    data['LastFM']['url'] = 'http://www.lastfm.com'
+    data['Behance']['url'] = 'http://www.behance.com'
+    data['Blogger']['url'] = 'http://www.blogger.com'
+    data['Google Plus']['url'] = 'http://plus.google.com'
+    data['Instagram']['url'] = 'http://www.instagram.com'
+    data['Livejournal']['url'] = 'http://www.livejournal.com'
+    data['Myspace']['url'] = 'http://www.myspace.com'
+    data['Orkut']['url'] = 'http://www.orkut.com'
+    data['Picasa']['url'] = 'http://www.picasa.com'
+    data['Vimeo']['url'] = 'http://www.vimeo.com'
+    data['Youtube']['url'] = 'http://www.youtube.com'
+    data['Stumbleupon']['url'] = 'http://www.stumbleupon.com'
+    data['RSS']['url'] = 'http://www.rss.com'
+    return data
+
+
+
+def add_categories(data):
+    categories = ['Social Networks', 'Professional', 'Entertainment',
+                    'Image Sharing', 'Music']
 
     data['Facebook']['category'] = categories[0]
     data['Twitter']['category'] = categories[0]
     data['LinkedIn']['category'] = categories[1]
-    data['Pinterest']['category'] = categories[2]
-    data['Tumblr']['category'] = categories[2]
-    data['Spotify']['category'] = categories[2]
-    data['LastFM']['category'] = categories[2]
-    data['SocialNetwork1']['category'] = categories[0]
-    data['SocialNetwork2']['category'] = categories[0]
-    data['SocialNetwork3']['category'] = categories[0]
-    data['Professional1']['category'] = categories[1]
-    data['Professional2']['category'] = categories[1]
-    data['Professional3']['category'] = categories[1]
-    data['Professional4']['category'] = categories[1]
-    data['Entertainment1']['category'] = categories[2]
-    data['Entertainment2']['category'] = categories[2]
-    data['Entertainment3']['category'] = categories[2]
-    data['Entertainment4']['category'] = categories[2]
-    data['Entertainment5']['category'] = categories[2]
-
-    return data
-
-def add_urls(data):
-    for site in data:
-        data[site]['url'] = 'http://www.google.com'
-    data['Facebook']['url'] = 'http://www.facebook.com' 
-    data['Twitter']['url'] = 'http://www.twitter.com' 
-    data['LinkedIn']['url'] = 'http://www.linkedin.com' 
-    data['Pinterest']['url'] = 'http://www.pinterest.com' 
-    data['Tumblr']['url'] = 'http://www.tumblr.com' 
-    data['Spotify']['url'] = 'http://www.spotify.com' 
-    data['LastFM']['url'] = 'http://www.last.fm' 
+    data['Pinterest']['category'] = categories[3]
+    data['Tumblr']['category'] = categories[3]
+    data['Spotify']['category'] = categories[4]
+    data['LastFM']['category'] = categories[4]
+    data['Behance']['category'] = categories[0]
+    data['Blogger']['category'] = categories[0]
+    data['Google Plus']['category'] = categories[0]
+    data['Instagram']['category'] = categories[3]
+    data['Livejournal']['category'] = categories[1]
+    data['Myspace']['category'] = categories[1]
+    data['Orkut']['category'] = categories[1]
+    data['Picasa']['category'] = categories[3]
+    data['Vimeo']['category'] = categories[2]
+    data['Youtube']['category'] = categories[2]
+    data['Stumbleupon']['category'] = categories[2]
+    data['RSS']['category'] = categories[2]
     return data
 
 
@@ -133,11 +183,12 @@ def generate_times():
     # and records open/close times in arrays, returning as a dict
     while t < now:
         open_times.append(time.mktime(t.timetuple()))
-        t += random_timedelta(10, 3600 * 2) # assume 10 seconds to 2 hours spent on site
+        t += random_timedelta(10, 3600 * 2)  # assume 10 seconds to 2 hours spent on site
         close_times.append(time.mktime(t.timetuple()))
-        t += random_timedelta(10, 3600 * 9) # assume next access is between 10 seconds and 9 hours later
+        t += random_timedelta(10, 3600 * 9)  # assume next access is between 10 seconds and 9 hours later
 
     return {"open": open_times, "close": close_times}
+
 
 def random_timedelta(lower, upper):
     '''Returns a timedelta in seconds between lower and upper'''

@@ -1,3 +1,84 @@
-body{
-  font-family: 'Helvetica'
+body {
+    height: 100%;
+    widht: 200%;
+    overflow: hidden;
+}
+
+#wrapper {
+    position: relative;
+    height: 100%;
+    text-align: center;
+    font: {
+        family: Helvetica, sans-serif;
+        weight: 300;
+    }
+    color: #4d4d4d;
+}
+
+svg {
+    position: relative;
+}
+
+.vis {
+  display: inline-block;
+}
+#visualizations {
+  position: absolute;
+}
+
+#circles {
+  position: relative;
+}
+
+#D3line {
+}
+
+#lines {
+  top: -100px;
+  position: relative;
+}
+
+#timeline_panel {
+    position: relative;
+    margin: auto;
+    width: 90%;
+}
+
+#timeline {
+  padding-bottom: 22px;
+}
+
+#timeline_details {
+    text-align: right;
+    height: 20px;
+    font: {
+        size: 0.8em;
+        variant: small-caps;
+    }
+
+    span {
+        display: inline-block;
+        height: 20px;
+        line-height: 20px;
+        margin-bottom: -4px;
+    }
+}
+
+.timeline_controls {
+    height: 20px;
+    background: {
+        repeat: no-repeat;
+        position: 0 0;
+    }
+    &:hover {
+        background-position: -31px 0;
+    }
+}
+
+#timeline_date {
+    color: #A51515;
+}
+
+#timeline_time {
+    color: #A51515;
 }
