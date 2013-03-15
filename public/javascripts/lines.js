@@ -9,7 +9,7 @@ var numberOfLines,
 
 $(document).ready(function() {
 
-    //makes the file not asynchronous so that JSON will load (Kevin)
+    // makes the file not asynchronous so that JSON will load (Kevin)
     $.ajaxSetup({
         "async" : false
     });
@@ -17,7 +17,6 @@ $(document).ready(function() {
     //get the JSON file
     $.getJSON('usage_data.json', function(data) {
         stats = data;
-        console.log('loaded');
     });
 
     //instantiates the slider timeline
@@ -190,8 +189,7 @@ function play(obj) {
     if (playTimeline) {
         interval = setInterval(function(){stepForward(1)},10);
         obj.src = "img/controls_pause.gif";
-    }
-    else {
+    } else {
         clearInterval(interval);
         obj.src = "img/controls_play.gif";
     }
