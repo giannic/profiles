@@ -1,6 +1,7 @@
 body {
   height: 100%;
-  widht: 200%; }
+  widht: 200%;
+  overflow: hidden; }
 
 #wrapper {
   position: relative;

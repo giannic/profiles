@@ -60,7 +60,7 @@ a {
     width: 100%;
     height: 32px;
     position: relative;
-    @include gradient($LIGHT_GREY,#C9C9C9);
+    @include gradient(#FFF,#E4E4E4);
 
     background: {
         color: $LIGHT_GREY;
@@ -68,8 +68,8 @@ a {
 
     border: {
         style: solid;
-        color: #AAA;
-        width: 0px 0px 2px 0px;
+        color: #DBDBDB;
+        width: 0px 0px 1px 0px;
     }
 
     font: {

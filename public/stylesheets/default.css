@@ -28,19 +28,19 @@ a {
   height: 32px;
   position: relative;
   /* fallback/image non-cover color */
-  background-color: #dddddd;
+  background-color: white;
   /* Firefox 3.6+ */
-  background-image: -moz-linear-gradient(#dddddd, #c9c9c9);
+  background-image: -moz-linear-gradient(white, #e4e4e4);
   /* Safari 4+, Chrome 1+ */
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#dddddd), to(#c9c9c9));
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#e4e4e4));
   /* Safari 5.1+, Chrome 10+ */
-  background-image: -webkit-linear-gradient(#dddddd, #c9c9c9);
+  background-image: -webkit-linear-gradient(white, #e4e4e4);
   /* Opera 11.10+ */
-  background-image: -o-linear-gradient(#dddddd, #c9c9c9);
+  background-image: -o-linear-gradient(white, #e4e4e4);
   background-color: #dddddd;
   border-style: solid;
-  border-color: #AAA;
-  border-width: 0px 0px 2px 0px;
+  border-color: #DBDBDB;
+  border-width: 0px 0px 1px 0px;
   font-family: Helvetica, Arial, sans-serif;
   z-index: 9001; }
   #header .title {
