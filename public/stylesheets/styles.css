@@ -1,13 +1,22 @@
+body {
+  height: 100%;
+  widht: 200%;
+  overflow: hidden; }
+
 #wrapper {
+  position: relative;
   height: 100%;
   text-align: center;
   font-family: Helvetica, sans-serif;
   font-weight: 300;
   color: #4d4d4d; }
 
+svg {
+  position: absolute; }
+
 #timeline_panel {
-  width: 90%;
-  margin: 0 auto; }
+  position: absolute;
+  width: 90%; }
 
 #timeline {
   padding-bottom: 22px; }

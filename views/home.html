@@ -4,7 +4,8 @@
     <title>Timelines</title>
     <!-- stylesheets -->
     <link rel="stylesheet" href="lib/jquery-ui/css/jquery-ui-1.8.10.custom.css">
-    <link rel="stylesheet" href="stylesheets/styles.css" />
+    <link rel="stylesheet" href="/stylesheets/styles.css" />
+    <link rel="stylesheet" href="/stylesheets/default.css" />
     <link rel="stylesheet" href="stylesheets/slider.css">
 
     <!-- js libs -->
@@ -18,22 +19,37 @@
     <script type="text/javascript" src="javascripts/Cluster.js"></script>
     <script type="text/javascript" src="javascripts/clusters.js"></script>
     <script type="text/javascript" src="javascripts/lines.js"></script>
+    <script type="text/javascript" src="javascripts/main.js"></script>
 </head>
 
 <body id="wrapper">
-    <!-- clusters div -->
-    <div id="circles"></div>
+    <div id="header">
+        <a class="title" href="#">{{{title}}}</a>
+        <span class="name">Gianni</span>
+        <img src="#"><!-- gear --></img>
+    </div>
 
-    <!-- ok, lets use a clear div here -->
-    <br/><br/><br/><br/>
-    <div id="D3line" style="margin: 0px auto;"></div>
+    <nav class="type-nav">
+        <ul>
+            <li><a href="#">all</a></li> |
+            <li><a id="clusters-toggle" href="#">clusters</a></li> |
+            <li><a id="timelines-toggle" href="#">timelines</a></li>
+    </nav>
+
+    <form id="search">
+        <input class="search-text" type="text" name="search"/>
+    </form>
+
+    <!-- clusters div -->
+    <div id="circles" class="vis"></div>
+
+    <div id="D3line" class="vis"></div>
 
     <div id="timeline_panel">
         <div id="timeline"></div>
         <p id="timeline_details">
             <span id="timeline_date">Jan 2, 2013 &bull;</span>
             <span id="timeline_time">4:00 pm</span>
-            <!-- fix sprites -->
             <img id="timeline_step_back"
                  class="timeline_controls"
                  src="img/controls-back.png">

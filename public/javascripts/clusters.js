@@ -13,7 +13,7 @@ $(function(){
     var cluster_apps = {};
     var pad = 5; // padding for boundary circle + app circles
 
-    $.get("apps.json", function(json) {
+    $.getJSON("apps.json", function(json) {
         var dataset = parse_data(json);
         console.log(dataset);
 
@@ -23,63 +23,47 @@ $(function(){
             .attr("width", window_width)
             .attr("height", window_height);
         var defs = svg.append('defs');
-    
-      var groups = svg.selectAll("g")
-          .data(dataset)
-          .enter()
-          .append("g")
-          .attr("id", function(x){
-              return x.id;
-          })
-          .attr("transform", function(x) {
-              var size =  x.r + image_width + pad*2;
-              var transx = x.x*window_width;
-              var transy = x.y*window_height;
-              // cap the circle positions
-              if (transx - size < 0)
-                  transx += size;
-              else if (transx + size > $(window).width())
-                  transx -= size;
-              if (transy - size < 0)
-                  transy += size;
-              else if (transy + size > $(window).height())
-                  transy -= size;
-              // TODO: fix overlap
-              return "translate(" + [transx, transy] + ")";
-          })
-          .on("mousedown", function(x, i){
-              // clicked should only keep everything expanded
-              // set a boolean and check in deselect
-              // deselect previously clicked one
-              deselect_old_cluster(svg, x, clicked_category);
-              clicked_category = x.id;
-              console.log('mousedown')
-              // TODO: move so focuses in center?
-          })
-          .on("mouseover", function(x, i){
-              console.log('enter')
-              selected_category = x.id;
-              if (!clicked_category || (clicked_category != selected_category))
-                  select_new_cluster(svg, x);
-          })
-          .on("mouseout", function(x, i){
-              // TODO: double check if access after clicking on link
-              if (clicked_category != selected_category)
-                  deselect_old_cluster(svg, x, selected_category);
-          });
 
-    // TODO: use if contracting category circle
-    // hidden boundary circles - use if contracting category circle
-    /*var bound_circles = groups.append("circle")
-        .attr("opacity", 0)
-        .attr("r", function(x) {
-            return x.r;// + 50*2 + pad*2; // increase radius after hover
+    var groups = svg.selectAll("g")
+                    .data(dataset)
+                    .enter()
+                    .append("g")
+                    .attr("id", function(x){
+                        return x.id;
+                    })
+
+        .attr("transform", function(x) {
+            var size =  x.r + image_width + pad*2;
+            var transx = x.x*window_width;
+            var transy = x.y*window_height;
+            // cap the circle positions
+            if (transx - size < 0)
+                transx += size;
+            else if (transx + size > $(window).width())
+                transx -= size;
+            if (transy - size < 0)
+                transy += size;
+            else if (transy + size > $(window).height())
+                transy -= size;
+            // TODO: fix overlap
+            return "translate(" + [transx, transy] + ")";
         })
-        .attr("id", function(x){
-            return "hidden_" + x.id;
+        .on("mousedown", function(x, i){
+            // clicked should only keep everything expanded
+            // set a boolean and check in deselect
+            // deselect previously clicked one
+            deselect_old_cluster(svg, x, clicked_category);
+            clicked_category = x.id;
+            // TODO: move so focuses in center?
+        })
+        .on("mouseover", function(x, i){
+            console.log("hello");
+            if (!selected_category || selected_category != x.id) {
+                selected_category = x.id;
+                if (!clicked_category || (clicked_category != selected_category))
+                    select_new_cluster(svg, x);
+            }
         });
-    */
-
     // category circles
     var circles = groups.append("circle")
         .style("stroke", stroke_color)
@@ -113,9 +97,17 @@ $(function(){
         var selected_circle = d3.select("#circle_" + selected_category);
         var selected_text = d3.select("#text_" + selected_category);
 
-        selected_circle.transition()
+        // hidden circle
+        /*svg.selectAll("#hidden_" + selected_category)
             .attr("r", function(x){
                 return x.r + image_width + pad*2;
+            });
+        */
+        var r = x.r;
+        selected_circle.transition()
+            .attr("r", function(x){
+                console.log("circle size " + x.r + image_width + pad*2);
+                return r + image_width + pad*2;
             });
         selected_circle.classed("selected", true);
 
@@ -182,6 +174,26 @@ $(function(){
             .attr("height", image_height)
             .attr("opacity", 0.6)
             ;
+        // TODO: use if contracting category circle
+        // hidden boundary circles - use if contracting category circle
+        cluster_apps[selected_category]
+            .append("circle")
+            .attr("opacity", 0)
+            .attr("r", function(x) {
+                console.log("hidden size " + x.r + image_width + pad*2);
+                return r + image_width + pad*2; // increase radius after hover
+            })
+            .attr("id", function(x){
+                return "hidden_" + x.id;
+            })
+            .on("mouseout", function(x, i){
+                // TODO: double check if access after clicking on link
+                console.log("goodbye");
+                if (clicked_category != selected_category) {
+                    deselect_old_cluster(svg, x, selected_category);
+                    selected_category = "";
+                }
+            });
     }
 
     function deselect_old_cluster(svg, x, old_category){
@@ -216,11 +228,11 @@ $(function(){
 
         // TODO: use if contracting category circle
         // decrease the bound of the hidden circle
-        /*svg.selectAll("#hidden_" + selected_category)
+        svg.selectAll("#hidden_" + selected_category)
             .attr("r", function(x){
-                return x.r;
-            }); 
-        */
+                return 0;
+            }).remove(); 
+        
         var old_apps = typeof old_category === 'undefined' ? svg.selectAll() 
             : svg.selectAll("." + old_category); 
         old_apps.transition().attr('r', 0).remove();
