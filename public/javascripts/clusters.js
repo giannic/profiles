@@ -12,8 +12,10 @@ $(function(){
     var clicked_category;
     var cluster_apps = {};
     var pad = 5; // padding for boundary circle + app circles
+    var px_arr = [];
+    var py_arr = [];
 
-    $.getJSON("apps.json", function(json) {
+    $.getJSON("usage_data.json", function(json) {
         var dataset = parse_data(json);
         console.log(dataset);
 
@@ -23,29 +25,85 @@ $(function(){
             .attr("width", window_width)
             .attr("height", window_height);
         var defs = svg.append('defs');
-
+    
     var groups = svg.selectAll("g")
-                    .data(dataset)
-                    .enter()
-                    .append("g")
-                    .attr("id", function(x){
-                        return x.id;
-                    })
-
-        .attr("transform", function(x) {
+        .data(dataset)
+        .enter()
+        .append("g")
+        .attr("id", function(x, i){
+            console.log(x.x);
+            // add all the positions first
+            px_arr[i] = x.x*window_width;
+            py_arr[i] = x.y*window_height;
+            return x.id;
+        })
+        
+        .attr("transform", function(x, i) {
+            var px = x.x*window_width;
+            var py = x.y*window_height;
             var size =  x.r + image_width + pad*2;
-            var transx = x.x*window_width;
-            var transy = x.y*window_height;
+            var newpx_arr = px_arr;
+            var newpy_arr = py_arr;
+
+            // fix overlap
+            // push the circle positions based on all the other ones
+            for (var j = 0; j < px_arr.length; j++) {
+                if (px != px_arr[j]) {
+                    var diff = px - newpx_arr[j];
+                    if (Math.abs(diff) < size) {
+                        // push x value
+                        if (diff < 0) { // then x is smaller, push left
+                            newpx_arr[i] = px - size - pad;
+                        }
+                        else { // x is larger, push right
+                            newpx_arr[i] = px + size + pad;
+                        }
+                    }
+                }
+            }
+            px_arr = newpx_arr;
+            for (var j = 0; j < py_arr.length; j++) {
+                if (py != py_arr[j]) {
+                    var diff = py - newpy_arr[j]
+                    if (Math.abs(diff) < size) {
+                        // push x value
+                        if (diff < 0) { // then x is smaller, push left
+                            //console.log("small x");
+                            newpy_arr[i] = py - size - pad;
+                        }
+                        else { // x is larger, push right
+                            //console.log("large x");
+                            newpy_arr[i] = py + size + pad;
+                        }
+                    }
+                }
+            }
+
+            py_arr = newpy_arr;
+            var transx = px_arr[i];
+            var transy = py_arr[i];
+
             // cap the circle positions
-            if (transx - size < 0)
-                transx += size;
-            else if (transx + size > $(window).width())
-                transx -= size;
-            if (transy - size < 0)
-                transy += size;
-            else if (transy + size > $(window).height())
-                transy -= size;
-            // TODO: fix overlap
+            if (transx - size < 0) {
+                transx -= (transx - size);
+            }
+            else if (transx + size > window_width) {
+                console.log("tx more");
+                transx -= (transx - size);
+            }
+            if (transy - size < 0) {
+                console.log("ty less");
+                transy -= (transy - size);
+            }
+            else if (transy + size > window_height) {
+                console.log("ty more");
+                transy -= (transy - size);
+            }
+
+            // put it back in px/py array
+            px_arr[i] = transx;
+            py_arr[i] = transy;
+            console.log(transx + ", " + transy + ": " + i);
             return "translate(" + [transx, transy] + ")";
         })
         .on("mousedown", function(x, i){
@@ -57,11 +115,12 @@ $(function(){
             // TODO: move so focuses in center?
         })
         .on("mouseover", function(x, i){
-            console.log("hello");
             if (!selected_category || selected_category != x.id) {
                 selected_category = x.id;
-                if (!clicked_category || (clicked_category != selected_category))
+                if (!clicked_category || (clicked_category != selected_category)){
                     select_new_cluster(svg, x);
+                    create_hidden_circle(svg, x);
+                }
             }
         });
     // category circles
@@ -115,6 +174,7 @@ $(function(){
         //selected_text.transition().attr("font-size", 0);
 
         selected_text.classed("selected", true);
+        
         var category = svg.selectAll("#" + x.id);
         
         // assign the created objects into the corresponding cluster_objects
@@ -160,6 +220,8 @@ $(function(){
         cluster_apps[selected_category]  // append each image
             .append('image')
             .attr('xlink:href', function(d, i){
+                console.log("HOOOOOOOOOOOOOOOOOOOOOOO: " + d.img);
+                console.log(d);
               return d.img;
             })
             .attr("x", function(d, i){
@@ -174,21 +236,22 @@ $(function(){
             .attr("height", image_height)
             .attr("opacity", 0.6)
             ;
+    }
+
+    function create_hidden_circle(svg, x){
         // TODO: use if contracting category circle
         // hidden boundary circles - use if contracting category circle
-        cluster_apps[selected_category]
+        var category = svg.selectAll("#" + x.id)
             .append("circle")
             .attr("opacity", 0)
             .attr("r", function(x) {
-                console.log("hidden size " + x.r + image_width + pad*2);
-                return r + image_width + pad*2; // increase radius after hover
+                return x.r + image_width + pad*2; // increase radius after hover
             })
             .attr("id", function(x){
                 return "hidden_" + x.id;
             })
             .on("mouseout", function(x, i){
                 // TODO: double check if access after clicking on link
-                console.log("goodbye");
                 if (clicked_category != selected_category) {
                     deselect_old_cluster(svg, x, selected_category);
                     selected_category = "";
