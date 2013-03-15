@@ -1,68 +1,90 @@
-//$(document).ready(function() {
-
-var apiUrlOpen = "http://127.0.0.1:3000/apps/open";
-var apiUrlClose = "http://127.0.0.1:3000/apps/close";
+var baseUrl = "http://ec2-50-19-65-30.compute-1.amazonaws.com:3000";
+//var baseUrl = "http://127.0.0.1:3000";
+var apiUrlOpen = baseUrl + "/apps/open";
+var apiUrlClose = baseUrl + "/apps/close";
 var userid = null;
-var bkg = chrome.extension.getBackgroundPage();
-
-loadUserId();
-bkg.console.log("Loaded")
-
+var storage = chrome.storage.local;
 var tabDomains = {}; // maps tab ids to URLs
-var activeDomains = {} // domains that are open already
+var activeDomains = {}; // domains that are open already
 
-chrome.management.onInstalled.addListener(function(info) {
-  registerAllTabs();
+$(document).ready(function() {
+  init();
 });
 
-chrome.management.onEnabled.addListener(function(info) {
-  registerAllTabs();
-});
+function init() {
+  loadUserId();
+  console.log("Loaded")
+  //printChromeStorage();
+  checkDirtyClose();
+  storage.set({"activeDomains": activeDomains});
+}
+
+//==================
+// Init functions
+//==================
+
+function checkDirtyClose() {
+  // see if we have active domains stored in chrome storage
+  storage.get({"activeDomains": null, "lastKnownTime": null}, 
+    function(items) {
+      var domains = items.activeDomains;
+      // if we do, post close with the last recorded time
+      if (domains) {
+        for (var d in domains) {
+          if (domains.hasOwnProperty(d)) {
+            var appId = domains[d]["appId"];
+            var posixTime = items.lastKnownTime;
+            if (!posixTime) {
+              posixTime = getCurrentTime();
+            }
+            postToClose(d, appId, posixTime);
+          }
+        }
+      }
+    storage.set({"activeDomains": null});
+    // 
+    registerAllTabs();
+    window.setInterval(logTime, 5000);
+  });
+};
 
 function registerAllTabs() {
-  var windows_ = [];
   chrome.windows.getAll({"populate": true}, function(windows) {
-    windows_ = windows;
-  });
-  for (var i = 0; i < windows_.length; i ++ ) {
-    var tabs = windows_[i].tabs;
-    for (var j = 0; j < tabs; j ++ ) {
-      var id = tabs[j].id;
-      var url = tabs[j].url;
-      processUrl(id, url);
+    for (var i = 0; i < windows.length; i ++ ) {
+      var tabs = windows[i].tabs;
+      for (var j = 0; j < tabs.length; j ++ ) {
+        var id = tabs[j].id;
+        var url = tabs[j].url;
+        processUrl(id, url);
+      }
     }
-  }
+  });
 }
 
+//==================
+// Other functions
+//==================
+
+// Records the time to Chrome storage
+function logTime() {
+  storage.set({"lastKnownTime": Math.round((new Date()).getTime() / 1000)});
+};
+
+// Load user id from Chrome storage
 function loadUserId() {
-  userid = chrome.storage.local.get({"userid": null}, function(items) {
+  userid = storage.get({"userid": null}, function(items) {
     userid = items.userid; 
   });
-  bkg.console.log("Loaded userid " + userid);
+  console.log("Loaded userid " + userid);
 }
-
-chrome.tabs.onCreated.addListener(function(tab) {
-  bkg.console.log("tab created!");
-  tabDomains[tab["id"]] = null;
-});
-
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {         
-  // If tab has no URL yet, return
-  if (!("url" in changeInfo) || changeInfo["url"] == "chrome://newtab/") {
-    return;
-  }
-
-  // Process the url
-  processUrl(tabId, changeInfo["url"]);
-  });
 
 function processUrl(tabId, url) {
   var domain = getGeneralDomain($.url(url).attr("host"));
   // If user opened chrome://*, ignore and return
-  if (domain == "chrome") {
+  var excludedDomains = ["chrome", "extensions", "devtools"];
+  if (excludedDomains.indexOf(domain) != -1) {
     return false;
   }
-  console.log("tab navigated to domain: " + domain);
   var oldDomain = tabDomains[tabId];
 
   // if new tab
@@ -86,14 +108,6 @@ function processUrl(tabId, url) {
   return true;
 };
 
-chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
-  bkg.console.log("closed tab " + tabId);
-  var closedDomain = tabDomains[tabId];
-  delete tabDomains[tabId];
-
-  decrementDomainCount(closedDomain);
-});
-
 function incrementDomainCount(domain) {
   if (!(domain in activeDomains)) {
     activeDomains[domain] = {"count": 0};
@@ -102,30 +116,56 @@ function incrementDomainCount(domain) {
     }
   }
   activeDomains[domain]["count"] += 1;
-  bkg.console.log(activeDomains[domain]["count"] + " tabs open for " + 
-    domain);
+  storage.set({"activeDomains": activeDomains});
+  console.log(activeDomains[domain]["count"] + " tabs open for " + domain);
 }
 
 function decrementDomainCount(domain) {
   // If last tab for that domain, delete from active domains
   if (activeDomains[domain]["count"] == 1) {
     var appId = activeDomains[domain]["appId"];
-    console.log("about to close appId " + appId);
     delete activeDomains[domain];
     if (userid) {
-      postToClose(domain, appId);
+      postToClose(domain, appId, getCurrentTime());
     }
   }
   // Else, decrement
   else {
     activeDomains[domain]["count"] = activeDomains[domain]["count"] - 1;
-    bkg.console.log(activeDomains[domain]["count"] + " tabs open for " + domain);
+    console.log(activeDomains[domain]["count"] + " tabs open for " + domain);
   }
+  storage.set({"activeDomains": activeDomains});
+};
 
+// Return the category of an app domain
+function getCategory(domain) {
+  // naive hashfunction so I can avoid storing categories lolol
+  // that's a job for the backend
+  // pass the buck
+  var r = domain.length % 3
+  if (r == 0) {
+    return "social";
+  }
+  else if (r == 1) {
+    return "productivity";
+  }
+  else {
+    return "entertainment";
+  }
+}
+
+//=======================
+// Request Functions
+//=======================
+
+function postToClose(domain, appId, posixTime) {
+  var postData = {"appid": appId, "close_date": posixTime};
+  $.post(apiUrlClose, postData);
+  console.log("POST to close for domain " + domain + ": " + JSON.stringify(postData));
 };
 
 function postToOpen(domain) {
-  var posixTime = Math.round(new Date().getTime() / 1000);
+  var posixTime = getCurrentTime();
   var postData = {
     "category": getCategory(domain),
     "userid": userid,
@@ -143,31 +183,12 @@ function postToOpen(domain) {
       console.log("new appId added " + activeDomains[domain]["appId"]);
     }
   });
-  bkg.console.log("POST to " + apiUrlOpen + ": " + JSON.stringify(postData));
+  console.log("POST to " + apiUrlOpen + ": " + JSON.stringify(postData));
 };
 
-function getCategory(domain) {
-  // naive hashfunction so I can avoid storing categories lolol
-  // that's a job for the backend
-  // pass the buck
-  var r = domain.length % 3
-  if (r == 0) {
-    return "social";
-  }
-  else if (r == 1) {
-    return "productivity";
-  }
-  else {
-    return "entertainment";
-  }
-}
-
-function postToClose(domain, appId) {
-  var posixTime = Math.round(new Date().getTime() / 1000);
-  var postData = {"appid": appId, "close_date": posixTime};
-  $.post(apiUrlClose, postData);
-  bkg.console.log("POST to " + apiUrlClose + ": " + JSON.stringify(postData));
-};
+//===============
+// Utilities
+//===============
 
 // Replaces subdomain.domain.com with www.domain.com
 // ex. maps.google.com --> www.google.com
@@ -181,21 +202,45 @@ function getGeneralDomain(domain) {
     return domain;
   }
   return domain.substring(firstIndex + 1, domain.length);
-  /*
-  var truncateIndex = domain.indexOf(".") + 1;
-  if (domain.indexOf("www") == -1) {
-    truncateIndex = domain.indexOf("/") + 1; // Index of second slash in http(s)://
-  }
-  return domain.substring(truncateIndex, domain.length);
-  */
 }
+
+function getCurrentTime() {
+  return Math.round(new Date().getTime() / 1000);
+}
+
+function printChromeStorage() {
+  storage.get({"activeDomains": null}, function(items) {
+      console.log(items.activeDomains);
+  });
+}
+
+//====================
+// Chrome listeners
+//====================
 
 chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
   userid = message["userid"];
-  chrome.storage.local.set({"userid": userid}, function() {
+  storage.set({"userid": userid}, function() {
     console.log("Stored user id")
   });
-  console.log("logged in as " + userid);
+  console.log("Logged in as " + userid);
 });
 
-//});
+chrome.tabs.onCreated.addListener(function(tab) {
+  tabDomains[tab["id"]] = null;
+});
+
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {         
+  // If tab has no URL yet, return
+  if (!("url" in changeInfo) || changeInfo["url"] == "chrome://newtab/") {
+    return;
+  }
+  // Process the url
+  processUrl(tabId, changeInfo["url"]);
+});
+
+chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
+  var closedDomain = tabDomains[tabId];
+  delete tabDomains[tabId];
+  decrementDomainCount(closedDomain);
+});
