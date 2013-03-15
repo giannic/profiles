@@ -17,7 +17,7 @@ $(function(){
 
     $.getJSON("usage_data.json", function(json) {
         var dataset = parse_data(json);
-        console.log(dataset);
+        //console.log(dataset);
 
         var all_images = [];
         var svg = d3.select("#circles")
@@ -25,19 +25,18 @@ $(function(){
             .attr("width", window_width)
             .attr("height", window_height);
         var defs = svg.append('defs');
-    
+
     var groups = svg.selectAll("g")
         .data(dataset)
         .enter()
         .append("g")
         .attr("id", function(x, i){
-            console.log(x.x);
             // add all the positions first
             px_arr[i] = x.x*window_width;
             py_arr[i] = x.y*window_height;
             return x.id;
         })
-        
+
         .attr("transform", function(x, i) {
             var px = x.x*window_width;
             var py = x.y*window_height;
@@ -68,11 +67,9 @@ $(function(){
                     if (Math.abs(diff) < size) {
                         // push x value
                         if (diff < 0) { // then x is smaller, push left
-                            //console.log("small x");
                             newpy_arr[i] = py - size - pad;
                         }
                         else { // x is larger, push right
-                            //console.log("large x");
                             newpy_arr[i] = py + size + pad;
                         }
                     }
@@ -88,22 +85,18 @@ $(function(){
                 transx -= (transx - size);
             }
             else if (transx + size > window_width) {
-                console.log("tx more");
                 transx -= (transx - size);
             }
             if (transy - size < 0) {
-                console.log("ty less");
                 transy -= (transy - size);
             }
             else if (transy + size > window_height) {
-                console.log("ty more");
                 transy -= (transy - size);
             }
 
             // put it back in px/py array
             px_arr[i] = transx;
             py_arr[i] = transy;
-            console.log(transx + ", " + transy + ": " + i);
             return "translate(" + [transx, transy] + ")";
         })
         .on("mousedown", function(x, i){
@@ -165,7 +158,6 @@ $(function(){
         var r = x.r;
         selected_circle.transition()
             .attr("r", function(x){
-                console.log("circle size " + x.r + image_width + pad*2);
                 return r + image_width + pad*2;
             });
         selected_circle.classed("selected", true);
@@ -174,18 +166,18 @@ $(function(){
         //selected_text.transition().attr("font-size", 0);
 
         selected_text.classed("selected", true);
-        
+
         var category = svg.selectAll("#" + x.id);
-        
+
         // assign the created objects into the corresponding cluster_objects
-        cluster_apps[selected_category] = 
+        cluster_apps[selected_category] =
             category.selectAll()
                 .data(x.apps)
                 .enter()
                 .append("a")
                 .attr("data-category", x.name)
                 .attr("xlink:href", function(d, i){
-                  return d.url;  
+                  return d.url;
                 })
                 .classed(x.id, true);
 
@@ -220,8 +212,6 @@ $(function(){
         cluster_apps[selected_category]  // append each image
             .append('image')
             .attr('xlink:href', function(d, i){
-                console.log("HOOOOOOOOOOOOOOOOOOOOOOO: " + d.img);
-                console.log(d);
               return d.img;
             })
             .attr("x", function(d, i){
@@ -265,7 +255,7 @@ $(function(){
 
         // first deselect the circle
         var old_cluster = typeof old_category === 'undefined' ? svg.selectAll() :
-            svg.selectAll("#circle_" + old_category); 
+            svg.selectAll("#circle_" + old_category);
         var selected_obj = old_cluster.classed('selected', false)
             .transition()
             .attr('r', function(d){
@@ -294,15 +284,15 @@ $(function(){
         svg.selectAll("#hidden_" + selected_category)
             .attr("r", function(x){
                 return 0;
-            }).remove(); 
-        
-        var old_apps = typeof old_category === 'undefined' ? svg.selectAll() 
-            : svg.selectAll("." + old_category); 
+            }).remove();
+
+        var old_apps = typeof old_category === 'undefined' ? svg.selectAll()
+            : svg.selectAll("." + old_category);
         old_apps.transition().attr('r', 0).remove();
     }
-  
+
     function parse_data(json){
-        console.log(json); // this will show the info it in firebug console
+        //console.log(json); // this will show the info it in firebug console
         // grab the categories
         var new_json = {};
         var dataset = [];

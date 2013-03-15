@@ -8,8 +8,6 @@ var numberOfLines,
     playTimeline = false;
 
 $(document).ready(function() {
-
-  console.log('hihihi')
     //get the JSON file
     $.ajax({
       url: 'usage_data.json', 
@@ -27,9 +25,6 @@ $(document).ready(function() {
       
      success: function(data) {
         stats = data;
-        console.log(data);
-        console.log('loaded');
-
 
     //instantiates the slider timeline
     $("#timeline").rangeSlider({
@@ -206,8 +201,7 @@ function play(obj) {
     if (playTimeline) {
         interval = setInterval(function(){stepForward(1)},10);
         obj.src = "img/controls_pause.gif";
-    }
-    else {
+    } else {
         clearInterval(interval);
         obj.src = "img/controls_play.gif";
     }
