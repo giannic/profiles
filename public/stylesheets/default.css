@@ -1,0 +1,98 @@
+/********
+ * VARS *
+ ********/
+/**********
+ * MIXINS *
+ **********/
+/********
+ * SCSS *
+ ********/
+/*
+ * RESET
+ */
+* {
+  margin: 0;
+  padding: 0; }
+
+body {
+  overflow: hidden; }
+
+a {
+  text-decoration: none;
+  color: #000; }
+  a:hover {
+    text-decoration: underline; }
+
+/*
+ * CLASS/ID
+ */
+#header {
+  width: 100%;
+  height: 32px;
+  position: relative;
+  /* fallback/image non-cover color */
+  background-color: #dddddd;
+  /* Firefox 3.6+ */
+  background-image: -moz-linear-gradient(#dddddd, #c9c9c9);
+  /* Safari 4+, Chrome 1+ */
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#dddddd), to(#c9c9c9));
+  /* Safari 5.1+, Chrome 10+ */
+  background-image: -webkit-linear-gradient(#dddddd, #c9c9c9);
+  /* Opera 11.10+ */
+  background-image: -o-linear-gradient(#dddddd, #c9c9c9);
+  background-color: #dddddd;
+  border-style: solid;
+  border-color: #AAA;
+  border-width: 0px 0px 2px 0px;
+  font-family: Helvetica, Arial, sans-serif; }
+  #header .title {
+    display: inline-block;
+    position: absolute;
+    bottom: 2px;
+    left: 10px;
+    text-transform: uppercase;
+    font-size: 21px;
+    font-weight: bold; }
+    #header .title:hover {
+      cursor: pointer; }
+  #header .name {
+    display: inline-block;
+    position: absolute;
+    bottom: 2px;
+    right: 10px;
+    font-size: 18px; }
+
+.type-nav {
+  float: right;
+  margin: 10px 10px 0px 0px; }
+  .type-nav ul {
+    list-style: none; }
+    .type-nav ul li {
+      display: inline-block; }
+
+#search {
+  display: block;
+  width: 320px;
+  margin: 10px auto 0px auto; }
+  #search .search-text {
+    width: 300px;
+    height: 28px;
+    padding: 2px 10px 2px 10px;
+    color: #888;
+    border-radius: 16px;
+    -moz-border-radius: 16px;
+    -webkit-border-radius: 16px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #dddddd;
+    font-size: 18px; }
+
+.sample {
+  width: 100%;
+  height: 960px;
+  margin-top: 15px;
+  background-color: #e0e0e0; }
+  .sample .sample-text {
+    display: block;
+    width: 170px;
+    margin: 0 auto; }

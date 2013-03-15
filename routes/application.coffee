@@ -40,15 +40,28 @@ exports.open = (req, res) ->
 ###
 exports.close = (req, res) ->
   # res.render "hi"
-  Application.findByIdAndUpdate(req.body.appid,
-  {$push: {close: req.body.close_date}}, {upsert: true},
-      (err, results) ->
-        console.log('close updated!')
-        console.log('results: ' + results)
-        console.log('error: ' + err)
-        if err then res.send(error: "Could not update database: App Close")
-        res.send(success: "Database updated: App close")
+  # Check that it's valid. If the open and close sizes are already equal, don't save!!!
+  # TODO: Refactor. Using a nested db call....
+  Application.findById(req.body.appid, (err, data) ->
+    if err then res.send(error: "Could not update database: App Close")
+
+    if data.close.length == data.open.length
+      res.send(error: "Could not update database: Close and Open times are already equal!")
+    if data.close.length > data.open.length
+      res.send(error: "Could not update database: More close times than open times.")
+
+    Application.findByIdAndUpdate(req.body.appid,
+    {$push: {close: req.body.close_date}}, {upsert: true},
+        (err, results) ->
+          console.log('close updated!')
+          console.log('results: ' + results)
+          console.log('error: ' + err)
+          if err then res.send(error: "Could not update database: App Close")
+          res.send(success: "Database updated: App close")
+    )
+
   )
+
 
 ###
 # testing purposes only

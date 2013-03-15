@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Timelines</title>
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="lib/jquery-ui/css/jquery-ui-1.8.10.custom.css">
+    <link rel="stylesheet" href="stylesheets/styles.css" />
+    <link rel="stylesheet" href="stylesheets/slider.css">
+
+    <!-- js libs -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+    <script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script>
+    <script type="text/javascript" src="lib/jquery-ui/js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="lib/jQRangeSlider-min.js"></script>
+
+    <!-- home made -->
+    <script type="text/javascript" src="javascripts/Cluster.js"></script>
+    <script type="text/javascript" src="javascripts/clusters.js"></script>
+    <script type="text/javascript" src="javascripts/lines.js"></script>
+</head>
+
+<body id="wrapper">
+    <!-- clusters div -->
+    <div id="circles"></div>
+
+    <!-- ok, lets use a clear div here -->
+    <br/><br/><br/><br/>
+    <div id="D3line" style="margin: 0px auto;"></div>
+
+    <div id="timeline_panel">
+        <div id="timeline"></div>
+        <p id="timeline_details">
+            <span id="timeline_date">Jan 2, 2013 &bull;</span>
+            <span id="timeline_time">4:00 pm</span>
+            <!-- fix sprites -->
+            <img id="timeline_step_back"
+                 class="timeline_controls"
+                 src="img/controls-back.png">
+            </img>
+            <img id="timeline_play_pause"
+                 class="timeline_controls"
+                 src="img/controls-play.png">
+            </img>
+            <img id="timeline_step_forward"
+                 class="timeline_controls"
+                 src="img/controls-forward.png">
+            </img>
+        </p>
+    </div>
+</body>
+</html>
