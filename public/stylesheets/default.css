@@ -41,7 +41,8 @@ a {
   border-style: solid;
   border-color: #AAA;
   border-width: 0px 0px 2px 0px;
-  font-family: Helvetica, Arial, sans-serif; }
+  font-family: Helvetica, Arial, sans-serif;
+  z-index: 9001; }
   #header .title {
     display: inline-block;
     position: absolute;

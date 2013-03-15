@@ -1,7 +1,7 @@
 body {
     height: 100%;
     widht: 200%;
-    overflow: hidden;
+    // overflow: hidden;
 }
 
 #wrapper {
@@ -16,17 +16,31 @@ body {
 }
 
 svg {
-    position: absolute;
+    position: relative;
+}
+
+.vis {
+  display: inline-block;
+}
+#visualizations {
+  position: absolute;
 }
 
 #circles {
+  position: relative;
 }
 
 #D3line {
 }
 
+#lines {
+  top: -100px;
+  position: relative;
+}
+
 #timeline_panel {
-    position: absolute;
+    position: relative;
+    margin: auto;
     width: 90%;
 }
 

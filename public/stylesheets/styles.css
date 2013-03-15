@@ -1,7 +1,6 @@
 body {
   height: 100%;
-  widht: 200%;
-  overflow: hidden; }
+  widht: 200%; }
 
 #wrapper {
   position: relative;
@@ -12,10 +11,24 @@ body {
   color: #4d4d4d; }
 
 svg {
+  position: relative; }
+
+.vis {
+  display: inline-block; }
+
+#visualizations {
   position: absolute; }
 
+#circles {
+  position: relative; }
+
+#lines {
+  top: -100px;
+  position: relative; }
+
 #timeline_panel {
-  position: absolute;
+  position: relative;
+  margin: auto;
   width: 90%; }
 
 #timeline {
