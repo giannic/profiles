@@ -20,6 +20,13 @@ $(document).ready(function() {
         console.log('loaded');
     });
 
+    $.ajaxSetup({
+        "async" : true
+    });
+
+    console.log(stats["Youtube"]["category"]);
+
+
     //instantiates the slider timeline
     $("#timeline").rangeSlider({
         arrows : false,
