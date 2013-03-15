@@ -9,27 +9,16 @@ var numberOfLines,
 
 $(document).ready(function() {
 
-  console.log('hihihi')
+    //makes the file not asynchronous so that JSON will load (Kevin)
+    $.ajaxSetup({
+        "async" : false
+    });
+
     //get the JSON file
-    $.ajax({
-      url: 'usage_data.json', 
-      dataType: 'json',
-
-
-
-      
-      
-      
-    error: function(err){
-      console.log(err)
-      console.log('ERROR')
-    },
-      
-     success: function(data) {
+    $.getJSON('usage_data.json', function(data) {
         stats = data;
-        console.log(data);
         console.log('loaded');
-
+    });
 
     //instantiates the slider timeline
     $("#timeline").rangeSlider({
@@ -121,11 +110,6 @@ $(document).ready(function() {
 
     //initial loading of lines
     calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"));
-
-
-
-    }
-    })
 });
 
 
