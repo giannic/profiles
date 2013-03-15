@@ -148,23 +148,24 @@ def add_url(data):
 
 
 def add_categories(data):
-    categories = ['Social Networks', 'Professional', 'Entertainment']
+    categories = ['Social Networks', 'Professional', 'Entertainment',
+                    'Image Sharing', 'Music']
 
     data['Facebook']['category'] = categories[0]
     data['Twitter']['category'] = categories[0]
     data['LinkedIn']['category'] = categories[1]
-    data['Pinterest']['category'] = categories[2]
-    data['Tumblr']['category'] = categories[2]
-    data['Spotify']['category'] = categories[2]
-    data['LastFM']['category'] = categories[2]
+    data['Pinterest']['category'] = categories[3]
+    data['Tumblr']['category'] = categories[3]
+    data['Spotify']['category'] = categories[4]
+    data['LastFM']['category'] = categories[4]
     data['Behance']['category'] = categories[0]
     data['Blogger']['category'] = categories[0]
     data['Google Plus']['category'] = categories[0]
-    data['Instagram']['category'] = categories[1]
+    data['Instagram']['category'] = categories[3]
     data['Livejournal']['category'] = categories[1]
     data['Myspace']['category'] = categories[1]
     data['Orkut']['category'] = categories[1]
-    data['Picasa']['category'] = categories[2]
+    data['Picasa']['category'] = categories[3]
     data['Vimeo']['category'] = categories[2]
     data['Youtube']['category'] = categories[2]
     data['Stumbleupon']['category'] = categories[2]
