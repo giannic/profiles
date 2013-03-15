@@ -13,7 +13,7 @@ $(function(){
     var cluster_apps = {};
     var pad = 5; // padding for boundary circle + app circles
 
-    $.getJSON("scripts/usage_data.json", function(json) {
+    $.get("apps.json", function(json) {
         var dataset = parse_data(json);
         console.log(dataset);
 
@@ -24,47 +24,49 @@ $(function(){
             .attr("height", window_height);
         var defs = svg.append('defs');
     
-    var groups = svg.selectAll("g")
-        .data(dataset)
-        .enter()
-        .append("g")
-        .attr("id", function(x){
-            return x.id;
-        })
-        .attr("transform", function(x) {
-            var size =  x.r + image_width + pad*2;
-            var transx = x.x*window_width;
-            var transy = x.y*window_height;
-            // cap the circle positions
-            if (transx - size < 0)
-                transx += size;
-            else if (transx + size > $(window).width())
-                transx -= size;
-            if (transy - size < 0)
-                transy += size;
-            else if (transy + size > $(window).height())
-                transy -= size;
-            // TODO: fix overlap
-            return "translate(" + [transx, transy] + ")";
-        })
-        .on("mousedown", function(x, i){
-            // clicked should only keep everything expanded
-            // set a boolean and check in deselect
-            // deselect previously clicked one
-            deselect_old_cluster(svg, x, clicked_category);
-            clicked_category = x.id;
-            // TODO: move so focuses in center?
-        })
-        .on("mouseenter", function(x, i){
-            selected_category = x.id;
-            if (!clicked_category || (clicked_category != selected_category))
-                select_new_cluster(svg, x);
-        })
-        .on("mouseleave", function(x, i){
-            // TODO: double check if access after clicking on link
-            if (clicked_category != selected_category)
-                deselect_old_cluster(svg, x, selected_category);
-        });
+      var groups = svg.selectAll("g")
+          .data(dataset)
+          .enter()
+          .append("g")
+          .attr("id", function(x){
+              return x.id;
+          })
+          .attr("transform", function(x) {
+              var size =  x.r + image_width + pad*2;
+              var transx = x.x*window_width;
+              var transy = x.y*window_height;
+              // cap the circle positions
+              if (transx - size < 0)
+                  transx += size;
+              else if (transx + size > $(window).width())
+                  transx -= size;
+              if (transy - size < 0)
+                  transy += size;
+              else if (transy + size > $(window).height())
+                  transy -= size;
+              // TODO: fix overlap
+              return "translate(" + [transx, transy] + ")";
+          })
+          .on("mousedown", function(x, i){
+              // clicked should only keep everything expanded
+              // set a boolean and check in deselect
+              // deselect previously clicked one
+              deselect_old_cluster(svg, x, clicked_category);
+              clicked_category = x.id;
+              console.log('mousedown')
+              // TODO: move so focuses in center?
+          })
+          .on("mouseover", function(x, i){
+              console.log('enter')
+              selected_category = x.id;
+              if (!clicked_category || (clicked_category != selected_category))
+                  select_new_cluster(svg, x);
+          })
+          .on("mouseout", function(x, i){
+              // TODO: double check if access after clicking on link
+              if (clicked_category != selected_category)
+                  deselect_old_cluster(svg, x, selected_category);
+          });
 
     // TODO: use if contracting category circle
     // hidden boundary circles - use if contracting category circle

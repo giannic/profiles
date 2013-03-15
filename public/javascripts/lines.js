@@ -12,7 +12,7 @@ $.ajaxSetup({
     "async": false
 });
 
-$.getJSON('usage_data.json', function(data) {
+$.get('apps.json', function(data) {
     stats = data;
     //console.log('loaded');
 

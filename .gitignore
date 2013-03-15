@@ -16,7 +16,8 @@ results
 npm-debug.log
 
 node_modules/*
-public/stylesheets/.sass-cache/**/*
+.sass-cache/**/*
+.sass-cache
 public/stylesheets/**/*.css
 
 usage_data.json
