@@ -8,17 +8,23 @@ var numberOfLines,
     playTimeline = false;
 
 $(document).ready(function() {
-
-    //makes the file not asynchronous so that JSON will load (Kevin)
-    $.ajaxSetup({
-        "async" : false
-    });
-
     //get the JSON file
-    $.getJSON('usage_data.json', function(data) {
+    $.ajax({
+      url: 'usage_data.json', 
+      dataType: 'json',
+
+
+
+      
+      
+      
+    error: function(err){
+      console.log(err)
+      console.log('ERROR')
+    },
+      
+     success: function(data) {
         stats = data;
-        console.log('loaded');
-    });
 
     $.ajaxSetup({
         "async" : true
@@ -117,6 +123,11 @@ $(document).ready(function() {
 
     //initial loading of lines
     calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"));
+
+
+
+    }
+    })
 });
 
 
@@ -197,8 +208,7 @@ function play(obj) {
     if (playTimeline) {
         interval = setInterval(function(){stepForward(1)},10);
         obj.src = "img/controls_pause.gif";
-    }
-    else {
+    } else {
         clearInterval(interval);
         obj.src = "img/controls_play.gif";
     }
