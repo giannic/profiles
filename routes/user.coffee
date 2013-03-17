@@ -78,8 +78,8 @@ exports.view = (req, res) ->
   Application.find({userid: user_id}, (err, result) ->
     if err
       res.send(error: err)
+    console.log result
+    console.log 'found user'
     res.json(result)
   )
-
-  res.render "login"
 
