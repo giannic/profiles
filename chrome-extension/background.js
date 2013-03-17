@@ -59,6 +59,7 @@ function registerAllTabs() {
       }
     }
   });
+  console.log("Registered all active tabs");
 }
 
 //==================
@@ -224,6 +225,7 @@ chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
     console.log("Stored user id")
   });
   console.log("Logged in as " + userid);
+  registerAllTabs();
 });
 
 chrome.tabs.onCreated.addListener(function(tab) {
