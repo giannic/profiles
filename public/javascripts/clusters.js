@@ -1,30 +1,28 @@
 $(function(){
-    var fsize = 16;
-    var image_width = 100;
-    var image_height = 100;
-    var window_width = $(window).width() - 20;
-    var window_height = $(window).height() - 20;
-    var stroke_color = 'rgba(201, 219, 242, 0.8)';
-    var cluster_fill = 'rgba(200, 220, 255, 0.4)';
-    var app_fill = 'rgba(232, 251, 255, 0.7)';
-    var text_color = 'rgba(120,174,255,1.0)';
-    var selected_category;  // selected on hover
-    var clicked_category;
-    var cluster_apps = {};
-    var pad = 5; // padding for boundary circle + app circles
-    var px_arr = [];
-    var py_arr = [];
+    var fsize = 16,
+        image_width = 100,
+        image_height = 100,
+        window_width = $(window).width() - 20,
+        window_height = $(window).height() - 20,
+        stroke_color = 'rgba(201, 219, 242, 0.8)',
+        cluster_fill = 'rgba(200, 220, 255, 0.4)',
+        app_fill = 'rgba(232, 251, 255, 0.7)',
+        text_color = 'rgba(120,174,255,1.0)',
+        selected_category,  // selected on hover
+        clicked_category,
+        cluster_apps = {},
+        pad = 5, // padding for boundary circle + app circles
+        px_arr = [],
+        py_arr = [];
 
     $.getJSON("usage_data.json", function(json) {
-        var dataset = parse_data(json);
-        //console.log(dataset);
-
-        var all_images = [];
-        var svg = d3.select("#circles")
+        var dataset = parse_data(json),
+            all_images = [],
+            svg = d3.select("#circles")
             .append("svg")
             .attr("width", window_width)
-            .attr("height", window_height);
-        var defs = svg.append('defs');
+            .attr("height", window_height),
+            defs = svg.append('defs');
 
     var groups = svg.selectAll("g")
         .data(dataset)
@@ -38,11 +36,11 @@ $(function(){
         })
 
         .attr("transform", function(x, i) {
-            var px = x.x*window_width;
-            var py = x.y*window_height;
-            var size =  x.r + image_width + pad*2;
-            var newpx_arr = px_arr;
-            var newpy_arr = py_arr;
+            var px = x.x*window_width,
+                py = x.y*window_height,
+                size =  x.r + image_width + pad*2,
+                newpx_arr = px_arr,
+                newpy_arr = py_arr;
 
             // fix overlap
             // push the circle positions based on all the other ones
@@ -144,18 +142,16 @@ $(function(){
     });
 
     function select_new_cluster(svg, x){
-        var angle = 360/x.apps.length;
-
-        var selected_circle = d3.select("#circle_" + selected_category);
-        var selected_text = d3.select("#text_" + selected_category);
-
+        var angle = (360/x.apps.length)*Math.PI/180, // RADIANS
+            selected_circle = d3.select("#circle_" + selected_category),
+            selected_text = d3.select("#text_" + selected_category),
+            r = x.r;
         // hidden circle
         /*svg.selectAll("#hidden_" + selected_category)
             .attr("r", function(x){
                 return x.r + image_width + pad*2;
             });
         */
-        var r = x.r;
         selected_circle.transition()
             .attr("r", function(x){
                 return r + image_width + pad*2;
@@ -209,6 +205,7 @@ $(function(){
             .attr('r', function(d, i){
               return d.r;
             });
+
         cluster_apps[selected_category]  // append each image
             .append('image')
             .attr('xlink:href', function(d, i){
@@ -224,8 +221,7 @@ $(function(){
             .transition()
             .attr("width", image_width)
             .attr("height", image_height)
-            .attr("opacity", 0.6)
-            ;
+            .attr("opacity", 0.6);
     }
 
     function create_hidden_circle(svg, x){
@@ -294,9 +290,9 @@ $(function(){
     function parse_data(json){
         //console.log(json); // this will show the info it in firebug console
         // grab the categories
-        var new_json = {};
-        var dataset = [];
-        var categories = _.unique(_.pluck(_.values(json), 'category'));
+        var new_json = {},
+            dataset = [],
+            categories = _.unique(_.pluck(_.values(json), 'category'));
 
         _.each(categories, function(cat, i){
             new_json[cat] = [];
