@@ -99,18 +99,32 @@ $(function(){
         })
         .on("mousedown", function(x, i){
             // clicked should only keep everything expanded
-            // set a boolean and check in deselect
             // deselect previously clicked one
-            deselect_old_cluster(svg, x, clicked_category);
-            clicked_category = x.id;
+            // make sure double click doesn't contract
+            if (clicked_category != x.id) {
+                deselect_old_cluster(svg, x, clicked_category);
+                clicked_category = x.id;
+            }
             // TODO: move so focuses in center?
         })
         .on("mouseover", function(x, i){
             if (!selected_category || selected_category != x.id) {
                 selected_category = x.id;
-                if (!clicked_category || (clicked_category != selected_category)){
-                    select_new_cluster(svg, x);
-                    create_hidden_circle(svg, x);
+                var target = d3.event.relatedTarget.getAttribute("class");
+                // issues when overlap
+                if (target == null) {
+                    if (!clicked_category || (clicked_category != selected_category)){
+                        select_new_cluster(svg, x);
+                    }
+                }
+            }
+        })
+        .on("mouseout", function(x, i){
+            if (clicked_category != selected_category) {
+                var target = d3.event.relatedTarget.getAttribute("class");
+                if (target == null) {
+                    deselect_old_cluster(svg, x, selected_category);
+                    selected_category = "";
                 }
             }
         });
@@ -146,12 +160,7 @@ $(function(){
             selected_circle = d3.select("#circle_" + selected_category),
             selected_text = d3.select("#text_" + selected_category),
             r = x.r;
-        // hidden circle
-        /*svg.selectAll("#hidden_" + selected_category)
-            .attr("r", function(x){
-                return x.r + image_width + pad*2;
-            });
-        */
+
         selected_circle.transition()
             .attr("r", function(x){
                 return r + image_width + pad*2;
@@ -224,27 +233,6 @@ $(function(){
             .attr("opacity", 0.6);
     }
 
-    function create_hidden_circle(svg, x){
-        // TODO: use if contracting category circle
-        // hidden boundary circles - use if contracting category circle
-        var category = svg.selectAll("#" + x.id)
-            .append("circle")
-            .attr("opacity", 0)
-            .attr("r", function(x) {
-                return x.r + image_width + pad*2; // increase radius after hover
-            })
-            .attr("id", function(x){
-                return "hidden_" + x.id;
-            })
-            .on("mouseout", function(x, i){
-                // TODO: double check if access after clicking on link
-                if (clicked_category != selected_category) {
-                    deselect_old_cluster(svg, x, selected_category);
-                    selected_category = "";
-                }
-            });
-    }
-
     function deselect_old_cluster(svg, x, old_category){
         /* CLEAN UP OLD CIRCLES */
         // old_category represents cluster to deselect (either clicked or selected)
@@ -274,13 +262,6 @@ $(function(){
             .transition()
             .attr('width', 0)
             .attr('height', 0);
-
-        // TODO: use if contracting category circle
-        // decrease the bound of the hidden circle
-        svg.selectAll("#hidden_" + selected_category)
-            .attr("r", function(x){
-                return 0;
-            }).remove();
 
         var old_apps = typeof old_category === 'undefined' ? svg.selectAll()
             : svg.selectAll("." + old_category);
