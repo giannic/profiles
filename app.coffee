@@ -73,7 +73,6 @@ app.post "/apps/close", application.close
 app.get "/apps/new", application.new_test  # just for testing
 app.get "/apps/:id.json", application.view
 
-
 server = http.createServer(app).listen app.get("port"), ->
   console.log "Express server listening on port " + app.get("port")
 

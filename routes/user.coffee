@@ -46,27 +46,40 @@ exports.register_get = (req, res) ->
 # Takes in a email, userid
 ###
 exports.login_post = (req, res) ->
+  req.session.messages = req.session.messages or []
+  # console.log req
   User.findOne email: req.body.email, (err, result) ->
     if result and result.authenticate(req.body.password)
       # set session user id
       req.session.user_id = result._id
       console.log 'logged in!'
       console.log req.session.user_id
-      res.send {userid: result._id}
+
+      if req.headers.origin.indexOf("chrome-extension") == -1
+        # if not chrome extension
+        req.session.messages.push 'Successfully logged in!'
+        res.redirect "/",
+      else
+        res.send {userid: result._id}
       # TODO: check if it's the chrome extension, if not, redirect
       # res.redirect '/'
     else
       console.log 'incorrect password'
-      res.send {error: 'Incorrect password'}
-      # res.redirect 'login'
+      if req.headers.origin.indexOf("chrome-extension") == -1
+        # if not chrome extension
+        req.session.messages.push 'Error: Username and passwords don\'t match'
+        res.redirect "/login"
+      else
+        res.send {error: 'Incorrect password'}
 
 ###
 # /login
 # The view for the login form
 ###
 exports.login_get = (req, res) ->
-  console.log 'reached here'
-  res.render "login"
+  req.session.messages = req.session.messages or []
+  res.render "login",
+    msg: req.session.messages.pop()
 
 ###
 # /user/:id.json
