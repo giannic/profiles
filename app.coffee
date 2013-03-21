@@ -9,6 +9,7 @@ http = require("http")
 path = require("path")
 mongoose = require("mongoose")
 MongoStore = require("connect-mongo")(express)
+hbs = require('hbs')
 
 conf =
   db: {
@@ -73,8 +74,27 @@ app.post "/apps/close", application.close
 app.get "/apps/new", application.new_test  # just for testing
 app.get "/apps/:id.json", application.view
 
+# handlebars templates
+# hbs.registerPartial('home', 'home')
+
+blocks = {}
+
+hbs.registerHelper 'extend', (name, context) =>
+    block = blocks[name]
+    if not block
+        block = blocks[name] = []
+    block.push(context.fn @)
+    return
+
+hbs.registerHelper 'block', (name) ->
+    val = (blocks[name] || []).join('\n')
+    blocks[name] = []
+    return val
+
 server = http.createServer(app).listen app.get("port"), ->
   console.log "Express server listening on port " + app.get("port")
+
+
 
 # socket.io code
 io = require("socket.io").listen(server)

@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Timelines</title>
-    <!-- stylesheets -->
+{{#extend "stylesheets"}}
+<!-- stylesheets -->
     <link rel="stylesheet" href="lib/jquery-ui/css/jquery-ui-1.8.10.custom.css">
     <link rel="stylesheet" href="/stylesheets/styles.css" />
     <link rel="stylesheet" href="/stylesheets/default.css" />
-    <link rel="stylesheet" href="stylesheets/slider.css">
+    <link rel="stylesheet" href="stylesheets/slider.css" />
+{{/extend}}
 
-    <!-- js libs -->
+{{#extend "javascripts"}}
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
     <script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
     <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script>
@@ -20,61 +18,59 @@
     <!--<script type="text/javascript" src="javascripts/clusters.js"></script>-->
     <script type="text/javascript" src="javascripts/lines.js"></script>
     <script type="text/javascript" src="javascripts/main.js"></script>
-</head>
+{{/extend}}
 
-<body id="wrapper">
+<div id="wrapper">
+  <div id="header">
+      <a class="title" href="#">{{{title}}}</a>
 
-    <div id="header">
-        <a class="title" href="#">{{{title}}}</a>
-
-        <!-- <span class="name">Gianni</span>-->
-        <nav class="type-nav">
-          <ul>
-          <li><a href="#">all</a></li> |
-          <li><a id="clusters-toggle" href="#">clusters</a></li> |
-          <li><a id="timelines-toggle" href="#">timelines</a></li>
-        </nav>
+      <!-- <span class="name">Gianni</span>-->
+      <nav class="type-nav">
+        <ul>
+        <li><a href="#">all</a></li> |
+        <li><a id="clusters-toggle" href="#">clusters</a></li> |
+        <li><a id="timelines-toggle" href="#">timelines</a></li>
+      </nav>
 
 
-        <!-- <img src="#">[> gear <]</img>-->
-    </div>
-    <div class="alert"> {{{msg}}} </div>
+      <!-- <img src="#">[> gear <]</img>-->
+  </div>
+  <div class="alert"> {{{msg}}} </div>
 
-    <!-- <form id="search">-->
-    <!--     <input class="search-text" type="text" name="search"/>-->
-    <!-- </form>-->
+  <!-- <form id="search">-->
+  <!--     <input class="search-text" type="text" name="search"/>-->
+  <!-- </form>-->
 
-    <div id="visualizations">
-      <!-- clusters div -->
-      <div id="circles" class="vis"></div>
-      <div id="lines" class="vis">
-        <div id="D3line" class="vis"></div>
-        <div id="timeline_panel">
-            <div id="timeline"></div>
-            <p id="timeline_details">
-                <span id="timeline_date">Jan 2, 2013 &bull;</span>
-                <span id="timeline_time">4:00 pm</span>
+  <div id="visualizations">
+    <!-- clusters div -->
+    <div id="circles" class="vis"></div>
+    <div id="lines" class="vis">
+      <div id="D3line" class="vis"></div>
+      <div id="timeline_panel">
+          <div id="timeline"></div>
+          <p id="timeline_details">
+              <span id="timeline_date">Jan 2, 2013 &bull;</span>
+              <span id="timeline_time">4:00 pm</span>
 
-                <input id="timeline_step_back"
-                class="timeline_controls"
-                type="image"
-                src="img/controls_backward.gif"
-                name="image" width="31" height="20">
+              <input id="timeline_step_back"
+              class="timeline_controls"
+              type="image"
+              src="img/controls_backward.gif"
+              name="image" width="31" height="20">
 
-                <input id="timeline_play_pause"
-                class="timeline_controls"
-                type="image"
-                src="img/controls_play.gif"
-                name="image" width="31" height="20">
+              <input id="timeline_play_pause"
+              class="timeline_controls"
+              type="image"
+              src="img/controls_play.gif"
+              name="image" width="31" height="20">
 
-                <input id="timeline_step_forward"
-                class="timeline_controls"
-                type="image"
-                src="img/controls_forward.gif"
-                name="image" width="31" height="20">
-            </p>
-        </div>
+              <input id="timeline_step_forward"
+              class="timeline_controls"
+              type="image"
+              src="img/controls_forward.gif"
+              name="image" width="31" height="20">
+          </p>
       </div>
     </div>
-</body>
-</html>
+  </div>
+</div>

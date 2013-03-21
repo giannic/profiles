@@ -1,22 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Express Boilerplate</title>
-  <link href="/stylesheets/styles.css" rel="stylesheet">
-  <script src="/javascripts/lib/jquery-1.9.1.min.js"></script>
-  <script src="/javascripts/lib/underscore-min.js"></script>
-  <script src="/javascripts/lib/backbone-min.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/javascripts/scripts.js"></script>
-</head>
+{{#extend "stylesheets"}}
+    <link rel="stylesheet" href="lib/jquery-ui/css/jquery-ui-1.8.10.custom.css">
+    <link rel="stylesheet" href="/stylesheets/styles.css" />
+    <link rel="stylesheet" href="/stylesheets/default.css" />
+    <link rel="stylesheet" href="stylesheets/slider.css">
+{{/extend}}
 
-<body>
- login 
- <div class="alert"> {{{msg}}} </div>
-  <form method="POST">
-    <input type="text" name="email" />
-    <input type="text" name="password" />
-    <input type="submit" />
-  </form>
-</body>
-</html>
+{{#extend "javascripts"}}
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+    <script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script>
+    <script type="text/javascript" src="lib/jquery-ui/js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="lib/jQRangeSlider-min.js"></script>
+
+    <!-- home made -->
+    <script type="text/javascript" src="javascripts/Cluster.js"></script>
+    <!--<script type="text/javascript" src="javascripts/clusters.js"></script>-->
+    <script type="text/javascript" src="javascripts/lines.js"></script>
+    <script type="text/javascript" src="javascripts/main.js"></script>
+{{/extend}}
+
+login 
+<div class="alert"> {{{msg}}} </div>
+<form method="POST">
+  <input type="text" name="email" />
+  <input type="text" name="password" />
+  <input type="submit" />
+</form>
