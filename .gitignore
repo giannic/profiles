@@ -20,5 +20,4 @@ node_modules/*
 .sass-cache
 public/stylesheets/**/*.css
 
-usage_data.json
 
