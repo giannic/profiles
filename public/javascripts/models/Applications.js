@@ -1,37 +1,36 @@
-(function(){
+root.app.models.Application = Backbone.Model.extend({
 
-  root = typeof exports !== "undefined" && exports !== null ? exports : this;
+  defaults: function() {
+    return {
+      name: 'Default Name',
+      number: 0,
+      url: 'http://www.google.com',
+      img: 'http://www.placekitten.com/50/50',
+      category: 'stuff'
+    };
+  },
 
-  root.models.Application = Backbone.Model.extend({
+  initialize: function(){
 
-    defaults: function() {
-      
-    },
-    toggle: function() {
-      this.save({done: !this.get("done")});
-    }
+  }
 
-  });
+});
 
-  root.collections.Applications = Backbone.Collection.extend({
+root.app.collections.Applications = Backbone.Collection.extend({
 
-    model: Todo,
+  model: root.app.models.Application,
 
-    localStorage: new Backbone.LocalStorage("todos-backbone"),
+  done: function() {
+    return this.where({done: true});
+  },
 
-    done: function() {
-      return this.where({done: true});
-    },
- 
-    remaining: function() {
-      return this.without.apply(this, this.done());
-    },
-    nextOrder: function() {
-      if (!this.length) return 1;
-      return this.last().get('order') + 1;
-    },
-    comparator: 'order'
+  remaining: function() {
+    return this.without.apply(this, this.done());
+  },
+  nextOrder: function() {
+    if (!this.length) return 1;
+    return this.last().get('order') + 1;
+  },
+  comparator: 'order'
 
-  });
-
-})();
+});

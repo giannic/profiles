@@ -1,19 +1,15 @@
 {{#extend "stylesheets"}}
-    <link rel="stylesheet" href="lib/jquery-ui/css/jquery-ui-1.8.10.custom.css">
     <link rel="stylesheet" href="/stylesheets/forms.css">
 {{/extend}}
 
 {{#extend "javascripts"}}
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
-    <script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
-    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script>
 {{/extend}}
 
 
 <div id="wrapper"> 
   <div id="form-wrapper">
     <form method="POST">
-      <div class="alert"> {{msg}} </div>
+      <div class="alert"> {{{msg}}} </div>
       <!-- <h4> Login </h4>-->
       <label for="input-username">Username</label>
       <input id="input-username" type="text" name="email" {{#if msg}} class="error" {{/if}} />

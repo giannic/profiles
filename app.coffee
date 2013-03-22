@@ -2,7 +2,7 @@
 Module dependencies.
 ###
 express = require("express")
-home = require("./routes/index")
+index = require("./routes/index")
 user = require("./routes/user")
 application = require("./routes/application")
 http = require("http")
@@ -60,7 +60,8 @@ db.once 'open', ->
 
 
 # existing routes
-app.get "/", home.index
+app.get "/", index.index
+app.get "/grid", index.grid
 app.get "/users", user.list
 app.get "/users.json", user.json_all
 app.get "/users/:id.json", user.view

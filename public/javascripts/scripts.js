@@ -1,8 +1,9 @@
-$(function(){
+root = typeof exports !== "undefined" && exports !== null ? exports : this;
 
-  var root;
-  root = typeof exports !== "undefined" && exports !== null ? exports : this;
-  // backbone stuff
+(function(){
+
+  // backbone globals setup
+
   root.app = {
     models: {},
     collections: {},
@@ -10,11 +11,29 @@ $(function(){
     templates: {}
   };    
 
-  // sample socket 
-  var socket = io.connect(window.location.hostname);
-  socket.on('news', function (data) {
-    console.log(data);
-    socket.emit('my other event', { my: 'data' });
+  //get the JSON file
+  $.ajax({
+    url: 'apps.json', 
+    dataType: 'json',
+    error: function(err) {
+      console.log(err);
+    },
+    success: function(data) {
+      console.log(data);
+      gnewtest = data;
+    }
   });
 
-});
+  $(function(){
+
+    // sample socket 
+    // var socket = io.connect(window.location.hostname);
+    // socket.on('news', function (data) {
+    //   console.log(data);
+    //   socket.emit('my other event', { my: 'data' });
+    // });
+  });
+
+
+
+})();
