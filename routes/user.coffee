@@ -29,9 +29,25 @@ exports.register_post = (req, res) ->
   console.log req.body
   new User(req.body).save (err) ->
     if err
+      if req.headers.origin.indexOf("chrome-extension") == -1
+        # if not chrome extension
+        req.session.messages.push err
+        res.redirect "/register",
+      else
+        res.send {error: err}
+
       console.log 'Error in saving user'
-      res.send(error: err)
-    else console.log 'yeaaah'
+    else
+      # succeeded!
+      console.log 'yeaaah registered bro'
+      if req.headers.origin.indexOf("chrome-extension") == -1
+        # if not chrome extension
+        req.session.messages.push 'Successfully registered! Please login.'
+        res.redirect "/login"
+      else
+        res.send {userid: result._id}
+
+
 
 ###
 # /register

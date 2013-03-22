@@ -94,12 +94,6 @@ hbs.registerHelper 'block', (name) ->
     blocks[name] = []
     return val
 
-# hbs.registerHelper 'if', (obj, context) ->
-#   console.log 'hereeee'
-#   if obj
-#     return context.fn @
-#   return 'hihihi'
-
 server = http.createServer(app).listen app.get("port"), ->
   console.log "Express server listening on port " + app.get("port")
 
