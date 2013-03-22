@@ -80,6 +80,9 @@ app.get "/apps/:id.json", application.view
 blocks = {}
 
 hbs.registerHelper 'extend', (name, context) =>
+    console.log context
+    console.log context.fn @
+    console.log name
     block = blocks[name]
     if not block
         block = blocks[name] = []
@@ -90,6 +93,12 @@ hbs.registerHelper 'block', (name) ->
     val = (blocks[name] || []).join('\n')
     blocks[name] = []
     return val
+
+# hbs.registerHelper 'if', (obj, context) ->
+#   console.log 'hereeee'
+#   if obj
+#     return context.fn @
+#   return 'hihihi'
 
 server = http.createServer(app).listen app.get("port"), ->
   console.log "Express server listening on port " + app.get("port")
