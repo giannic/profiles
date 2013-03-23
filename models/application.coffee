@@ -4,6 +4,7 @@ crypto = require 'crypto'
 Application = new mongoose.Schema
   # TODO: refactor category into new model
   category: String,
+  name: String,
   user: String,  # user id
   open: [Number],
   close: [Number],
