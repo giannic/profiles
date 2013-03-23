@@ -1,8 +1,8 @@
-root.app.views.ApplicationView = Backbone.View.extend({
+root.app.views.GridView = Backbone.View.extend({
 
   tagName:  "div",
 
-  template: _.template(root.app.templates.application),
+  template: _.template(root.app.templates.grid),
 
   events: {
     // "click .toggle"   : "toggleDone",
@@ -18,11 +18,26 @@ root.app.views.ApplicationView = Backbone.View.extend({
   },
 
   render: function() {
-    console.log(this.model)
-    console.log('hi i amd in here')
-    this.$el.html(this.template(this.model.toJSON()));
+    this.$el.html(this.template(this.collection.toJSON()));
     // this.$el.toggleClass('done', this.model.get('done'));
     // this.input = this.$('.edit');
+    
+
+    // iterate over it. for every 5, create a new table row, and then start appending to that row.
+    var index = 0;
+    var current_row;
+    var that = this;
+    this.collection.each(function(item, i) {
+      if(i%5 === 0) {
+        that.$el.append(current_row);
+        current_row = $('<tr></tr>');
+      }
+      current_row_item = $('<td></td>');
+      current_row_item.append(new app.views.ApplicationView({model: item}).render().el);
+      current_row.append(current_row_item)
+        
+    });
+
     return this;
   },
 

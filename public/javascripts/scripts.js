@@ -11,20 +11,28 @@ root = typeof exports !== "undefined" && exports !== null ? exports : this;
     templates: {}
   };    
 
-  //get the JSON file
-  $.ajax({
-    url: 'apps.json', 
-    dataType: 'json',
-    error: function(err) {
-      console.log(err);
-    },
-    success: function(data) {
-      console.log(data);
-      gnewtest = data;
-    }
-  });
-
   $(function(){
+
+    //get the JSON file
+    $.ajax({
+      url: 'apps.json', 
+      dataType: 'json',
+      error: function(err) {
+        console.log(err);
+      },
+      success: function(data) {
+        console.log(data);
+        TEST_DATA = data;
+        root.app.applications = new app.collections.Applications(data);
+
+        // root.
+
+        // append the grid to body
+        $('body').append(new app.views.GridView({collection: app.applications}).render().el);
+        
+      }
+    });
+
 
     // sample socket 
     // var socket = io.connect(window.location.hostname);
