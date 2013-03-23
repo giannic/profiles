@@ -3,7 +3,7 @@
 	
 	"name": "Profile Manager Chrome Extension",
 	"description": "Tracks trends in your online app usage.",
-	"version": "1.0",
+	"version": "1.0.1",
 
 	"background": {
 		"scripts": ["jquery-1.9.1.min.js", "purl.js", "background.js"]
@@ -14,7 +14,8 @@
 		"storage",
 		"management",
 		"http://127.0.0.1:3000/*",
-        "http://ec2-50-19-65-30.compute-1.amazonaws.com/*"
+        "http://ec2-50-19-65-30.compute-1.amazonaws.com/*",
+        "http://davidxu.me/*"
 	],
 	"browser_action": {
 		"default_icon": "icon.png",

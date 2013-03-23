@@ -1,4 +1,5 @@
-var baseUrl = "http://ec2-50-19-65-30.compute-1.amazonaws.com:3000";
+var baseUrl = "http://davidxu.me:3000";
+//var baseUrl = "localhost:3000";
 var url = baseUrl + "/login";
 
 // Bind click listener
