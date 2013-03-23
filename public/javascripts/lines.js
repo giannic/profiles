@@ -4,36 +4,86 @@ var numberOfLines,
     startTime, endTime, difference,
     lineGraphWidth, lineGraphHeight, lineGraph,
     allTheLines, hsl, colorArray, appArray,
-    minRange = 0, maxRange = 100, interval,
+    minRange, maxRange, interval,
     playTimeline = false;
 
 $(document).ready(function() {
     //get the JSON file
     $.ajax({
-      url: 'usage_data.json', 
-      dataType: 'json',
-
-
-
-      
-      
-      
-    error: function(err){
-      console.log(err)
-      console.log('ERROR')
+        url: 'usage_data.json',
+        dataType: 'json',
+    error: function(err) {
+        console.log(err)
+        console.log('ERROR')
     },
-      
-     success: function(data) {
+    success: function(data) {
         stats = data;
+        //console.log(stats["Youtube"]["category"]);
 
-    $.ajaxSetup({
-        "async" : true
+        //app array stores the apps displayed
+        appArray = [];
+
+        //temp array stores all apps
+        var tempArray = [];
+        var i = 0;
+        for (var key in stats) {
+            if (stats.hasOwnProperty(key)) {
+                tempArray[i] = key;
+                i++;
+            }
+        }
+
+        appArray[0] = tempArray[0];
+        appArray[1] = tempArray[1];
+        // appArray[2] = tempArray[2];
+
+        //instantiate values
+        numberOfLines = 0;
+        startTime = 0;
+        endTime = 0;
+
+        //store colors for each app
+        colorArray = [];
+
+        //initiate the variables
+        for (var i = 0; i < appArray.length; i++) {
+            var index = appArray[i];
+            var lengthA = stats[index]['open'].length;
+            var startTimeA = stats[index]['open'][0];
+            var endTimeA = stats[index]['close'][stats[index]['close'].length - 1];
+
+            if (lengthA > numberOfLines) {
+                numberOfLines = lengthA;
+            }
+            if (startTimeA > startTime) {
+                startTime = startTimeA;
+            }
+            if (endTimeA > endTime) {
+                endTime = endTimeA;
+            }
+            colorArray[i] = i * (360 / appArray.length);
+        }
+
+        // put the stage dimensions here
+        lineGraphWidth = 1000;
+        lineGraphHeight = 600;
+
+        // difference in times
+        difference = endTime - startTime;
+
+        // array to store the lines
+        allTheLines = [];
+
+        // Select the DIV container "D3line" and add an SVG element to it
+        lineGraph = d3.select("#D3line").append("svg:svg").attr("width", lineGraphWidth).attr("height", lineGraphHeight);
+
+        //initial loading of lines
+        calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"));
+    }
     });
 
-    console.log(stats["Youtube"]["category"]);
-
-
     //instantiates the slider timeline
+    minRange = 0, maxRange = 100;
     $("#timeline").rangeSlider({
         arrows : false,
         defaultValues : {
@@ -60,74 +110,9 @@ $(document).ready(function() {
         stepForward(10);
     });
 
-    //app array stores the apps displayed
-    appArray = [];
-
-    //temp array stores all apps
-    var tempArray = [];
-    var i = 0;
-    for (var key in stats) {
-        if (stats.hasOwnProperty(key)) {
-            tempArray[i] = key;
-            i++;
-        }
-    }
-
-    appArray[0] = tempArray[0];
-    appArray[1] = tempArray[1];
-    // appArray[2] = tempArray[2];
-
-    //instantiate values
-    numberOfLines = 0;
-    startTime = 0;
-    endTime = 0;
-
-    //store colors for each app
-    colorArray = [];
-
-    //initiate the variables
-    for (var i = 0; i < appArray.length; i++) {
-        var index = appArray[i];
-        var lengthA = stats[index]['open'].length;
-        var startTimeA = stats[index]['open'][0];
-        var endTimeA = stats[index]['close'][stats[index]['close'].length - 1];
-
-        if (lengthA > numberOfLines) {
-            numberOfLines = lengthA;
-        }
-        if (startTimeA > startTime) {
-            startTime = startTimeA;
-        }
-        if (endTimeA > endTime) {
-            endTime = endTimeA;
-        }
-        colorArray[i] = i * (360 / appArray.length);
-    }
-
-    // put the stage dimensions here
-    lineGraphWidth = 1000;
-    lineGraphHeight = 600;
-
-    // difference in times
-    difference = endTime - startTime;
-
     $("#timeline").on("valuesChanged", function(e, data) {
         calculateRender(Math.round(data.values.min), Math.round(data.values.max));
     });
-
-    // array to store the lines
-    allTheLines = [];
-
-    // Select the DIV container "D3line" and add an SVG element to it
-    lineGraph = d3.select("#D3line").append("svg:svg").attr("width", lineGraphWidth).attr("height", lineGraphHeight);
-
-    //initial loading of lines
-    calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"));
-
-
-
-    }
-    })
 });
 
 
