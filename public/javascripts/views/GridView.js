@@ -29,13 +29,10 @@ root.app.views.GridView = Backbone.View.extend({
     var that = this;
     this.collection.each(function(item, i) {
       if(i%5 === 0) {
-        that.$el.append(current_row);
+        that.$el.find('table').append(current_row);
         current_row = $('<tr></tr>');
       }
-      current_row_item = $('<td></td>');
-      current_row_item.append(new app.views.ApplicationView({model: item}).render().el);
-      current_row.append(current_row_item)
-        
+      current_row.append(new app.views.ApplicationView({model: item}).render().el);
     });
 
     return this;

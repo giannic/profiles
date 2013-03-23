@@ -1,6 +1,6 @@
 root.app.templates.application = 'this is an app';
 
-root.app.templates.grid = '<table class="grid"> \
+root.app.templates.grid = '<table id="grid"> \
                           <!-- <tr> --> \
                           <!-- </tr> --> \
                           </table>'
