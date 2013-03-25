@@ -20,16 +20,12 @@
   <div id="header">
       <a class="title" href="#">{{{title}}}</a>
 
-      <!-- <span class="name">Gianni</span>-->
       <nav class="type-nav">
         <ul>
         <li><a href="#">all</a></li> |
         <li><a id="clusters-toggle" href="#">clusters</a></li> |
         <li><a id="timelines-toggle" href="#">timelines</a></li>
       </nav>
-
-
-      <!-- <img src="#">[> gear <]</img>-->
   </div>
   <div class="alert"> {{{msg}}} </div>
 
@@ -39,7 +35,16 @@
 
   <div id="visualizations">
     <!-- clusters div -->
-    <div id="circles" class="vis"></div>
+    <div id="circles" class="vis">
+        <div id="stats">
+            Sample Service <br/>
+            Username: Hello <br/>
+            Last Visit: Yesterday <br/>
+            Active/Closed
+        </div>
+    </div>
+
+    <!-- timelines div -->
     <div id="lines" class="vis">
       <div id="D3line" class="vis"></div>
       <div id="timeline_panel">

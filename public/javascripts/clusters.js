@@ -1,3 +1,6 @@
+/*
+ * This file really needs a code cleanup.
+ */
 $(function(){
     var fsize = 16,
         image_width = 100,
@@ -24,6 +27,25 @@ $(function(){
             .attr("height", window_height),
             defs = svg.append('defs');
 
+    // for hover state, lets move this later
+    // THIS SHOULD NOT BE A GLOBAL, CHANGE AFTER CODE CLEANUP
+    show_stats = function(id) {
+        $("#stats").show();
+        //$("#stats").append(id);
+    }
+
+    hide_stats = function() {
+        $("#stats").hide();
+    }
+
+    $(document).mousemove(function(e) {
+        $("#stats").css({
+            position: "absolute",
+            top: e.pageY+1,
+            left: e.pageX+1
+        });
+    });
+
     var groups = svg.selectAll("g")
         .data(dataset)
         .enter()
@@ -34,7 +56,6 @@ $(function(){
             py_arr[i] = x.y*window_height;
             return x.id;
         })
-
         .attr("transform", function(x, i) {
             var px = x.x*window_width,
                 py = x.y*window_height,
@@ -113,7 +134,8 @@ $(function(){
                 var target = d3.event.relatedTarget.getAttribute("class");
                 // issues when overlap
                 if (target == null) {
-                    if (!clicked_category || (clicked_category != selected_category)){
+                    if (!clicked_category ||
+                        (clicked_category != selected_category)) {
                         select_new_cluster(svg, x);
                     }
                 }
@@ -128,32 +150,34 @@ $(function(){
                 }
             }
         });
+
     // category circles
     var circles = groups.append("circle")
-        .style("stroke", stroke_color)
-        .style("fill", cluster_fill)
-        .attr("r", function(x){
-            return x.r;
-        })
-        .attr("id", function(x){
-            return "circle_" + x.id;
-        });
+                        .style("stroke", stroke_color)
+                        .style("fill", cluster_fill)
+                        .attr("r", function(x){
+                            return x.r;
+                        })
+                        .attr("id", function(x){
+                            return "circle_" + x.id;
+                        });
 
     var label = groups.append("text")
-        .text(function(x){
-            return x.name;
-        })
-        .attr("id", function(x){
-            return "text_" + x.id;
-        })
-        .attr({
-            "alignment-baseline": "middle",
-            "text-anchor": "middle",
-            "font-size": fsize,
-            "font-family": "Helvetica"
-        })
-        .style('fill', text_color);
-    });
+                      .text(function(x){
+                          return x.name;
+                      })
+                      .attr("id", function(x){
+                          return "text_" + x.id;
+                      })
+                      .attr({
+                          "alignment-baseline": "middle",
+                          "text-anchor": "middle",
+                          "font-size": fsize,
+                          "font-family": "Helvetica"
+                      })
+                      .style('fill', text_color);
+
+    }); // TODO: WHAT IS THIS SET OF END PARENS ENDING?
 
     function select_new_cluster(svg, x){
         var angle = (360/x.apps.length)*Math.PI/180, // RADIANS
@@ -208,8 +232,7 @@ $(function(){
               d.y = Math.sin(angle*i)*dist;
               return d.y;
             })
-            .style("fill", app_fill)
-
+            .style("fill", app_fill) // what is diff between cluster_fill and app_fill?
             .transition()
             .attr('r', function(d, i){
               return d.r;
@@ -231,6 +254,14 @@ $(function(){
             .attr("width", image_width)
             .attr("height", image_height)
             .attr("opacity", 0.6);
+
+        var hovers = svg.selectAll("a")
+                        .on("mouseover", function() {
+                            show_stats();
+                        })
+                        .on("mouseout", function() {
+                            hide_stats();
+                        });
     }
 
     function deselect_old_cluster(svg, x, old_category){
