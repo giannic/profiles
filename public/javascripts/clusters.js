@@ -22,29 +22,10 @@ $(function(){
         var dataset = parse_data(json),
             all_images = [],
             svg = d3.select("#circles")
-            .append("svg")
-            .attr("width", window_width)
-            .attr("height", window_height),
+                    .append("svg")
+                    .attr("width", window_width)
+                    .attr("height", window_height),
             defs = svg.append('defs');
-
-    // for hover state, lets move this later
-    // THIS SHOULD NOT BE A GLOBAL, CHANGE AFTER CODE CLEANUP
-    show_stats = function(id) {
-        $("#stats").show();
-        //$("#stats").append(id);
-    }
-
-    hide_stats = function() {
-        $("#stats").hide();
-    }
-
-    $(document).mousemove(function(e) {
-        $("#stats").css({
-            position: "absolute",
-            top: e.pageY+1,
-            left: e.pageX+1
-        });
-    });
 
     var groups = svg.selectAll("g")
         .data(dataset)

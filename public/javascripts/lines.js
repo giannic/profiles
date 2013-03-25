@@ -24,8 +24,8 @@ $(document).ready(function() {
         appArray = [];
 
         //temp array stores all apps
-        var tempArray = [];
-        var i = 0;
+        var tempArray = [],
+            i = 0;
         for (var key in stats) {
             if (stats.hasOwnProperty(key)) {
                 tempArray[i] = key;
@@ -46,11 +46,12 @@ $(document).ready(function() {
         colorArray = [];
 
         //initiate the variables
+        var index, lengthA, startTimeA, endTimeA;
         for (var i = 0; i < appArray.length; i++) {
-            var index = appArray[i];
-            var lengthA = stats[index]['open'].length;
-            var startTimeA = stats[index]['open'][0];
-            var endTimeA = stats[index]['close'][stats[index]['close'].length - 1];
+            index = appArray[i];
+            lengthA = stats[index]['open'].length;
+            startTimeA = stats[index]['open'][0];
+            endTimeA = stats[index]['close'][stats[index]['close'].length - 1];
 
             if (lengthA > numberOfLines) {
                 numberOfLines = lengthA;
@@ -118,7 +119,7 @@ $(document).ready(function() {
 
 //generates all the lines on each loop : OPTIMIZE
 function generateLines(currArray, index, diff) {
-    var currentLine, i;
+    var currentLine, i, x;
     for (i = 0; i < currArray.length; i++) {
         currentLine = lineGraph.append("svg:line")
                                .attr("x1", currArray[i])
@@ -127,8 +128,14 @@ function generateLines(currArray, index, diff) {
                                .attr("y2", lineGraphHeight)
                                .attr("name", "line"+i)
                                .style("stroke-width", 2)
-                               .style("stroke", "hsl("+ colorArray[index] +",50%, 50%)");
-        var x = (closeArray[i] - openArray[i])/diff + .5;
+                               .style("stroke", "hsl("+ colorArray[index] +",50%, 50%)")
+                               .on("mouseover", function() {
+                                    show_stats();
+                               })
+                               .on("mouseout", function() {
+                                    hide_stats();
+                               });
+        x = (closeArray[i] - openArray[i])/diff + .5;
         changeColor(currentLine, x);
         allTheLines[i] = currentLine;
     }
@@ -141,28 +148,35 @@ function changeColor(line, opacityOfLine) {
 
 //calculates the render array
 function calculateRender(startValIndex, endValIndex) {
+    var leftBarTime, rightBarTime, diff,
+        index;
+
     d3.selectAll("line").remove();
     allTheLines =  [];
 
-    var leftBarTime = startTime + (difference*startValIndex)/(100);
-    var rightBarTime = startTime + (difference*endValIndex)/(100);
-    var diff = rightBarTime - leftBarTime;
+    leftBarTime = startTime + (difference*startValIndex)/(100);
+    rightBarTime = startTime + (difference*endValIndex)/(100);
+    diff = rightBarTime - leftBarTime;
 
     for(var k = 0; k < appArray.length; k++){
-    var index = appArray[k];
-    openArray = stats[index]['open'];
-    closeArray = stats[index]['close'];
+        var index = appArray[k];
+        openArray = stats[index]['open'];
+        closeArray = stats[index]['close'];
 
-    renderArray = [];
-    for (var i = 0; i < openArray.length; i++) {
-      if((openArray[i] > leftBarTime) && (closeArray[i] < rightBarTime)){
-        renderArray[i] = ((openArray[i]-leftBarTime)/(diff/lineGraphWidth));
-      }
+        renderArray = [];
+        for (var i = 0; i < openArray.length; i++) {
+            if ((openArray[i] > leftBarTime) && (closeArray[i] < rightBarTime)) {
+               renderArray[i] = ((openArray[i]-leftBarTime)/(diff/lineGraphWidth));
+            }
+        }
+        generateLines(renderArray, k, diff);
     }
-    generateLines(renderArray, k, diff);
-  }
 }
 
+
+/*
+ * CONTROLS
+ */
 //animation controls: step back
 function stepBackward(stepInterval) {
     var tMin = $("#timeline").rangeSlider("min");
