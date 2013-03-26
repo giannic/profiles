@@ -12,8 +12,9 @@ $(function(){
         clicked_category,
         cluster_apps = {},
         pad = 5, // padding for boundary circle + app circles
-        px_arr = [],
-        py_arr = [];
+        px_arr = []
+        py_arr = []
+        maxApps = -1;
 
     $.getJSON("usage_data.json", function(json) {
         var dataset = parse_data(json),
@@ -32,6 +33,7 @@ $(function(){
             // add all the positions first
             px_arr[i] = x.x*window_width;
             py_arr[i] = x.y*window_height;
+            if (x.apps.length > 
             return x.id;
         })
 
@@ -42,6 +44,7 @@ $(function(){
                 newpx_arr = px_arr,
                 newpy_arr = py_arr;
 
+            /*
             // fix overlap
             // push the circle positions based on all the other ones
             for (var j = 0; j < px_arr.length; j++) {
@@ -77,6 +80,10 @@ $(function(){
             py_arr = newpy_arr;
             var transx = px_arr[i];
             var transy = py_arr[i];
+            */
+
+            var transx = px;
+            var transy = py;
 
             // cap the circle positions
             if (transx - size < 0) {
@@ -128,11 +135,13 @@ $(function(){
                 }
             }
         });
+
     // category circles
     var circles = groups.append("circle")
         .style("stroke", stroke_color)
         .style("fill", cluster_fill)
-        .attr("r", function(x){
+        .attr("r", function(x, i){
+            // TODO: scale the r based on how many apps in this circle
             return x.r;
         })
         .attr("id", function(x){
@@ -167,8 +176,8 @@ $(function(){
             });
         selected_circle.classed("selected", true);
 
-        // TODO: use if contracting category circle
-        //selected_text.transition().attr("font-size", 0);
+        // LOOK: use if contracting category circle
+        // selected_text.transition().attr("font-size", 0);
 
         selected_text.classed("selected", true);
 
@@ -246,7 +255,7 @@ $(function(){
                 return d.r;
             });
 
-        // TODO: use if contracting category circle
+        // LOOK: use if contracting category circle
         // then deselect the circle's text
         /*old_cluster = typeof selected_category === 'undefined' ? svg.selectAll() :
             svg.selectAll("#text_" + selected_category); 
