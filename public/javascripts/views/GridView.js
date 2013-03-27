@@ -1,6 +1,10 @@
 root.app.views.GridView = Backbone.View.extend({
 
   tagName:  "div",
+  COLUMNS: 6,  // the number items in each row
+  // default width of 1024
+  width: 1024,
+  
 
   template: _.template(root.app.templates.grid),
 
@@ -13,8 +17,9 @@ root.app.views.GridView = Backbone.View.extend({
   },
 
   initialize: function() {
-    // this.listenTo(this.model, 'change', this.render);
-    // this.listenTo(this.model, 'destroy', this.remove);
+    // set the width to the width of body
+    this.width = $('body').width();
+    
   },
 
   render: function() {
@@ -28,11 +33,16 @@ root.app.views.GridView = Backbone.View.extend({
     var current_row;
     var that = this;
     this.collection.each(function(item, i) {
-      if(i%5 === 0) {
+      if(i % that.COLUMNS === 0) {
         that.$el.find('table').append(current_row);
         current_row = $('<tr></tr>');
       }
-      current_row.append(new app.views.ApplicationView({model: item}).render().el);
+      console.log('hi');
+      console.log(that.width);
+      console.log(that.width/6);
+      current_row.append(new app.views.ApplicationView({model: item, 
+                                                        width: that.width / that.COLUMNS, 
+                                                        height: that.width / that.COLUMNS}).render().el);
     });
 
     return this;
