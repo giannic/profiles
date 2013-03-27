@@ -112,3 +112,16 @@ exports.view = (req, res) ->
     res.json(result)
   )
 
+###
+# /users/whitelist
+# 
+###
+exports.whitelist = (req, res) ->
+  user_id = req.params.id
+  Application.find({userid: user_id}, (err, result) ->
+    if err
+      res.send(error: err)
+    console.log result
+    res.json(result)
+  )
+

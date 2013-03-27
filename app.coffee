@@ -65,6 +65,9 @@ app.get "/grid", index.grid
 app.get "/users", user.list
 app.get "/users.json", user.json_all
 app.get "/users/:id.json", user.view
+app.get "/users/whitelist/:id.json", user.whitelist
+#app.post "/users/allow", user.allow
+#app.post "/users/disallow", user.disallow
 app.get "/register", user.register_get
 app.post "/register", user.register_post
 app.get "/login", user.login_get
@@ -72,6 +75,7 @@ app.post "/login", user.login_post
 app.get "/apps.json", application.json_all
 app.post "/apps/open", application.open
 app.post "/apps/close", application.close
+app.post "/apps/delete", application.delete
 app.get "/apps/new", application.new_test  # just for testing
 app.get "/apps/:id.json", application.view
 

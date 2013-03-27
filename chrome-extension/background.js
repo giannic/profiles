@@ -230,6 +230,7 @@ function getGeneralDomain(domain) {
 
   // special case for mail.google.com
   if (domain.indexOf("mail.google.com") !== -1) {
+    
     return "mail.google.com";
   }
 
