@@ -1,52 +1,22 @@
-html {
-  width:100%;
-  height:100%;
-}
-
-h1,h2,h3,h4,h5,h6,div,p,body{
-  margin: 0px;
-  padding: 0px;
-}
-
-body {
-  background-color: rgb(251, 253, 250);
-  width:100%;
-  height:100%;
-}
-
 @mixin focus_glow {
-  border-color: #2d6987;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7ab5d3;
-  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7ab5d3;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7ab5d3;
-  -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
-  -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
-  -o-transition: border linear 0.2s, box-shadow linear 0.2s;
-  transition: border linear 0.2s, box-shadow linear 0.2s;
+    border-color: #2d6987;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7ab5d3;
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7ab5d3;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7ab5d3;
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
 }
 
 // input box styles
 input[type=text], input[type=password] {
-  border-radius: 3px;
-  outline: none;
-  color: #555555;
-  padding: 7px 8px;
-  background-color: #ffffff;
-  border: 1px solid #cccccc;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
-  -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
-  -o-transition: border linear 0.2s, box-shadow linear 0.2s;
-  transition: border linear 0.2s, box-shadow linear 0.2s;
-
-  &:focus {
-    @include focus_glow;
-  }
-
-  &.error {
-    border-color: #b94a48;
+    border-radius: 3px;
+    outline: none;
+    color: #555555;
+    padding: 7px 8px;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -54,29 +24,30 @@ input[type=text], input[type=password] {
     -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
     -o-transition: border linear 0.2s, box-shadow linear 0.2s;
     transition: border linear 0.2s, box-shadow linear 0.2s;
+
     &:focus {
-      @include focus_glow;
+        @include focus_glow;
     }
-  }
+
+    &.error {
+        border-color: #b94a48;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+        -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+        -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+        transition: border linear 0.2s, box-shadow linear 0.2s;
+        &:focus {
+            @include focus_glow;
+        }
+    }
 }
 
-#wrapper {
-/*
-  width: 40%;
-  height: 40%;
-  margin: auto;
-  // background-color: red;
-  // center this
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-*/
-
-  #form-wrapper {
+#form-wrapper {
     margin: auto;
     width: 100%;
+
     // center this
     position: absolute;
     top: 0;
@@ -85,40 +56,39 @@ input[type=text], input[type=password] {
     right: 0;
 
     form {
-      text-align: center;
-      margin: auto;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background-color: rgb(241, 245, 245);
-      width:400px;
-      height:150px;
-
-      .alert {
-        position: absolute;
-        top: -30px;
-        left: 0px;
-        right: 0px;
-        line-height: 30px;
-      }
-
-
-      #input-username, #input-password{
-        display:block;
+        text-align: center;
         margin: auto;
-        width: 60%;
-      }
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgb(241, 245, 245);
+        width:400px;
+        height:150px;
 
-      input[type=submit] {
-        margin-top: 5px;
-      }
-      label {
-        font-size: 18px;
-      }
+        .alert {
+            position: absolute;
+            top: -30px;
+            left: 0px;
+            right: 0px;
+            line-height: 30px;
+        }
+
+        #input-username, #input-password{
+            display:block;
+            margin: auto;
+            width: 60%;
+        }
+
+        input[type=submit] {
+            margin-top: 5px;
+        }
+
+        label {
+            font-size: 18px;
+        }
     }
-  }
 }
 
 #add-app-box {
@@ -138,18 +108,18 @@ input[type=text], input[type=password] {
 }
 
 @-webkit-keyframes fade {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }
 
 .alert {
-  animation: fade 3s;
-  -webkit-animation: fade 1s;
-  -webkit-animation-delay: 1s;
-  -webkit-animation-fill-mode: forwards;
+    animation: fade 3s;
+    -webkit-animation: fade 1s;
+    -webkit-animation-delay: 1s;
+    -webkit-animation-fill-mode: forwards;
 }
 

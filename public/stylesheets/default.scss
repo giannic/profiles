@@ -2,6 +2,7 @@
  * VARS *
  ********/
 $LIGHT_GREY: #DDD;
+
 /**********
  * MIXINS *
  **********/
@@ -40,8 +41,15 @@ $LIGHT_GREY: #DDD;
     padding: 0;
 }
 
+html {
+    height: 100%;
+    width: 100%;
+}
+
 body {
-    //overflow: hidden;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
 }
 
 a {
@@ -52,6 +60,10 @@ a {
     }
 }
 
+// do we still need this css?
+svg {
+    position: relative;
+}
 
 /*
  * CLASS/ID
@@ -141,19 +153,5 @@ a {
             size: 18px;
         }
 
-    }
-}
-
-// placeholder for canvas
-.sample {
-    width: 100%;
-    height: 960px;
-    margin-top: 15px;
-    background-color: $LIGHT_GREY + #030303;
-
-    .sample-text {
-        display: block;
-        width: 170px;
-        margin: 0 auto;
     }
 }
