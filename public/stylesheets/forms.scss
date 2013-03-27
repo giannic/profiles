@@ -61,6 +61,7 @@ input[type=text], input[type=password] {
 }
 
 #wrapper {
+/*
   width: 40%;
   height: 40%;
   margin: auto;
@@ -71,6 +72,7 @@ input[type=text], input[type=password] {
   bottom: 0;
   left: 0;
   right: 0;
+*/
 
   #form-wrapper {
     margin: auto;
@@ -81,8 +83,7 @@ input[type=text], input[type=password] {
     bottom: 0;
     left: 0;
     right: 0;
-    
-   
+
     form {
       text-align: center;
       margin: auto;
@@ -101,7 +102,6 @@ input[type=text], input[type=password] {
         left: 0px;
         right: 0px;
         line-height: 30px;
-        
       }
 
 
@@ -121,12 +121,28 @@ input[type=text], input[type=password] {
   }
 }
 
+#add-app-box {
+    display: none;
+    position: absolute;
+    right: 20px;
+    top: 50px;
+    width: 250px;
+
+    background: {
+        color: rgb(241, 245, 245);
+    }
+
+    input {
+        width: 200px;
+    }
+}
+
 @-webkit-keyframes fade {
   from {
-    opacity: 1; 
+    opacity: 1;
   }
   to {
-    opacity: 0; 
+    opacity: 0;
   }
 }
 

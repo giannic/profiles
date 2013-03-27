@@ -18,4 +18,9 @@ $('document').ready(function() {
 
         });
     });
+
+    $('#add-account-toggle').click(function() {
+        console.log("adding account");
+        $("#add-app-box").toggle();
+    });
 });

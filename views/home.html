@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="/stylesheets/styles.css" />
     <link rel="stylesheet" href="/stylesheets/default.css" />
     <link rel="stylesheet" href="stylesheets/slider.css" />
+    <link rel="stylesheet" href="stylesheets/forms.css" />
 {{/extend}}
 
 {{#extend "javascripts"}}
@@ -25,22 +26,29 @@
         <ul>
         <li><a href="#">all</a></li> |
         <li><a id="clusters-toggle" href="#">clusters</a></li> |
-        <li><a id="timelines-toggle" href="#">timelines</a></li>
+        <li><a id="timelines-toggle" href="#">timelines</a></li> |
+        <li><a id="add-account-toggle" href="#">ADD APP</a></li>
       </nav>
   </div>
-  <div class="alert"> {{{msg}}} </div>
+  <!--<div class="alert"> {{{msg}}} </div>-->
 
-  <!-- <form id="search">-->
-  <!--     <input class="search-text" type="text" name="search"/>-->
-  <!-- </form>-->
+  <div id="form-wrapper">
+      <form action="/register" method="POST">
+          <div class="alert"> {{{msg}}} </div>
+          <label for="input-username">Username</label>
+          <input id="input-username" type="text" name="email" {{#if msg}} class="error" {{/if}} />
+          <label for="input-password">Password</label>
+          <input id="input-password" type="password" name="password" {{#if msg}} class="error" {{/if}} />
+          <input type="submit" value="Register" />
+      </form>
+  </div>
 
+  <!--
   <div id="visualizations">
-    <!-- clusters div -->
     <div id="circles" class="vis">
 
     </div>
 
-    <!-- timelines div -->
     <div id="lines" class="vis">
       <div id="D3line" class="vis"></div>
       <div id="timeline_panel">
@@ -70,10 +78,24 @@
       </div>
     </div>
   </div>
+  -->
     <div id="stats">
         Sample Service <br/>
         Username: Hello <br/>
         Last Visit: Yesterday <br/>
         Active/Closed
+    </div>
+
+    <div id="add-app-box">
+        <form action="#" method="POST">
+          <label for="input-appname">App</label>
+          <input id="input-appname" type="text" name="app_name"/>
+
+          <label for="input-appurl">URL</label>
+          <input id="input-appurl" type="text" name="app_url"/>
+
+          <label for="input-appusername">Username</label>
+          <input id="input-appusername" type="text" name="app_username"/>
+        </form>
     </div>
 </div>
