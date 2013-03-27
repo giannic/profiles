@@ -2,12 +2,14 @@ root.app.views.ApplicationView = Backbone.View.extend({
 
   stroke_color: 'rgba(201, 219, 242, 0.8)',
   cluster_fill: 'rgba(200, 220, 255, 0.4)',
-  tagName:  "td",
+  tagName:  'div',
+  className: 'application',
   // width should be a 6th of the size of the grid 
   // 6 = number of items per row
   // DEFAULT VALUES FOR WIDTH/HEIGHT
-  width: Math.ceil(1000/6), // $('#grid').width() / 6,
-  height: Math.ceil(1000/6), // square for now
+  width: Math.floor(1000/6), // $('#grid').width() / 6,
+  height: Math.floor(1000/6), // square for now
+  margin: 7,
   r: 1000/12, // temporary
   
 
@@ -23,16 +25,15 @@ root.app.views.ApplicationView = Backbone.View.extend({
 
   initialize: function(data) {
     console.log('this is the width:');
-    console.log(Math.ceil(data.width));
+    console.log(Math.floor(data.width));
     console.log('this is the height:');
-    console.log(Math.ceil(data.height));
-    this.width = Math.ceil(data.width);
-    this.height = Math.ceil(data.height);
-    this.r = data.width / 2;
+    console.log(Math.floor(data.height));
+    this.width = Math.floor(data.width) - 2 * this.margin;
+    this.height = Math.floor(data.height) - 2 * this.margin;
+    this.$el.css('margin', this.margin);
+    this.r = (data.width) / 2 - this.margin - 1;  // subtract the border
     this.cx = this.r;
     this.cy = this.r;
-    // this.listenTo(this.model, 'change', this.render);
-    // this.listenTo(this.model, 'destroy', this.remove);
   },
 
   render: function() {
