@@ -93,6 +93,7 @@ exports.login_post = (req, res) ->
           req.session.messages.push 'Successfully logged in!'
           res.redirect "/",
         else
+          console.log("sending userid");
           res.send {userid: result._id}
       # if it's an inferior browser
       else
@@ -114,6 +115,7 @@ exports.login_post = (req, res) ->
       else
         req.session.messages.push 'Error: Username and passwords don\'t match'
         res.redirect "/login"
+    console.log("end login function");
 
 
 ###
