@@ -25,6 +25,7 @@ root.app.views.GridView = Backbone.View.extend({
   },
 
   render: function() {
+    console.log(this.collection)
     this.$el.html(this.template(this.collection.toJSON()));
     // this.$el.toggleClass('done', this.model.get('done'));
     // this.input = this.$('.edit');
