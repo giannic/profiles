@@ -9,13 +9,13 @@ root = typeof exports !== "undefined" && exports !== null ? exports : this;
     collections: {},
     views: {},
     templates: {}
-  };    
+  };
 
   $(function(){
 
     //get the JSON file
     $.ajax({
-      url: 'apps.json', 
+      url: 'apps.json',
       dataType: 'json',
       error: function(err) {
         console.log(err);
@@ -29,7 +29,6 @@ root = typeof exports !== "undefined" && exports !== null ? exports : this;
 
         // append the grid to body
         $('body').append(new app.views.GridView({collection: app.applications}).render().el);
-        
       }
     });
 
