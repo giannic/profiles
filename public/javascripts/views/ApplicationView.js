@@ -24,10 +24,7 @@ root.app.views.ApplicationView = Backbone.View.extend({
   },
 
   initialize: function(data) {
-    console.log('this is the width:');
-    console.log(Math.floor(data.width));
-    console.log('this is the height:');
-    console.log(Math.floor(data.height));
+    console.log(this.model.attributes);
     this.width = Math.floor(data.width) - 2 * this.margin;
     this.height = Math.floor(data.height) - 2 * this.margin;
     this.$el.css('margin', this.margin);
@@ -37,33 +34,29 @@ root.app.views.ApplicationView = Backbone.View.extend({
   },
 
   render: function() {
-    console.log(this.width);
-    console.log(this.height);
-    console.log(this.model);
-    console.log('hi i amd in here');
-    console.log(d3.select(this));
     this.$el.html('');
     // should be square (circles)
     this.$el.width(this.width);
     this.$el.height(this.height);
-    console.log(this.width);
-    console.log(this.height);
-    console.log($('#grid').width());
-    console.log('this is the width:');
-    console.log(this.r);
-    console.log(this.cx);
-    console.log(this.cy);
     svg = d3.select(this.el).append('svg')
       .attr('width', this.width)  // set the width
       .attr('height', this.height)  // set the height
       .style('display', 'block')  // set the height
-      .style('margin', 'auto')  // set the height
-      .append('g').append('circle')
+      .style('margin', 'auto'); // set the height
+
+    group = svg.append('a')
+      .attr("xlink:href", 'http://' + this.model.get('url'));
+
+    image = group.append('image')
+            .attr('xlink:href', this.model.get('img'));
+      
+    circle = group.append('circle')
       .attr('r', this.r)
       .attr('cx', this.cx)
       .attr('cy', this.cy)
       .attr('width', this.width)
       .attr('height', this.height)
+      
       .style('stroke', this.stroke_color)
       .style('fill', this.cluster_fill);
     
