@@ -1,5 +1,5 @@
-var baseUrl = "http://davidxu.me:3000";
-//var baseUrl = "http://127.0.0.1:3000";
+//var baseUrl = "http://davidxu.me:3000";
+var baseUrl = "http://127.0.0.1:3000";
 var apiUrlOpen = baseUrl + "/apps/open";
 var apiUrlClose = baseUrl + "/apps/close";
 var userid = null;
@@ -39,7 +39,7 @@ function checkDirtyClose() {
             if (!posixTime) {
               posixTime = getCurrentTime();
             }
-            postToClose(d, appId, posixTime);
+            //postToClose(d, appId, posixTime);
           }
         }
       }
@@ -256,6 +256,7 @@ function printChromeStorage() {
 //====================
 
 chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
+  console.log("message listener");
   userid = message["userid"];
   storage.set({"userid": userid}, function() {
     console.log("Stored user id")
