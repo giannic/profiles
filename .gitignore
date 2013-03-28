@@ -21,5 +21,4 @@ node_modules/*
 public/stylesheets/**/*.css
 public/stylesheets/*.css
 
-usage_data.json
 
