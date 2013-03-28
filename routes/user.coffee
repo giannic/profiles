@@ -201,11 +201,11 @@ exports.delete_app = (req, res) ->
     console.log "remove function"
     console.log user_id 
     console.log domain 
-#    if err
-#      res.send(error: err)
-#    else
-#      res.send(success: result)
-      remove_from_whitelist(user_id, domain, res)
+    #    if err
+    #      res.send(error: err)
+    #    else
+    #      res.send(success: result)
+    remove_from_whitelist(user_id, domain, res)
   )
 
 
