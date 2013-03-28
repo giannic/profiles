@@ -1,7 +1,31 @@
 mongoose = require 'mongoose'
 crypto = require 'crypto'
 
-User = new mongoose.Schema { email: {type: String, index: {unique: true}}, hashed_password: String, salt: String }
+User = new mongoose.Schema { 
+							email: {type: String, index: {unique: true}}, 
+							hashed_password: String, 
+							salt: String,
+							whitelist: {type: [String], default:
+								[
+									"twitter.com",
+									"facebook.com",
+									"google.com",
+									"mail.google.com",
+									"tumblr.com",
+									"pinterest.com",
+									"youtube.com",
+									"linkedin.com",
+									"myspace.com",
+									"vimeo.com",
+									"blogger.com",
+									"pandora.com",
+									"spotify.com",
+									"github.com",
+									"stackoverflow.com",
+									"ycombinator.com",
+									"reddit.com",
+									"mint.com" ] }
+							}
 
 User.methods.makeSalt = ->
   return Math.round(new Date().valueOf() * Math.random() + '')
@@ -21,4 +45,3 @@ User.virtual('password')
     console.log 'password has been hashed and created!'
 
 module.exports = mongoose.model 'User', User
-

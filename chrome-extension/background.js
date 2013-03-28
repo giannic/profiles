@@ -1,4 +1,4 @@
-var baseUrl = "http://ec2-50-19-65-30.compute-1.amazonaws.com:3000";
+var baseUrl = "http://davidxu.me:3000";
 //var baseUrl = "http://127.0.0.1:3000";
 var apiUrlOpen = baseUrl + "/apps/open";
 var apiUrlClose = baseUrl + "/apps/close";
@@ -6,6 +6,7 @@ var userid = null;
 var storage = chrome.storage.local;
 var tabDomains = {}; // maps tab ids to URLs
 var activeDomains = {}; // domains that are open already
+var whitelist = {};
 
 $(document).ready(function() {
   init();
@@ -17,6 +18,7 @@ function init() {
   //printChromeStorage();
   checkDirtyClose();
   storage.set({"activeDomains": activeDomains});
+  getWhitelist();
 }
 
 //==================
@@ -82,10 +84,12 @@ function loadUserId() {
 function processUrl(tabId, url) {
   var domain = getGeneralDomain($.url(url).attr("host"));
   // If user opened chrome://*, ignore and return
+  /*
   var excludedDomains = ["chrome", "extensions", "devtools"];
   if (excludedDomains.indexOf(domain) != -1) {
     return false;
   }
+  */
   var oldDomain = tabDomains[tabId];
 
   // if new tab
@@ -112,7 +116,7 @@ function processUrl(tabId, url) {
 function incrementDomainCount(domain) {
   if (!(domain in activeDomains)) {
     activeDomains[domain] = {"count": 0};
-    if (userid) {
+    if (userid && isInWhitelist(domain)) {
       postToOpen(domain);
     }
   }
@@ -123,10 +127,11 @@ function incrementDomainCount(domain) {
 
 function decrementDomainCount(domain) {
   // If last tab for that domain, delete from active domains
-  if (activeDomains[domain]["count"] == 1) {
+  if (domain in activeDomains && activeDomains[domain]["count"] == 1) {
     var appId = activeDomains[domain]["appId"];
     delete activeDomains[domain];
-    if (userid) {
+    console.log("No more tabs open for " + domain);
+    if (userid && isInWhitelist(domain)) {
       postToClose(domain, appId, getCurrentTime());
     }
   }
@@ -154,6 +159,31 @@ function getCategory(domain) {
     return "entertainment";
   }
 }
+
+function getWhitelist() {
+  whitelist = {"twitter.com": true,
+                "facebook.com": true,
+                "google.com": true,
+                "tumblr.com": true,
+                "pinterest.com": true,
+                "youtube.com": true,
+                "linkedin.com": true,
+                "myspace.com": true,
+                "vimeo.com": true,
+                "blogger.com": true,
+                "pandora.com": true,
+                "spotify.com": true,
+                "github.com": true,
+                "stackoverflow.com": true,
+                "ycombinator.com": true,
+                "reddit.com": true,
+                "mint.com": true,
+              };
+}
+
+function isInWhitelist(domain) {
+  return domain in whitelist;
+};
 
 //=======================
 // Request Functions
@@ -196,6 +226,12 @@ function postToOpen(domain) {
 function getGeneralDomain(domain) {
   if (domain.indexOf("chrome://") !== -1) {
     return "chrome";
+  }
+
+  // special case for mail.google.com
+  if (domain.indexOf("mail.google.com") !== -1) {
+    
+    return "mail.google.com";
   }
 
   var firstIndex = domain.indexOf(".");
@@ -243,6 +279,8 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
   var closedDomain = tabDomains[tabId];
-  delete tabDomains[tabId];
-  decrementDomainCount(closedDomain);
+  if (tabId in tabDomains) {
+    delete tabDomains[tabId];
+    decrementDomainCount(closedDomain);
+  }
 });

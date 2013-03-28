@@ -23,14 +23,24 @@ exports.json_all = (req, res) ->
 exports.open = (req, res) ->
   # res.render "hi"
   console.log req.body
-  Application.findOneAndUpdate({ userid: req.body.userid, url: req.body.url},
-  {$push: {open: req.body.open_date}, $set: {category: req.body.category, userid: req.body.userid, url: req.body.url, img: req.body.img_url}}, {upsert: true},
-      (err, results) ->
-        console.log('open updated')
-        console.log(results)
-        console.log(err)
-        if err then res.send(error: "Could not update database: App Open")
-        res.send({appid: results.id})
+  Application.findOneAndUpdate(
+    { userid: req.body.userid, url: req.body.url },
+    {
+      $push: {open: req.body.open_date}, 
+      $set: {
+              category: req.body.category, 
+              userid: req.body.userid, 
+              url: req.body.url, 
+              img: req.body.img_url
+            }
+    }, 
+    {upsert: true},
+    (err, results) ->
+      console.log('open updated')
+      console.log(results)
+      console.log(err)
+      if err then res.send(error: "Could not update database: App Open")
+      res.send({appid: results.id})
   )
 
 ###
@@ -62,6 +72,22 @@ exports.close = (req, res) ->
 
   )
 
+###
+# /apps/delete
+# appid 
+###
+exports.delete = (req, res) ->
+  app_id = req.body.appid
+  Application.remove({_id: app_id}, (err, result) ->
+    console.log result 
+    if err
+      res.send(error: err)
+    else if not result
+      console.log "not result"
+      res.send(error: "Could not find any application with id: " + app_id)
+    else
+      res.send(success: result)
+  )
 
 ###
 # testing purposes only
