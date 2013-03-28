@@ -1,5 +1,5 @@
 $(function(){
-    var window_width = $(window).width() - 50,
+    var window_width = $(window).width() - 30,
         window_height = $(window).height() - 50, // TODO: subtract size of menubar
         image_width = [], // image widths of the apps
         image_height = [],
@@ -11,41 +11,45 @@ $(function(){
         cluster_apps = {},
         pad = 10, // padding for boundary circle + app circles
         max_apps = -1; // max number of apps that exists in user's categories
-        total_apps = 0; // total number of apps this user has
         num_categories = 0,
-        groups = 0,
         nodes = {},
-        radius = d3.scale.sqrt().range([0, window_height/2]);
+        force = 0,
+        collision_padding = 4; // padding for collisions
 
     var svg = d3.select("#circles")
                 .append("svg")
                 .attr("width", window_width)
                 .attr("height", window_height),
         defs = svg.append('defs');
-    
+
+    // use json data to create dataset and groups
     $.getJSON("usage_data.json", function(json) {
         var dataset = parse_data(json);
         num_categories = dataset.length;
-        
+
         nodes = dataset;
-        var force = d3.layout.force()
+
+        for (var i = 0; i < dataset.length; i++) {
+            if (dataset[i].apps.length > max_apps)
+                max_apps = dataset[i].apps.length;
+        }
+
+        force = d3.layout.force()
             .size([window_width, window_height])
             .nodes(nodes)
-            .gravity(0)
-            .charge(0)
+            .alpha(0.01)
+            .charge(0) // charge is node-node attraction/repulsion
+            .gravity(0) // gravity -> move to center
+            .friction(0.3) // lower so doesn't bounce too much off boundary
             .on("tick", tick)
             .start();
 
         // groups contain category information
-        groups = svg.selectAll("g")
+        var groups = svg.selectAll("g")
             .data(nodes)
             .enter()
             .append("g")
             .attr("id", function(x){
-                // add all the positions first
-                if (x.apps.length > max_apps)
-                    max_apps = x.apps.length;
-                total_apps += x.apps.length;
                 return x.id;
             })
             .attr("transform", function(x, i) {
@@ -59,10 +63,29 @@ $(function(){
                 // cap it so it's not terribly small
                 if (x.r < 50)
                     x.r = 50;
+
+                // x.r is unchanging radius, x.radius changes upon mouseenter/leave
                 x.radius = x.r;
                 image_width[i] = image_height[i] = 0.8*x.r;
 
+                // force layout will automatically choose x/y
                 return "translate(" + [x.x, x.y] + ")";
+            })
+            .on("mouseenter", function(x, i){
+                  // category selected
+                if (!selected_category || selected_category != x.id) {
+                    selected_category = x.id;
+                    if (!clicked_category ||
+                        (clicked_category != selected_category)) {
+                        select_new_cluster(x, i);
+                    }
+                }          
+            })
+            .on("mouseleave", function(x){
+                if (clicked_category != selected_category) {
+                    deselect_old_cluster(x, selected_category);
+                    selected_category = "";
+                }
             })
             .on("mousedown", function(x){
                 // make sure double click doesn't contract
@@ -70,33 +93,6 @@ $(function(){
                     // deselect any previously clicked ones
                     deselect_old_cluster(x, clicked_category);
                     clicked_category = x.id;
-                }
-                // TODO: move so focuses in center?
-            })
-            .on("mouseover", function(x, i){
-                // only has effect if no category selected, or different
-                // category selected
-                if (!selected_category || selected_category != x.id) {
-                    selected_category = x.id;
-                    // note: issues when overlap
-                    // only select when hovering over parent (which has no class)
-                    var target = d3.event.relatedTarget.getAttribute("class");
-                    if (target == null) {
-                        if (!clicked_category ||
-                            (clicked_category != selected_category)) {
-                            select_new_cluster(x, i);
-                        }
-                    }
-                }
-            })
-            .on("mouseout", function(x){
-                // don't contract a clicked category
-                if (clicked_category != selected_category) {
-                    var target = d3.event.relatedTarget.getAttribute("class");
-                    if (target == null) {
-                        deselect_old_cluster(x, selected_category);
-                        selected_category = "";
-                    }
                 }
             });
 
@@ -132,47 +128,55 @@ $(function(){
             .style('fill', text_color);
     });
 
-    function tick(e) {
-        groups
-            .each(collide(.5))
+    // collision & tick from https://gist.github.com/GerHobbelt/3116713
+    function tick() {
+        var q = d3.geom.quadtree(nodes),
+            i = 0,
+            n = nodes.length;
+
+        //force.friction(0.9);
+        while (++i < n) {
+            q.visit(collide(nodes[i]));
+        }
+
+        // update the category positions based on collisions
+        svg.selectAll("g")
             .attr("transform", function(d) {
-                // constrain x and y here so doesn't go out of browser
-                var x = Math.max(d.r, Math.min(window_width - d.r, d.x));
-                var y = Math.max(d.r, Math.min(window_height - d.r, d.y));
-                //console.log(d.radius);
-                return "translate(" + [x, y] + ")";
+                // constrain x and y here so doesn't go out of window
+                d.x = Math.max(d.radius, Math.min(window_width - d.radius, d.x));
+                d.y = Math.max(d.radius, Math.min(window_height - d.radius, d.y));
+                
+                return "translate(" + [d.x, d.y] + ")";
             })
     }
 
     // Resolve collisions between nodes.
-    function collide(alpha) {
-        var quadtree = d3.geom.quadtree(nodes);
-        return function(d) {
-            var r = d.radius + radius.domain()[1] + pad,
-                nx1 = d.x - r,
-                nx2 = d.x + r,
-                ny1 = d.y - r,
-                ny2 = d.y + r;
-            quadtree.visit(function(quad, x1, y1, x2, y2) {
-                if (quad.point && (quad.point !== d)) {
-                    var x = d.x - quad.point.x,
-                        y = d.y - quad.point.y,
-                        l = Math.sqrt(x * x + y * y),
-                        r = d.radius + quad.point.radius + (d.color !== quad.point.color) * pad;
-                    if (l < r) {
-                      l = (l - r) / l * alpha;
-                      d.x -= x *= l;
-                      d.y -= y *= l;
-                      quad.point.x += x;
-                      quad.point.y += y;
-                    }
-              }
-              return x1 > nx2
-                  || x2 < nx1
-                  || y1 > ny2
-                  || y2 < ny1;
-          });
-      };
+    function collide(node) {
+        var r = node.radius + collision_padding;
+            nx1 = node.x - r,
+            nx2 = node.x + r,
+            ny1 = node.y - r,
+            ny2 = node.y + r;
+        return function(quad, x1, y1, x2, y2) {
+            if (quad.point && (quad.point !== node)) {
+                var x = node.x - quad.point.x,
+                    y = node.y - quad.point.y,
+                    l = Math.sqrt(x * x + y * y),
+                    r = node.radius + quad.point.radius;
+                // there's a collision if distance is less than r
+                if (l < r) {
+                    l = (l - r) / l * .1;
+                    node.x -= x *= l;
+                    node.y -= y *= l;
+                    quad.point.x += x;
+                    quad.point.y += y;
+                }
+            }
+            return x1 > nx2
+                || x2 < nx1
+                || y1 > ny2
+                || y2 < ny1;
+          };
     }
 
     function select_new_cluster(x, i) {
@@ -181,6 +185,8 @@ $(function(){
             selected_text = d3.select("#text_" + selected_category),
             r = x.r;
 
+        // pause the force for the radius to change
+        force.alpha(0);
         selected_circle.transition()
             .attr("r", function(x){
                 x.radius = r + image_width[i] + pad*2;
@@ -190,8 +196,9 @@ $(function(){
         // need to keep both selected so parent is the only unclassed
         selected_circle.classed("selected", true);
         selected_text.classed("selected", true);
+        force.resume();
 
-        var category = svg.selectAll("#" + x.id);
+        var category = svg.selectAll("#" + x.id); 
 
         // assign the created objects into the corresponding cluster_objects
         cluster_apps[selected_category] =
@@ -200,7 +207,7 @@ $(function(){
                 .enter()
                 .append("a")
                 .attr("data-category", x.name)
-                .attr("xlink:href", function(d, i){
+                .attr("xlink:href", function(d){
                     return d.url;
                 })
 
@@ -235,22 +242,18 @@ $(function(){
             .transition()
             .attr("width", function(d){
                 // make the app img about 80% size of category
-                return 0.8*x.r;
+                return image_width[i];
             })
             .attr("height", function(d){
-                return 0.8*x.r;
+                return image_height[i];
             })
 
         var hovers = svg.selectAll("a")
             .on("mouseover", function() {
                 show_stats();
-                d3.event.stopPropagation();
             })
             .on("mouseout", function() {
                 hide_stats();
-                // TODO: fix not that stable, if you move your mouse really fast
-                // it doesn't access other mouseout
-                d3.event.stopPropagation();
             });
     }
 
