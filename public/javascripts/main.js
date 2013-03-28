@@ -5,7 +5,8 @@ $('document').ready(function() {
 
     $('#timelines-toggle').click(function() {
         $('#visualizations').animate({
-            left: '-=' + $(window).width()
+            // we should probably have -1 * vis_number * width (to scale)
+            left: -$(window).width()
         }, 300, function() {
         });
     });
@@ -13,7 +14,7 @@ $('document').ready(function() {
     $('#clusters-toggle').click(function() {
       console.log('animate')
         $('#visualizations').animate({
-            left: '+=' + $(window).width()
+            left: 0
         }, 300, function() {
 
         });
