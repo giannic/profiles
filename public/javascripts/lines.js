@@ -175,9 +175,8 @@ function calculateRender(startValIndex, endValIndex) {
 
 
 /*
- * CONTROLS
+ * ANIMATION CONTROLS
  */
-//animation controls: step back
 function stepBackward(stepInterval) {
     var tMin = $("#timeline").rangeSlider("min");
     if (tMin > minRange) {
@@ -188,7 +187,6 @@ function stepBackward(stepInterval) {
     }
 }
 
-//animation controls: step forward
 function stepForward(stepInterval) {
     var tMax = $("#timeline").rangeSlider("max");
     var tMin = $("#timeline").rangeSlider("min");
@@ -201,19 +199,16 @@ function stepForward(stepInterval) {
     }
 }
 
-//animation controls: play
 function play(obj) {
     playTimeline = !playTimeline;
     if (playTimeline) {
         interval = setInterval(function(){stepForward(1)},10);
         obj.src = "img/controls_pause.gif";
     } else {
-        clearInterval(interval);
-        obj.src = "img/controls_play.gif";
+        pause(obj);
     }
 }
 
-//animation controls: pause
 function pause(obj) {
     clearInterval(interval);
     obj.src = "img/controls_play.gif";
