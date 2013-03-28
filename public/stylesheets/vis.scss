@@ -1,36 +1,13 @@
-body {
-    height: 100%;
-    widht: 200%;
-    overflow: hidden;
-}
-
-#wrapper {
-    position: relative;
-    height: 100%;
-    text-align: center;
-    font: {
-        family: Helvetica, sans-serif;
-        weight: 300;
-    }
-    color: #4d4d4d;
-}
-
-svg {
-    position: relative;
-}
-
 .vis {
   display: inline-block;
 }
+
 #visualizations {
   position: absolute;
 }
 
 #circles {
   position: relative;
-}
-
-#D3line {
 }
 
 #lines {
