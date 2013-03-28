@@ -1,15 +1,16 @@
 {{#extend "stylesheets"}}
 <!-- stylesheets -->
     <link rel="stylesheet" href="lib/jquery-ui/css/jquery-ui-1.8.10.custom.css">
-    <link rel="stylesheet" href="/stylesheets/styles.css" />
     <link rel="stylesheet" href="/stylesheets/default.css" />
     <link rel="stylesheet" href="stylesheets/slider.css" />
+    <link rel="stylesheet" href="/stylesheets/vis.css" />
     <link rel="stylesheet" href="stylesheets/forms.css" />
 {{/extend}}
 
 {{#extend "javascripts"}}
     <script type="text/javascript" src="lib/jquery-ui/js/jquery-ui-1.8.16.custom.min.js"></script>
     <script type="text/javascript" src="lib/jQRangeSlider-min.js"></script>
+
     <!-- home made -->
     <script type="text/javascript" src="javascripts/config.js"></script>
     <script type="text/javascript" src="javascripts/Cluster.js"></script>
@@ -19,17 +20,20 @@
 {{/extend}}
 
 <div id="wrapper">
-  <div id="header">
-      <a class="title" href="#">{{{title}}}</a>
+    <div id="header">
+        <a class="title" href="#">{{{title}}}</a>
 
-      <nav class="type-nav">
-        <ul>
-        <li><a href="#">all</a></li> |
-        <li><a id="clusters-toggle" href="#">clusters</a></li> |
-        <li><a id="timelines-toggle" href="#">timelines</a></li> |
-        <li><a id="add-account-toggle" href="#">ADD APP</a></li>
-      </nav>
-  </div>
+        <nav class="type-nav">
+            <ul>
+                <li><a href="#">all</a></li> |
+                <li><a id="clusters-toggle" href="#">clusters</a></li> |
+                <li><a id="timelines-toggle" href="#">timelines</a></li> |
+                <li><a id="add-account-toggle" href="#">ADD APP</a></li>
+
+            </ul>
+        </nav>
+    </div>
+
   <!--<div class="alert"> {{{msg}}} </div>-->
 
   <!--
@@ -45,40 +49,44 @@
   </div>
   -->
 
-  <div id="visualizations">
-    <div id="circles" class="vis">
+    <div id="visualizations">
+        <div id="circles" class="vis"></div>
 
+        <div id="lines" class="vis">
+            <div id="D3line" class="vis"></div>
+            <div id="timeline_panel">
+                <div id="timeline"></div>
+                <p id="timeline_details">
+                    <span id="timeline_date">Jan 2, 2013 &bull;</span>
+                    <span id="timeline_time">4:00 pm</span>
+
+                    <input id="timeline_step_back"
+                           class="timeline_controls"
+                           type="image"
+                           src="img/controls_backward.gif"
+                           name="image"
+                           width="31"
+                           height="20">
+
+                    <input id="timeline_play_pause"
+                           class="timeline_controls"
+                           type="image"
+                           src="img/controls_play.gif"
+                           name="image"
+                           width="31"
+                           height="20">
+
+                    <input id="timeline_step_forward"
+                           class="timeline_controls"
+                           type="image"
+                           src="img/controls_forward.gif"
+                           name="image"
+                           width="31"
+                           height="20">
+                </p>
+            </div>
+        </div>
     </div>
-
-    <div id="lines" class="vis">
-      <div id="D3line" class="vis"></div>
-      <div id="timeline_panel">
-          <div id="timeline"></div>
-          <p id="timeline_details">
-              <span id="timeline_date">Jan 2, 2013 &bull;</span>
-              <span id="timeline_time">4:00 pm</span>
-
-              <input id="timeline_step_back"
-              class="timeline_controls"
-              type="image"
-              src="img/controls_backward.gif"
-              name="image" width="31" height="20">
-
-              <input id="timeline_play_pause"
-              class="timeline_controls"
-              type="image"
-              src="img/controls_play.gif"
-              name="image" width="31" height="20">
-
-              <input id="timeline_step_forward"
-              class="timeline_controls"
-              type="image"
-              src="img/controls_forward.gif"
-              name="image" width="31" height="20">
-          </p>
-      </div>
-    </div>
-  </div>
     <div id="stats">
         Sample Service <br/>
         Username: Hello <br/>
