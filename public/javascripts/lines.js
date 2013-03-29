@@ -10,7 +10,7 @@ var numberOfLines,
 $(document).ready(function() {
     //get the JSON file
     $.ajax({
-        url: 'public/javascripts/usage_data.json',
+        url: 'usage_data.json',
         dataType: 'json',
     error: function(err) {
         console.log(err)
@@ -156,12 +156,9 @@ function setUpAppSelection(){
 
       var stage = new Kinetic.Stage({
         container: 'container',
-        x: 0,
-        y:0,
-        width: 50*appArray.length,
-        height: 20
+        width: 25*appArray.length,
+        height: 25
       });
-
       var layer = new Kinetic.Layer();
 
       boxes = [];
@@ -207,6 +204,7 @@ function setUpAppSelection(){
         layer.add(box);
         })();
     }
+
       // add the layer to the stage
       stage.add(layer);    
 }
