@@ -1,5 +1,6 @@
 root = typeof exports !== "undefined" && exports !== null ? exports : this;
 
+// GENERATES GRID 
 (function(){
 
   // backbone globals setup
@@ -28,7 +29,7 @@ root = typeof exports !== "undefined" && exports !== null ? exports : this;
         // root.
 
         // append the grid to body
-        $('body').append(new app.views.GridView({collection: app.applications}).render().el);
+        $('#visualizations').prepend(new app.views.GridView({collection: app.applications}).render().el);
       }
     });
 

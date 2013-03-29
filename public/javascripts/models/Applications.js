@@ -38,7 +38,6 @@ root.app.collections.Applications = Backbone.Collection.extend({
     return this.last().get('order') + 1;
   },
   comparator: function(model) {
-    console.log(model.get(this.by).length);
     // number of times opened
     
     return -model.get(this.by).length;

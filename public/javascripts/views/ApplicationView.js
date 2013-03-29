@@ -26,7 +26,6 @@ root.app.views.ApplicationView = Backbone.View.extend({
   },
 
   initialize: function(data) {
-    console.log(this.model.attributes);
     this.width = Math.floor(data.width) - 2 * this.margin;
     this.height = Math.floor(data.height) - 2 * this.margin;
     this.$el.css('margin', this.margin);

@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="stylesheets/slider.css" />
     <link rel="stylesheet" href="/stylesheets/vis.css" />
     <link rel="stylesheet" href="stylesheets/forms.css" />
+    <link rel="stylesheet" href="/stylesheets/grid.css">
 {{/extend}}
 
 {{#extend "javascripts"}}
@@ -17,6 +18,12 @@
     <script type="text/javascript" src="javascripts/clusters.js"></script>
     <script type="text/javascript" src="javascripts/lines.js"></script>
     <script type="text/javascript" src="javascripts/main.js"></script>
+    <script type="text/javascript" src="javascripts/scripts.js"></script>
+    <script type="text/javascript" src="javascripts/models/Applications.js"></script>
+    <script type="text/javascript" src="javascripts/templates/ApplicationTemplates.js"></script>
+    <script type="text/javascript" src="javascripts/views/ApplicationView.js"></script>
+    <script type="text/javascript" src="javascripts/views/GridView.js"></script>
+    <script type="text/javascript" src="javascripts/grid.js"></script>
 {{/extend}}
 
 <div id="wrapper">
@@ -53,7 +60,7 @@
         <div id="circles" class="vis"></div>
 
         <div id="lines" class="vis">
-            <div id="D3line" class="vis"></div>
+            <div id="D3line"></div>
             <div id="timeline_panel">
                 <div id="timeline"></div>
                 <p id="timeline_details">

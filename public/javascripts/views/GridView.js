@@ -4,6 +4,7 @@ root.app.views.GridView = Backbone.View.extend({
   COLUMNS: 6,  // the number items in each row
   ROW_MULTIPLIER: 3/4,  // the size decrease with each row
   id: 'grid',
+  className: 'vis',
   // default width of 1024
   width: 1024,
   
@@ -20,12 +21,11 @@ root.app.views.GridView = Backbone.View.extend({
 
   initialize: function() {
     // set the width to the width of body
-    this.width = 1024;
-    
+    this.width = $(window).width();
   },
 
   render: function() {
-    console.log(this.collection)
+    this.$el.width(this.width);
     this.$el.html(this.template(this.collection.toJSON()));
     // this.$el.toggleClass('done', this.model.get('done'));
     // this.input = this.$('.edit');
