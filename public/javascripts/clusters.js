@@ -14,7 +14,7 @@ $(function(){
         num_categories = 0,
         nodes = {},
         force = 0,
-        collision_padding = 4; // padding for collisions
+        collision_padding = 15; // padding for collisions
 
     var svg = d3.select("#circles")
                 .append("svg")
@@ -37,7 +37,7 @@ $(function(){
         force = d3.layout.force()
             .size([window_width, window_height])
             .nodes(nodes)
-            .alpha(0.01)
+            .alpha(0.1)
             .charge(0) // charge is node-node attraction/repulsion
             .gravity(0) // gravity -> move to center
             .friction(0.3) // lower so doesn't bounce too much off boundary
@@ -67,7 +67,7 @@ $(function(){
                 // x.r is unchanging radius, x.radius changes upon mouseenter/leave
                 x.radius = x.r;
                 image_width[i] = image_height[i] = 0.8*x.r;
-
+                
                 // force layout will automatically choose x/y
                 return "translate(" + [x.x, x.y] + ")";
             })
@@ -129,7 +129,7 @@ $(function(){
     });
 
     // collision & tick from https://gist.github.com/GerHobbelt/3116713
-    function tick() {
+    function tick(e) {
         var q = d3.geom.quadtree(nodes),
             i = 0,
             n = nodes.length;
@@ -141,13 +141,55 @@ $(function(){
 
         // update the category positions based on collisions
         svg.selectAll("g")
+            .each(cluster(10 * e.alpha * e.alpha))
             .attr("transform", function(d) {
-                // constrain x and y here so doesn't go out of window
-                d.x = Math.max(d.radius, Math.min(window_width - d.radius, d.x));
-                d.y = Math.max(d.radius, Math.min(window_height - d.radius, d.y));
-                
+                if (d.id != selected_category) {
+                    // constrain x and y here so doesn't go out of window
+                    d.x = Math.max(d.radius, Math.min(window_width - d.radius, d.x));
+                    d.y = Math.max(d.radius, Math.min(window_height - d.radius, d.y));
+                }
                 return "translate(" + [d.x, d.y] + ")";
             })
+    }
+
+    // Move d to be adjacent to the cluster node.
+    function cluster(alpha) {
+      var max = {};
+
+      // Find the largest node for each cluster.
+      nodes.forEach(function(d) {
+        if (!(d.color in max) || (d.radius > max[d.color].radius)) {
+          max[d.color] = d;
+        }
+      });
+
+      return function(d) {
+        var node = max[d.color],
+            l,
+            r,
+            x,
+            y,
+            k = 1,
+            i = -1;
+
+        // For cluster nodes, apply custom gravity.
+        if (node == d) {
+          node = {x: window_width / 2, y: window_height / 2, radius: -d.radius};
+          k = .1 * Math.sqrt(d.radius);
+        }
+
+        x = d.x - node.x;
+        y = d.y - node.y;
+        l = Math.sqrt(x * x + y * y);
+        r = d.radius + node.radius;
+        if (l != r) {
+          l = (l - r) / l * alpha * k;
+          d.x -= x *= l;
+          d.y -= y *= l;
+          node.x += x;
+          node.y += y;
+        }
+      };
     }
 
     // Resolve collisions between nodes.
@@ -162,7 +204,7 @@ $(function(){
                 var x = node.x - quad.point.x,
                     y = node.y - quad.point.y,
                     l = Math.sqrt(x * x + y * y),
-                    r = node.radius + quad.point.radius;
+                    r = node.radius + quad.point.radius + collision_padding;
                 // there's a collision if distance is less than r
                 if (l < r) {
                     l = (l - r) / l * .1;
@@ -249,11 +291,18 @@ $(function(){
             })
 
         var hovers = svg.selectAll("a")
-            .on("mouseover", function() {
+            .on("mouseenter", function() {
                 show_stats();
+                d3.event.stopPropagation();
             })
-            .on("mouseout", function() {
+            .on("mouseleave", function() {
                 hide_stats();
+                var check_x = d3.event.pageX - x.x;
+                var check_y = d3.event.pageY - x.y;
+                var dist = Math.sqrt(check_x*check_x + check_y*check_y);
+                var r2 = x.r + image_width[i] + pad*2;
+                if (dist < r2)
+                    d3.event.stopPropagation();
             });
     }
 
