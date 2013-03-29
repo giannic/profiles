@@ -30,6 +30,7 @@ root = typeof exports !== "undefined" && exports !== null ? exports : this;
 
         // append the grid to body
         $('#visualizations').prepend(new app.views.GridView({collection: app.applications}).render().el);
+        $('#more-apps-box').prepend(new app.views.GridView({collection: app.applications}).render().el);
       }
     });
 
