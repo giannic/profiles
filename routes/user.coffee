@@ -31,7 +31,7 @@ exports.register_post = (req, res) ->
   new User(req.body).save (err) ->
     if err
       # if webkit
-      if req.headers.origin 
+      if req.headers.origin
         if req.headers.origin.indexOf("chrome-extension") == -1
           # if not chrome extension
           req.session.messages.push err
@@ -49,7 +49,7 @@ exports.register_post = (req, res) ->
       # succeeded!
       console.log 'yeaaah registered bro'
       # if webkit
-      if req.headers.origin 
+      if req.headers.origin
         if req.headers.origin.indexOf("chrome-extension") == -1
           # if not chrome extension
           req.session.messages.push 'Successfully registered! Please login.'
@@ -96,7 +96,7 @@ exports.login_post = (req, res) ->
           console.log("sending userid");
           res.send {userid: result._id}
       # if it's an inferior browser
-      else 
+      else
         req.session.messages.push 'Successfully logged in!'
         res.redirect "/"
       # TODO: check if it's the chrome extension, if not, redirect
@@ -115,7 +115,6 @@ exports.login_post = (req, res) ->
       else
         req.session.messages.push 'Error: Username and passwords don\'t match'
         res.redirect "/login"
-
     console.log("end login function");
 
 
@@ -146,7 +145,7 @@ exports.view = (req, res) ->
 ###
 # /users/whitelist
 # pass in id
-# returns list of user's tracked apps 
+# returns list of user's tracked apps
 ###
 exports.whitelist = (req, res) ->
   user_id = req.params.id
@@ -159,7 +158,7 @@ exports.whitelist = (req, res) ->
 ###
 # /users/whitelist
 # pass in id
-# returns list of user's tracked apps 
+# returns list of user's tracked apps
 ###
 exports.reset_whitelist = (req, res) ->
   user_id = req.params.id
@@ -191,13 +190,13 @@ exports.reset_whitelist = (req, res) ->
 ###
 # /users/allow
 # accepts id, domain
-# adds domain to user's list of tracked apps 
+# adds domain to user's list of tracked apps
 ###
 exports.allow = (req, res) ->
   user_id = req.body.id
   domain = req.body.domain
 
-  User.findByIdAndUpdate(user_id, {$addToSet: { whitelist: domain }}, 
+  User.findByIdAndUpdate(user_id, {$addToSet: { whitelist: domain }},
     (err, result) ->
       if err
         res.send(error: err)
@@ -208,7 +207,7 @@ exports.allow = (req, res) ->
 ###
 # /users/allow
 # accepts id, domain
-# removes domain from user's list of tracked apps 
+# removes domain from user's list of tracked apps
 ###
 exports.disallow = (req, res) ->
   user_id = req.body.id
@@ -229,8 +228,8 @@ exports.delete_app = (req, res) ->
 
   Application.remove({userid: user_id, url: domain}, (err, result) ->
     console.log "remove function"
-    console.log user_id 
-    console.log domain 
+    console.log user_id
+    console.log domain
     #    if err
     #      res.send(error: err)
     #    else
@@ -262,7 +261,7 @@ exports.apps_json = (req, res) ->
 ###
 
 remove_from_whitelist = (user_id, domain, res) ->
-  User.findByIdAndUpdate(user_id, {$pull: { whitelist: domain }}, 
+  User.findByIdAndUpdate(user_id, {$pull: { whitelist: domain }},
     (err, result) ->
       if err
         res.send({error: err})
