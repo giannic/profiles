@@ -8,9 +8,9 @@
       $('#lines').width($(window).width() + 'px');
 
       $('#timelines-toggle').click(function() {
-          console.log("timelines");
-          console.log($('#visualizations').position().left);
-          console.log(-(VIS_COUNT - 1) * $(window).width());
+          // console.log("timelines");
+          // console.log($('#visualizations').position().left);
+          // console.log(-(VIS_COUNT - 1) * $(window).width());
           if(move_count < VIS_COUNT - 1) {
             move_count++;
             $('#visualizations').stop().animate({
@@ -26,8 +26,10 @@
         console.log('animate');
           if(move_count > 0) {
             move_count--;
+            console.log(move_count * $(window).width() + 'px');
+            console.log(move_count);
             $('#visualizations').stop().animate({
-                left: move_count * $(window).width() + 'px'
+                left: -move_count * $(window).width() + 'px'
             }, 300, function() {
             });
           }
