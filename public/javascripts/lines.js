@@ -4,7 +4,7 @@ var numberOfLines,
     startTime, endTime, difference,
     lineGraphWidth, lineGraphHeight, lineGraph,
     allTheLines, hsl, colorArray, appArray,
-    minRange, maxRange, interval,
+    minRange, maxRange, interval, boxes,
     playTimeline = false;
 
 $(document).ready(function() {
@@ -18,68 +18,61 @@ $(document).ready(function() {
     },
     success: function(data) {
         stats = data;
-        //console.log(stats["Youtube"]["category"]);
-
-        //app array stores the apps displayed
-        appArray = [];
-
-        //temp array stores all apps
-        var tempArray = [],
-            i = 0;
-        for (var key in stats) {
-            if (stats.hasOwnProperty(key)) {
-                tempArray[i] = key;
-                i++;
-            }
+    //app array stores the apps displayed
+    appArray = [];
+    var i = 0;
+    for (var key in stats) {
+        if (stats.hasOwnProperty(key)) {
+            appArray[i] = key;
+            i++;
         }
+    }
 
-        appArray[0] = tempArray[0];
-        appArray[1] = tempArray[1];
-        // appArray[2] = tempArray[2];
+    //instantiate values
+    numberOfLines = 0;
+    startTime = 0;
+    endTime = 0;
 
-        //instantiate values
-        numberOfLines = 0;
-        startTime = 0;
-        endTime = 0;
+    //store colors for each app
+    colorArray = [];
 
-        //store colors for each app
-        colorArray = [];
+    //initiate the variables
+    for (var i = 0; i < appArray.length; i++) {
+        var index = appArray[i];
+        var lengthA = stats[index]['open'].length;
+        var startTimeA = stats[index]['open'][0];
+        var endTimeA = stats[index]['close'][stats[index]['close'].length - 1];
 
-        //initiate the variables
-        var index, lengthA, startTimeA, endTimeA;
-        for (var i = 0; i < appArray.length; i++) {
-            index = appArray[i];
-            lengthA = stats[index]['open'].length;
-            startTimeA = stats[index]['open'][0];
-            endTimeA = stats[index]['close'][stats[index]['close'].length - 1];
-
-            if (lengthA > numberOfLines) {
-                numberOfLines = lengthA;
-            }
-            if (startTimeA > startTime) {
-                startTime = startTimeA;
-            }
-            if (endTimeA > endTime) {
-                endTime = endTimeA;
-            }
-            colorArray[i] = i * (360 / appArray.length);
+        if (lengthA > numberOfLines) {
+            numberOfLines = lengthA;
         }
+        if (startTimeA > startTime) {
+            startTime = startTimeA;
+        }
+        if (endTimeA > endTime) {
+            endTime = endTimeA;
+        }
+        colorArray[i] = i * (360 / appArray.length);
+    }
 
-        // put the stage dimensions here
-        lineGraphWidth = 1000;
-        lineGraphHeight = 600;
+    // put the stage dimensions here
+    lineGraphWidth = 1000;
+    lineGraphHeight = 600;
 
-        // difference in times
-        difference = endTime - startTime;
+    // difference in times
+    difference = endTime - startTime;
 
-        // array to store the lines
-        allTheLines = [];
+    $("#timeline").on("valuesChanged", function(e, data) {
+        calculateRender(Math.round(data.values.min), Math.round(data.values.max), 0);
+    });
 
-        // Select the DIV container "D3line" and add an SVG element to it
-        lineGraph = d3.select("#D3line").append("svg:svg").attr("width", lineGraphWidth).attr("height", lineGraphHeight);
+    // Select the DIV container "D3line" and add an SVG element to it
+    lineGraph = d3.select("#D3line").append("svg:svg").attr("width", lineGraphWidth).attr("height", lineGraphHeight);
 
-        //initial loading of lines
-        calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"));
+    //initial loading of lines
+    calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+
+    setUpAppSelection();
     }
     });
 
@@ -119,7 +112,7 @@ $(document).ready(function() {
 
 //generates all the lines on each loop : OPTIMIZE
 function generateLines(currArray, index, diff) {
-    var currentLine, i, x;
+    var currentLine, i;
     for (i = 0; i < currArray.length; i++) {
         currentLine = lineGraph.append("svg:line")
                                .attr("x1", currArray[i])
@@ -128,50 +121,109 @@ function generateLines(currArray, index, diff) {
                                .attr("y2", lineGraphHeight)
                                .attr("name", "line"+i)
                                .style("stroke-width", 2)
-                               .style("stroke", "hsl("+ colorArray[index] +",50%, 50%)")
-                               .on("mouseover", function() {
-                                    show_stats();
-                               })
-                               .on("mouseout", function() {
-                                    hide_stats();
-                               });
-        x = (closeArray[i] - openArray[i])/diff + .5;
-        changeColor(currentLine, x);
-        allTheLines[i] = currentLine;
+                               .style("stroke", "hsl("+ colorArray[index] +",50%, 50%)");
+        var x = (closeArray[i] - openArray[i])/diff + .5;
+            currentLine.style("stroke-opacity", x);
     }
-}
-
-//changes the opacity
-function changeColor(line, opacityOfLine) {
-    line.style("stroke-opacity", opacityOfLine);
 }
 
 //calculates the render array
-function calculateRender(startValIndex, endValIndex) {
-    var leftBarTime, rightBarTime, diff,
-        index;
-
+function calculateRender(startValIndex, endValIndex, first) {
     d3.selectAll("line").remove();
-    allTheLines =  [];
 
-    leftBarTime = startTime + (difference*startValIndex)/(100);
-    rightBarTime = startTime + (difference*endValIndex)/(100);
-    diff = rightBarTime - leftBarTime;
+    var leftBarTime = startTime + (difference*startValIndex)/(100);
+    var rightBarTime = startTime + (difference*endValIndex)/(100);
+    var diff = rightBarTime - leftBarTime; 
 
     for(var k = 0; k < appArray.length; k++){
-        var index = appArray[k];
-        openArray = stats[index]['open'];
-        closeArray = stats[index]['close'];
+    var index = appArray[k];
+    openArray = stats[index]['open']; 
+    closeArray = stats[index]['close'];
+    var track = 0;
 
-        renderArray = [];
-        for (var i = 0; i < openArray.length; i++) {
-            if ((openArray[i] > leftBarTime) && (closeArray[i] < rightBarTime)) {
-               renderArray[i] = ((openArray[i]-leftBarTime)/(diff/lineGraphWidth));
-            }
-        }
-        generateLines(renderArray, k, diff);
+    renderArray = [];
+    for (var i = 0; i < openArray.length; i++) {
+      if((openArray[i] > leftBarTime) && (closeArray[i] < rightBarTime)){
+        renderArray[track] = ((openArray[i]-leftBarTime)/(diff/lineGraphWidth));
+        track++;
+      }
     }
+        generateLines(renderArray, k, diff);
+  }
 }
+
+function setUpAppSelection(){
+
+      var stage = new Kinetic.Stage({
+        container: 'container',
+        width: 25*appArray.length,
+        height: 25
+      });
+      var layer = new Kinetic.Layer();
+
+      boxes = [];
+
+    for(var k = 0; k< appArray.length; k++){
+        // anonymous function to induce scope
+        (function() {
+        colortrack = colorArray[k];
+        var colorset = "hsl(" + colortrack + ",50%,50%)";
+        var box = new Kinetic.Rect({
+        x: k * 25,
+        y: 0,
+        width: 20,
+        height: 20,
+        id: k,
+        name: appArray[k],
+        fill: colorset,
+        });
+
+        boxes[k] = box;
+
+      box.on('mousedown', function() {
+        if(this.getOpacity() == 1.0){
+            this.setOpacity(0.3);
+        }
+        else{
+            this.setOpacity(1.0);
+        }
+        printApp(this.getName());
+        layer.draw();
+      });
+
+      box.on('mouseover', function() {
+        printApp(this.getName());
+        layer.draw();
+      });
+
+      box.on('mouseout', function() {
+        clearApp();
+        layer.draw();
+      });
+
+        layer.add(box);
+        })();
+    }
+
+      // add the layer to the stage
+      stage.add(layer);    
+}
+
+function clearApp(){
+  var fieldNameElement = document.getElementById("appname");
+  while(fieldNameElement.childNodes.length >= 1) {
+    fieldNameElement.removeChild(fieldNameElement.firstChild);
+  }
+}
+
+function printApp(d){
+  console.log(d);
+  var fieldNameElement = document.getElementById("appname");
+  while(fieldNameElement.childNodes.length >= 1) {
+    fieldNameElement.removeChild(fieldNameElement.firstChild);
+  }
+  fieldNameElement.appendChild(fieldNameElement.ownerDocument.createTextNode(d));
+  }
 
 
 /*

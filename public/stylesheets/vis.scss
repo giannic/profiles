@@ -1,5 +1,7 @@
 .vis {
-  display: inline-block;
+  // display: inline-block;
+  vertical-align: top;
+  float:left;
 }
 
 #visualizations {
@@ -13,6 +15,8 @@
 #lines {
   top: -100px;
   position: relative;
+  margin: 0 auto;
+
 }
 
 #timeline_panel {
@@ -32,6 +36,15 @@
         size: 0.8em;
         variant: small-caps;
     }
+
+#app_details {
+    margin: 0 auto;
+    height: 25px;
+    font: {
+        size: 0.8em;
+        variant: small-caps;
+    }
+}
 
     span {
         display: inline-block;

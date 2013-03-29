@@ -1,5 +1,7 @@
 root.app.views.ApplicationView = Backbone.View.extend({
 
+  fsize: 16,
+  text_color: 'rgba(120,174,255,1.0)',
   stroke_color: 'rgba(201, 219, 242, 0.8)',
   cluster_fill: 'rgba(200, 220, 255, 0.4)',
   tagName:  'div',
@@ -24,7 +26,6 @@ root.app.views.ApplicationView = Backbone.View.extend({
   },
 
   initialize: function(data) {
-    console.log(this.model.attributes);
     this.width = Math.floor(data.width) - 2 * this.margin;
     this.height = Math.floor(data.height) - 2 * this.margin;
     this.$el.css('margin', this.margin);
@@ -34,6 +35,7 @@ root.app.views.ApplicationView = Backbone.View.extend({
   },
 
   render: function() {
+    var that = this;
     this.$el.html('');
     // should be square (circles)
     this.$el.width(this.width);
@@ -45,21 +47,37 @@ root.app.views.ApplicationView = Backbone.View.extend({
       .style('margin', 'auto'); // set the height
 
     group = svg.append('a')
-      .attr("xlink:href", 'http://' + this.model.get('url'));
-
-    image = group.append('image')
-            .attr('xlink:href', this.model.get('img'));
+      .attr("xlink:href", 'http://' + this.model.get('url'))
+      .attr('transform', function(){
+        return 'translate(' + [that.cx, that.cy] + ')';
+      });
+    // image = group.append('image')
+    //         .attr('xlink:href', this.model.get('img'));
       
     circle = group.append('circle')
       .attr('r', this.r)
-      .attr('cx', this.cx)
-      .attr('cy', this.cy)
       .attr('width', this.width)
       .attr('height', this.height)
       
       .style('stroke', this.stroke_color)
       .style('fill', this.cluster_fill);
-    
+ 
+    group.append("text")
+         .text(this.model.get('url'))
+         .attr({
+           "alignment-baseline": "middle",
+           "text-anchor": "middle",
+           "font-family": "Helvetica"
+         })
+        .attr("font-size", function(){
+                             if (0.8*that.r < 12)
+                               return 8;
+                             else 
+                               return 0.16*that.r;
+                           })
+        .style('fill', this.text_color);
+
+   
     return this;
   }
 

@@ -1,32 +1,37 @@
-$('document').ready(function() {
-    $('#visualizations').width(2*$(window).width() + 5 + 'px');
-    $('#circles').width($(window).width() + 'px');
-    $('#lines').width($(window).width() + 'px');
+(function(){
+  $('document').ready(function() {
+      var VIS_COUNT = 3; // $('.vis').length;
 
-    $('#timelines-toggle').click(function() {
-        $('#visualizations').animate({
-            // we should probably have -1 * vis_number * width (to scale)
-            left: -$(window).width()
-        }, 300, function() {
-        });
-    });
+      $('#visualizations').width(VIS_COUNT*$(window).width() + 5 + 'px');
+      $('#circles').width($(window).width() + 'px');
+      $('#lines').width($(window).width() + 'px');
 
-    $('#clusters-toggle').click(function() {
-        $('#visualizations').animate({
-            left: 0
-        }, 300, function() {
+      $('#grid-toggle').click(function() {
+          $('#visualizations').stop().animate({
+              // we should probably have -1 * vis_number * width (to scale)
+              left: 0
+          }, 300);
+      });
 
-        });
-    });
+      $('#clusters-toggle').click(function() {
+          $('#visualizations').stop().animate({
+              left: -1 * $(window).width() + 'px'
+          }, 300);
+      });
 
-    $('#add-account-toggle').click(function() {
-        console.log("adding account");
-        $("#add-app-box").toggle();
-    });
+      $('#timelines-toggle').click(function() {
+          $('#visualizations').stop().animate({
+              left: -2 * $(window).width() + 'px'
+          }, 300);
+      });
 
-    $('.close-more-apps').click(function() {
-        $("#more-apps-box").toggle();
-    });
+      $('#add-account-toggle').click(function() {
+          $("#add-app-box").toggle();
+      });
+
+      $('.close-more-apps').click(function() {
+          $("#more-apps-box").toggle();
+      });
 
     // MOUSE ENTER MOUSE LEAVE SUPPORT FROM https://gist.github.com/shawnbot/4166283
     // get a reference to the d3.selection prototype,
@@ -34,41 +39,42 @@ $('document').ready(function() {
     var d3_selectionPrototype = d3.selection.prototype,
         d3_on = d3_selectionPrototype.on;
 
-    // our shims are organized by event:
-    // "desired-event": ["shimmed-event", wrapperFunction]
-    var shims = {
-        "mouseenter": ["mouseover", relatedTarget],
-        "mouseleave": ["mouseout", relatedTarget]
-    };
+      // our shims are organized by event:
+      // "desired-event": ["shimmed-event", wrapperFunction]
+      var shims = {
+      "mouseenter": ["mouseover", relatedTarget],
+      "mouseleave": ["mouseout", relatedTarget]
+      };
 
-    // rewrite the d3.selection.on function to shim the events with wrapped
-    // callbacks
-    d3_selectionPrototype.on = function(evt, callback, useCapture) {
-        var bits = evt.split("."),
-            type = bits.shift(),
-            shim = shims[type];
-        if (shim) {
-            evt = [shim[0], bits].join(".");
-            callback = shim[1].call(null, callback);
-            return d3_on.call(this, evt, callback, useCapture);
-        } else {
-            return d3_on.apply(this, arguments);
-        }
-    };
+      // rewrite the d3.selection.on function to shim the events with wrapped
+      // callbacks
+      d3_selectionPrototype.on = function(evt, callback, useCapture) {
+      var bits = evt.split("."),
+          type = bits.shift(),
+          shim = shims[type];
+      if (shim) {
+          evt = [shim[0], bits].join(".");
+          callback = shim[1].call(null, callback);
+          return d3_on.call(this, evt, callback, useCapture);
+      } else {
+          return d3_on.apply(this, arguments);
+      } 
+      };
 
-    function relatedTarget(callback) {
-        return function() {
-            var related = d3.event.relatedTarget;
-            if (this === related || childOf(this, related)) {
-                return undefined;
-            }
-            return callback.apply(this, arguments);
-        };
-    }
+      function relatedTarget(callback) {
+      return function() {
+          var related = d3.event.relatedTarget;
+          if (this === related || childOf(this, related)) {
+              return undefined;
+          }
+          return callback.apply(this, arguments);
+      };
+      }
 
-    function childOf(p, c) {
-        if (p === c) return false;
-        while (c && c !== p) c = c.parentNode;
-        return c === p;
-    }
-});
+      function childOf(p, c) {
+          if (p === c) return false;
+          while (c && c !== p) c = c.parentNode;
+          return c === p;
+      }
+  });
+})()
