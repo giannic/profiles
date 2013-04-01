@@ -114,6 +114,26 @@ $(document).ready(function() {
     $("#timeline").on("valuesChanged", function(e, data) {
         calculateRender(Math.round(data.values.min), Math.round(data.values.max));
     });
+
+    var w = lineGraphWidth;
+    var h = 50;
+    var graph = d3.select("#timeline_test")
+    .append("svg")
+    .attr("width", w)
+    .attr("height", h);
+
+    var data = [3, 6, 2, 7, 5, 2, 1, 3, 8, 9, 2, 5, 9, 3, 6, 3, 6, 2, 7, 5, 2, 1, 3, 8, 9, 2, 5, 9, 2, 7, 5, 2, 1, 3, 8, 9, 2, 5, 9, 3, 6, 2, 7, 5, 1, 3, 8, 9, 2, 5, 9];
+
+    var x = d3.scale.linear().domain([0,10]).range([0, 200]);
+    var y = d3.scale.linear().domain([0,10]).range([0, 10]);
+    var line = d3.svg.line()
+      .x(function(d,i) { 
+        return x(i); 
+      })
+      .y(function(d) { 
+        return y(d); 
+      })
+      graph.append("svg:path").attr("d", line(data));
 });
 
 
