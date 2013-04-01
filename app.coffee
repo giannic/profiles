@@ -62,16 +62,27 @@ db.once 'open', ->
 # existing routes
 app.get "/", index.index
 app.get "/grid", index.grid
+
+# Users
 app.get "/users", user.list
 app.get "/users.json", user.json_all
 app.get "/users/:id.json", user.view
+app.get "/users/:id/reset_whitelist", user.reset_whitelist
+app.get "/users/:id/whitelist.json", user.whitelist
+app.post "/users/allow", user.allow
+app.post "/users/disallow", user.disallow
+app.post "/users/delete_app", user.delete_app
+app.get "/users/:id/apps.json", user.apps_json
 app.get "/register", user.register_get
 app.post "/register", user.register_post
 app.get "/login", user.login_get
 app.post "/login", user.login_post
+
+# Applications
 app.get "/apps.json", application.json_all
 app.post "/apps/open", application.open
 app.post "/apps/close", application.close
+app.post "/apps/delete", application.delete
 app.get "/apps/new", application.new_test  # just for testing
 app.get "/apps/:id.json", application.view
 

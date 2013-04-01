@@ -39,7 +39,7 @@ function checkDirtyClose() {
             if (!posixTime) {
               posixTime = getCurrentTime();
             }
-            postToClose(d, appId, posixTime);
+            //postToClose(d, appId, posixTime);
           }
         }
       }
@@ -230,6 +230,7 @@ function getGeneralDomain(domain) {
 
   // special case for mail.google.com
   if (domain.indexOf("mail.google.com") !== -1) {
+    
     return "mail.google.com";
   }
 
@@ -255,6 +256,7 @@ function printChromeStorage() {
 //====================
 
 chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
+  console.log("message listener");
   userid = message["userid"];
   storage.set({"userid": userid}, function() {
     console.log("Stored user id")

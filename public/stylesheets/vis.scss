@@ -1,27 +1,9 @@
-body {
-    height: 100%;
-    widht: 200%;
-    overflow: hidden;
-}
-
-#wrapper {
-    position: relative;
-    height: 100%;
-    text-align: center;
-    font: {
-        family: Helvetica, sans-serif;
-        weight: 300;
-    }
-    color: #4d4d4d;
-}
-
-svg {
-    position: relative;
-}
-
 .vis {
-  display: inline-block;
+  // display: inline-block;
+  vertical-align: top;
+  float:left;
 }
+
 #visualizations {
   position: absolute;
 }
@@ -30,12 +12,11 @@ svg {
   position: relative;
 }
 
-#D3line {
-}
-
 #lines {
   top: -100px;
   position: relative;
+  margin: 0 auto;
+
 }
 
 #timeline_panel {
@@ -55,6 +36,15 @@ svg {
         size: 0.8em;
         variant: small-caps;
     }
+
+#app_details {
+    margin: 0 auto;
+    height: 25px;
+    font: {
+        size: 0.8em;
+        variant: small-caps;
+    }
+}
 
     span {
         display: inline-block;
@@ -82,18 +72,3 @@ svg {
 #timeline_time {
     color: #A51515;
 }
-
-#stats {
-    display: none;
-    position: absolute;
-    width: 100px;
-    padding: 5px;
-    background-color: rgba(255,255,255,0.7);
-    border-style: solid;
-    border-color: black;
-    border-width: 1px;
-    font-family: Helvetica, sans-serif;
-    font-size: 10px;
-}
-
-

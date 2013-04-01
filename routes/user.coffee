@@ -25,27 +25,40 @@ exports.json_all = (req, res) ->
 # email, password
 ###
 exports.register_post = (req, res) ->
+  req.session.messages = req.session.messages or []
   # res.render "hi"
   console.log req.body
   new User(req.body).save (err) ->
     if err
-      if req.headers.origin.indexOf("chrome-extension") == -1
-        # if not chrome extension
-        req.session.messages.push err
-        res.redirect "/register",
-      else
-        res.send {error: err}
+      # if webkit
+      if req.headers.origin
+        if req.headers.origin.indexOf("chrome-extension") == -1
+          # if not chrome extension
+          req.session.messages.push err
+          res.redirect "/register",
+        else
+          res.send {error: err}
+      # else
+      req.session.messages.push err
+      res.redirect "/register",
+
+
 
       console.log 'Error in saving user'
     else
       # succeeded!
       console.log 'yeaaah registered bro'
-      if req.headers.origin.indexOf("chrome-extension") == -1
-        # if not chrome extension
-        req.session.messages.push 'Successfully registered! Please login.'
-        res.redirect "/login"
-      else
-        res.send {userid: result._id}
+      # if webkit
+      if req.headers.origin
+        if req.headers.origin.indexOf("chrome-extension") == -1
+          # if not chrome extension
+          req.session.messages.push 'Successfully registered! Please login.'
+          res.redirect "/login"
+        else
+          res.send {userid: result._id}
+      # else
+      req.session.messages.push 'Successfully registered! Please login.'
+      res.redirect "/login"
 
 
 
@@ -62,6 +75,8 @@ exports.register_get = (req, res) ->
 # Takes in a email, userid
 ###
 exports.login_post = (req, res) ->
+  console.log 'here are the headers'
+  console.log req.headers
   req.session.messages = req.session.messages or []
   # console.log req
   User.findOne email: req.body.email, (err, result) ->
@@ -71,22 +86,37 @@ exports.login_post = (req, res) ->
       console.log 'logged in!'
       console.log req.session.user_id
 
-      if req.headers.origin.indexOf("chrome-extension") == -1
-        # if not chrome extension
-        req.session.messages.push 'Successfully logged in!'
-        res.redirect "/",
+      # if it is webkit
+      if req.headers.origin
+        if req.headers.origin.indexOf("chrome-extension") == -1
+          # if not chrome extension
+          req.session.messages.push 'Successfully logged in!'
+          res.redirect "/",
+        else
+          console.log("sending userid");
+          res.send {userid: result._id}
+      # if it's an inferior browser
       else
-        res.send {userid: result._id}
+        req.session.messages.push 'Successfully logged in!'
+        res.redirect "/"
       # TODO: check if it's the chrome extension, if not, redirect
       # res.redirect '/'
     else
       console.log 'incorrect password'
-      if req.headers.origin.indexOf("chrome-extension") == -1
-        # if not chrome extension
+      console.log 'dying here'
+      if req.headers.origin
+        if req.headers.origin.indexOf("chrome-extension") == -1
+          console.log 'dying herei again'
+          # if not chrome extension
+          req.session.messages.push 'Error: Username and passwords don\'t match'
+          res.redirect "/login"
+        else
+          res.send {error: 'Incorrect password'}
+      else
         req.session.messages.push 'Error: Username and passwords don\'t match'
         res.redirect "/login"
-      else
-        res.send {error: 'Incorrect password'}
+    console.log("end login function");
+
 
 ###
 # /login
@@ -112,3 +142,129 @@ exports.view = (req, res) ->
     res.json(result)
   )
 
+###
+# /users/whitelist
+# pass in id
+# returns list of user's tracked apps
+###
+exports.whitelist = (req, res) ->
+  user_id = req.params.id
+  User.findById(user_id, (err, result) ->
+    if err
+      res.send(error: err)
+    res.json(result.whitelist)
+  )
+
+###
+# /users/whitelist
+# pass in id
+# returns list of user's tracked apps
+###
+exports.reset_whitelist = (req, res) ->
+  user_id = req.params.id
+  User.findByIdAndUpdate(user_id,
+    {whitelist: ["twitter.com",
+                  "facebook.com",
+                  "google.com",
+                  "mail.google.com",
+                  "tumblr.com",
+                  "pinterest.com",
+                  "youtube.com",
+                  "linkedin.com",
+                  "myspace.com",
+                  "vimeo.com",
+                  "blogger.com",
+                  "pandora.com",
+                  "spotify.com",
+                  "github.com",
+                  "stackoverflow.com",
+                  "ycombinator.com",
+                  "reddit.com",
+                  "mint.com"] }
+    (err, result) ->
+      if err
+        res.send(error: err)
+      res.json(result.whitelist)
+  )
+
+###
+# /users/allow
+# accepts id, domain
+# adds domain to user's list of tracked apps
+###
+exports.allow = (req, res) ->
+  user_id = req.body.id
+  domain = req.body.domain
+
+  User.findByIdAndUpdate(user_id, {$addToSet: { whitelist: domain }},
+    (err, result) ->
+      if err
+        res.send(error: err)
+      else
+        res.send(success: "Added to allowed apps")
+  )
+
+###
+# /users/allow
+# accepts id, domain
+# removes domain from user's list of tracked apps
+###
+exports.disallow = (req, res) ->
+  user_id = req.body.id
+  domain = req.body.domain
+  console.log "disallowing " + domain + " for " + user_id
+
+  remove_from_whitelist(user_id, domain, res)
+
+###
+# /users/delete_app
+# accepts id, domain
+# deletes domain from database and removes it from list of user's tracked apps
+# only deletes database entry for this user's version of the app
+###
+exports.delete_app = (req, res) ->
+  user_id = req.body.id
+  domain = req.body.domain
+
+  Application.remove({userid: user_id, url: domain}, (err, result) ->
+    console.log "remove function"
+    console.log user_id
+    console.log domain
+    #    if err
+    #      res.send(error: err)
+    #    else
+    #      res.send(success: result)
+    remove_from_whitelist(user_id, domain, res)
+  )
+
+
+###
+# /users/:id/apps.json
+# accepts id
+# returns Applications tracked by user of that id
+###
+exports.apps_json = (req, res) ->
+  user_id = req.params.id
+
+  Application.find(
+    {userid: user_id},
+    'category img url open close',
+    (err, result) ->
+      if err
+        res.send(error: err)
+      else
+        res.send(apps: result)
+  )
+
+###
+# Helper Functions
+###
+
+remove_from_whitelist = (user_id, domain, res) ->
+  User.findByIdAndUpdate(user_id, {$pull: { whitelist: domain }},
+    (err, result) ->
+      if err
+        res.send({error: err})
+      else
+        res.send({success: result})
+  )

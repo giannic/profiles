@@ -1,181 +1,268 @@
-/*
- * This file really needs a code cleanup.
- */
 $(function(){
-    var fsize = 16,
-        image_width = 100,
-        image_height = 100,
-        window_width = $(window).width() - 20,
-        window_height = $(window).height() - 20,
+    var window_width = $(window).width() - 30,
+        window_height = $(window).height() - 50, // TODO: subtract size of menubar
+        image_width = [], // image widths of the apps
+        image_height = [],
         stroke_color = 'rgba(201, 219, 242, 0.8)',
         cluster_fill = 'rgba(200, 220, 255, 0.4)',
-        app_fill = 'rgba(232, 251, 255, 0.7)',
         text_color = 'rgba(120,174,255,1.0)',
         selected_category,  // selected on hover
         clicked_category,
         cluster_apps = {},
-        pad = 5, // padding for boundary circle + app circles
-        px_arr = [],
-        py_arr = [];
+        pad = 10, // padding for boundary circle + app circles
+        max_apps = -1; // max number of apps that exists in user's categories
+        num_categories = 0,
+        nodes = {},
+        force = 0,
+        collision_padding = 15; // padding for collisions
 
+    var svg = d3.select("#circles")
+                .append("svg")
+                .attr("width", window_width)
+                .attr("height", window_height),
+        defs = svg.append('defs');
+
+    // use json data to create dataset and groups
     $.getJSON("usage_data.json", function(json) {
-        var dataset = parse_data(json),
-            all_images = [],
-            svg = d3.select("#circles")
-                    .append("svg")
-                    .attr("width", window_width)
-                    .attr("height", window_height),
-            defs = svg.append('defs');
+        var dataset,
+            groups, circles, label;
+        dataset = parse_data(json);
+        num_categories = dataset.length;
 
-    var groups = svg.selectAll("g")
-        .data(dataset)
-        .enter()
-        .append("g")
-        .attr("id", function(x, i){
-            // add all the positions first
-            px_arr[i] = x.x*window_width;
-            py_arr[i] = x.y*window_height;
-            return x.id;
-        })
-        .attr("transform", function(x, i) {
-            var px = x.x*window_width,
-                py = x.y*window_height,
-                size =  x.r + image_width + pad*2,
-                newpx_arr = px_arr,
-                newpy_arr = py_arr;
+        nodes = dataset;
 
-            // fix overlap
-            // push the circle positions based on all the other ones
-            for (var j = 0; j < px_arr.length; j++) {
-                if (px != px_arr[j]) {
-                    var diff = px - newpx_arr[j];
-                    if (Math.abs(diff) < size) {
-                        // push x value
-                        if (diff < 0) { // then x is smaller, push left
-                            newpx_arr[i] = px - size - pad;
-                        }
-                        else { // x is larger, push right
-                            newpx_arr[i] = px + size + pad;
-                        }
-                    }
+        for (var i = 0; i < dataset.length; i++) {
+            if (dataset[i].apps.length > max_apps) {
+                max_apps = dataset[i].apps.length;
+            }
+        }
+
+        force = d3.layout.force()
+            .size([window_width, window_height])
+            .nodes(nodes)
+            .alpha(0.1)
+            .charge(0) // charge is node-node attraction/repulsion
+            .gravity(0) // gravity -> move to center
+            .friction(0.3) // lower so doesn't bounce too much off boundary
+            .on("tick", tick)
+            .start();
+
+        // groups contain category information
+        groups = svg.selectAll("g")
+            .data(nodes)
+            .enter()
+            .append("g")
+            .attr("id", function(x){
+                return x.id;
+            })
+            .attr("transform", function(x, i) {
+                // scale the category circle and image size
+                // get the r of enlarged circle (rough calculation, assuming grid config)
+                var r = Math.floor(Math.sqrt((window_width*window_height)/(4*num_categories)));
+                // reduce it to r of the smaller circle
+                x.r = (r - (2*pad))/1.8;
+                // update the r for expansion
+                x.r = (x.apps.length/max_apps)*x.r;
+                // cap it so it's not terribly small
+                if (x.r < 50) {
+                    x.r = 50;
                 }
-            }
-            px_arr = newpx_arr;
-            for (var j = 0; j < py_arr.length; j++) {
-                if (py != py_arr[j]) {
-                    var diff = py - newpy_arr[j]
-                    if (Math.abs(diff) < size) {
-                        // push x value
-                        if (diff < 0) { // then x is smaller, push left
-                            newpy_arr[i] = py - size - pad;
-                        }
-                        else { // x is larger, push right
-                            newpy_arr[i] = py + size + pad;
-                        }
-                    }
-                }
-            }
 
-            py_arr = newpy_arr;
-            var transx = px_arr[i];
-            var transy = py_arr[i];
+                // x.r is unchanging radius
+                // x.radius changes upon mouseenter/leave
+                x.radius = x.r;
+                image_width[i] = image_height[i] = 0.8*x.r;
 
-            // cap the circle positions
-            if (transx - size < 0) {
-                transx -= (transx - size);
-            }
-            else if (transx + size > window_width) {
-                transx -= (transx - size);
-            }
-            if (transy - size < 0) {
-                transy -= (transy - size);
-            }
-            else if (transy + size > window_height) {
-                transy -= (transy - size);
-            }
-
-            // put it back in px/py array
-            px_arr[i] = transx;
-            py_arr[i] = transy;
-            return "translate(" + [transx, transy] + ")";
-        })
-        .on("mousedown", function(x, i){
-            // clicked should only keep everything expanded
-            // deselect previously clicked one
-            // make sure double click doesn't contract
-            if (clicked_category != x.id) {
-                deselect_old_cluster(svg, x, clicked_category);
-                clicked_category = x.id;
-            }
-            // TODO: move so focuses in center?
-        })
-        .on("mouseover", function(x, i){
-            if (!selected_category || selected_category != x.id) {
-                selected_category = x.id;
-                var target = d3.event.relatedTarget.getAttribute("class");
-                // issues when overlap
-                if (target == null) {
+                // force layout will automatically choose x/y
+                return "translate(" + [x.x, x.y] + ")";
+            })
+            .on("mouseenter", function(x, i) {
+                  // category selected
+                if (!selected_category || selected_category != x.id) {
+                    selected_category = x.id;
                     if (!clicked_category ||
                         (clicked_category != selected_category)) {
-                        select_new_cluster(svg, x);
+                        select_new_cluster(x, i);
                     }
                 }
-            }
-        })
-        .on("mouseout", function(x, i){
-            if (clicked_category != selected_category) {
-                var target = d3.event.relatedTarget.getAttribute("class");
-                if (target == null) {
-                    deselect_old_cluster(svg, x, selected_category);
+            })
+            .on("mouseleave", function(x) {
+                if (clicked_category != selected_category) {
+                    deselect_old_cluster(x, selected_category);
                     selected_category = "";
                 }
+            })
+            .on("mousedown", function(x){
+                // make sure double click doesn't contract
+                if (clicked_category != x.id) {
+                    // deselect any previously clicked ones
+                    deselect_old_cluster(x, clicked_category);
+                    clicked_category = x.id;
+                }
+            });
+
+        // category circles
+        circles = groups.append("circle")
+            .style("stroke", stroke_color)
+            .style("fill", cluster_fill)
+            .attr("r", function(x){
+                return x.r;
+            })
+            .attr("id", function(x){
+                return "circle_" + x.id;
+            });
+
+        label = groups.append("text")
+            .text(function(x){
+                return x.name;
+            })
+            .attr("id", function(x){
+                return "text_" + x.id;
+            })
+            .attr({
+                "alignment-baseline": "middle",
+                "text-anchor": "middle",
+                "font-family": "Helvetica"
+            })
+            .attr("font-size", function(x){
+                // reduce the font size based on the radius
+                if (0.16*x.r < 12)
+                    return 12;
+                return 0.16*x.r;
+            })
+            .style('fill', text_color);
+
+        groups.append("text")
+            .html("More")
+            .attr({
+                //"alignment-baseline": "middle",
+                "text-anchor": "middle",
+                "font-family": "Helvetica"
+            })
+            .attr("font-size", function(x) {
+                // reduce the font size based on the radius
+                if (0.16*x.r < 12)
+                    return 12;
+                return 0.1*x.r;
+            })
+            .attr("dy", "14px")
+            .style('fill', "#666")
+            .on("mousedown", function() {
+                more_apps();
+            });
+    });
+
+    // collision & tick from https://gist.github.com/GerHobbelt/3116713
+    function tick(e) {
+        var q = d3.geom.quadtree(nodes),
+            i = 0,
+            n = nodes.length;
+
+        //force.friction(0.9);
+        while (++i < n) {
+            q.visit(collide(nodes[i]));
+        }
+
+        // update the category positions based on collisions
+        svg.selectAll("g")
+            .each(cluster(10 * e.alpha * e.alpha))
+            .attr("transform", function(d) {
+                if (d.id != selected_category) {
+                    // constrain x and y here so doesn't go out of window
+                    d.x = Math.max(d.radius, Math.min(window_width - d.radius, d.x));
+                    d.y = Math.max(d.radius, Math.min(window_height - d.radius, d.y));
+                }
+                return "translate(" + [d.x, d.y] + ")";
+            })
+    }
+
+    // Move d to be adjacent to the cluster node.
+    function cluster(alpha) {
+      var max = {};
+
+      // Find the largest node for each cluster.
+      nodes.forEach(function(d) {
+        if (!(d.color in max) || (d.radius > max[d.color].radius)) {
+          max[d.color] = d;
+        }
+      });
+
+      return function(d) {
+        var node = max[d.color],
+            l,
+            r,
+            x,
+            y,
+            k = 1,
+            i = -1;
+
+        // For cluster nodes, apply custom gravity.
+        if (node == d) {
+          node = {x: window_width / 2, y: window_height / 2, radius: -d.radius};
+          k = .1 * Math.sqrt(d.radius);
+        }
+
+        x = d.x - node.x;
+        y = d.y - node.y;
+        l = Math.sqrt(x * x + y * y);
+        r = d.radius + node.radius;
+        if (l != r) {
+          l = (l - r) / l * alpha * k;
+          d.x -= x *= l;
+          d.y -= y *= l;
+          node.x += x;
+          node.y += y;
+        }
+      };
+    }
+
+    // Resolve collisions between nodes.
+    function collide(node) {
+        var r = node.radius + collision_padding;
+            nx1 = node.x - r,
+            nx2 = node.x + r,
+            ny1 = node.y - r,
+            ny2 = node.y + r;
+        return function(quad, x1, y1, x2, y2) {
+            if (quad.point && (quad.point !== node)) {
+                var x = node.x - quad.point.x,
+                    y = node.y - quad.point.y,
+                    l = Math.sqrt(x * x + y * y),
+                    r = node.radius + quad.point.radius + collision_padding;
+                // there's a collision if distance is less than r
+                if (l < r) {
+                    l = (l - r) / l * .1;
+                    node.x -= x *= l;
+                    node.y -= y *= l;
+                    quad.point.x += x;
+                    quad.point.y += y;
+                }
             }
-        });
+            return x1 > nx2 ||
+                   x2 < nx1 ||
+                   y1 > ny2 ||
+                   y2 < ny1;
+        };
+    }
 
-    // category circles
-    var circles = groups.append("circle")
-                        .style("stroke", stroke_color)
-                        .style("fill", cluster_fill)
-                        .attr("r", function(x){
-                            return x.r;
-                        })
-                        .attr("id", function(x){
-                            return "circle_" + x.id;
-                        });
-
-    var label = groups.append("text")
-                      .text(function(x){
-                          return x.name;
-                      })
-                      .attr("id", function(x){
-                          return "text_" + x.id;
-                      })
-                      .attr({
-                          "alignment-baseline": "middle",
-                          "text-anchor": "middle",
-                          "font-size": fsize,
-                          "font-family": "Helvetica"
-                      })
-                      .style('fill', text_color);
-
-    }); // TODO: WHAT IS THIS SET OF END PARENS ENDING?
-
-    function select_new_cluster(svg, x){
+    function select_new_cluster(x, i) {
         var angle = (360/x.apps.length)*Math.PI/180, // RADIANS
             selected_circle = d3.select("#circle_" + selected_category),
             selected_text = d3.select("#text_" + selected_category),
             r = x.r;
 
+        // pause the force for the radius to change
+        force.alpha(0);
         selected_circle.transition()
             .attr("r", function(x){
-                return r + image_width + pad*2;
+                x.radius = r + image_width[i] + pad*2;
+                return x.radius;
             });
+
+        // need to keep both selected so parent is the only unclassed
         selected_circle.classed("selected", true);
-
-        // TODO: use if contracting category circle
-        //selected_text.transition().attr("font-size", 0);
-
         selected_text.classed("selected", true);
+        force.resume();
 
         var category = svg.selectAll("#" + x.id);
 
@@ -186,86 +273,76 @@ $(function(){
                 .enter()
                 .append("a")
                 .attr("data-category", x.name)
-                .attr("xlink:href", function(d, i){
-                  return d.url;
+                .attr("xlink:href", function(d){
+                    return d.url;
                 })
-                .classed(x.id, true);
 
         // append each app
+        // need circle for appending image, don't display it
         cluster_apps[selected_category].append("circle")
-            .style("stroke", stroke_color)
-            .style("fill", cluster_fill)
-            .attr("href", "google.com")
-            .classed(x.id, true)
-            .attr("r", function(d, i){
-              return 0;
+            .attr("display", "none")
+            .attr("cx", function(d, j){
+                var dist = image_width[i]/2 + x.r + pad;
+                d.x = Math.cos(angle*j)*dist;
+                return d.x;
             })
-            .attr("id", function(d, i){
-              return d.id;
-            })
-            .attr("cx", function(d, i){
-              var dist = d.r + x.r + pad;
-              d.x = Math.cos(angle*i)*dist;
-              return d.x;
-            })
-            .attr("cy", function(d, i){
-              var dist = d.r + x.r + pad;
-              d.y = Math.sin(angle*i)*dist;
-              return d.y;
-            })
-            .style("fill", app_fill) // what is diff between cluster_fill and app_fill?
-            .transition()
-            .attr('r', function(d, i){
-              return d.r;
+            .attr("cy", function(d, j){
+                var dist = image_width[i]/2 + x.r + pad;
+                d.y = Math.sin(angle*j)*dist;
+                return d.y;
             });
 
-        cluster_apps[selected_category]  // append each image
+        // append each image
+        cluster_apps[selected_category]
             .append('image')
-            .attr('xlink:href', function(d, i){
+            .attr('xlink:href', function(d) {
               return d.img;
             })
-            .attr("x", function(d, i){
-              return d.x - image_width/2;
+            .attr("x", function(d){
+              return d.x - image_width[i]/2;
             })
-            .attr("y", function(d, i){
-              return d.y - image_width/2;
+            .attr("y", function(d){
+              return d.y - image_width[i]/2;
             })
             .classed('image_' + selected_category, true)
             .transition()
-            .attr("width", image_width)
-            .attr("height", image_height)
-            .attr("opacity", 0.6);
+            .attr("width", function(d){
+                // make the app img about 80% size of category
+                return image_width[i];
+            })
+            .attr("height", function(d){
+                return image_height[i];
+            })
 
-        var hovers = svg.selectAll("a")
-                        .on("mouseover", function() {
-                            show_stats();
-                        })
-                        .on("mouseout", function() {
-                            hide_stats();
-                        });
+        var hovers = svg.selectAll("image") // this should change
+            .on("mouseover", function() {
+                show_stats();
+                d3.event.stopPropagation();
+            })
+            .on("mouseleave", function() {
+                hide_stats();
+                var check_x = d3.event.pageX - x.x;
+                var check_y = d3.event.pageY - x.y;
+                var dist = Math.sqrt(check_x*check_x + check_y*check_y);
+                var r2 = x.r + image_width[i] + pad*2;
+                if (dist < r2)
+                    d3.event.stopPropagation();
+            });
     }
 
-    function deselect_old_cluster(svg, x, old_category){
-        /* CLEAN UP OLD CIRCLES */
-        // old_category represents cluster to deselect (either clicked or selected)
+    function deselect_old_cluster(x, old_category) {
+        // old_category is the cluster to deselect (either clicked or selected)
 
         // first deselect the circle
         var old_cluster = typeof old_category === 'undefined' ? svg.selectAll() :
             svg.selectAll("#circle_" + old_category);
+
         var selected_obj = old_cluster.classed('selected', false)
             .transition()
-            .attr('r', function(d){
-                return d.r;
+            .attr('r', function(x){
+                x.radius = x.r;
+                return x.r;
             });
-
-        // TODO: use if contracting category circle
-        // then deselect the circle's text
-        /*old_cluster = typeof selected_category === 'undefined' ? svg.selectAll() :
-            svg.selectAll("#text_" + selected_category); 
-        selected_obj = old_cluster.classed('selected', false)
-            .transition()
-            .attr('font-size', fsize);
-        */
 
         // then deselect the circle's images
         old_cluster = typeof old_category === 'undefined' ? svg.selectAll() :
@@ -280,8 +357,7 @@ $(function(){
         old_apps.transition().attr('r', 0).remove();
     }
 
-    function parse_data(json){
-        //console.log(json); // this will show the info it in firebug console
+    function parse_data(json) {
         // grab the categories
         var new_json = {},
             dataset = [],
@@ -306,6 +382,17 @@ $(function(){
         });
 
         return dataset;
+    }
+
+    // displays the shadow box over apps for more apps
+    function more_apps() {
+        $("#more-apps-box").width(0)
+                           .height(0)
+                           .show()
+                           .animate({
+                                width: $(window).width(),
+                                height: $(window).height()
+                           }, 500);
     }
 });
 
