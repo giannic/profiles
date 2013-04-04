@@ -131,6 +131,7 @@ $(document).ready(function() {
 });
 
 function removeApp(index, k){
+    index = index.replace(' ', '-');
     console.log(index);
     d3.selectAll("#"+index).remove();
     activeArray[k] = false;
@@ -157,12 +158,14 @@ function addAppBack(k){
 function generateLines(index) {
     var currentLine, i;
     for (i = 0; i < renderArray.length; i++) {
+        var string = appArray[index];
+        string = string.replace(' ', '-');
         currentLine = lineGraph.append("svg:line")
                                .attr("x1", renderArray[i])
                                .attr("y1", 0)
                                .attr("x2", renderArray[i])
                                .attr("y2", lineGraphHeight)
-                               .attr("id", appArray[index])
+                               .attr("id", string)
                                .style("stroke-width", 2)
                                .style("stroke", "hsl("+ colorArray[index] +",50%, 50%)");
             var x = (closeArray[i] - openArray[i])/diff + .5;
