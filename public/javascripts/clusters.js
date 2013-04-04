@@ -233,7 +233,6 @@ $(function(){
             }
         });
 
-<<<<<<< HEAD
       // Find the largest node for each cluster.
       nodes.forEach(function(d) {
         if (!(d.color in max) || (d.radius > max[d.color].radius)) {
@@ -252,22 +251,6 @@ $(function(){
           node = {x: window_width / 2, y: window_height / 2, radius: -d.radius};
           k = .1 * Math.sqrt(d.radius);
         }
-=======
-        return function(d) {
-            var node = max,
-                l,
-                r,
-                x,
-                y,
-                k = 1,
-                i = -1;
-
-            // For cluster nodes, apply custom gravity.
-            if (node == d) {
-                node = {x: window_width / 2, y: window_height / 2, radius: -d.radius};
-                k = .1 * Math.sqrt(d.radius);
-            }
->>>>>>> 7e1a518b05763ee9281f95eb982627b55a8b6222
 
             x = d.x - node.x;
             y = d.y - node.y;
