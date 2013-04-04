@@ -1,9 +1,9 @@
 mongoose = require 'mongoose'
 crypto = require 'crypto'
 
-User = new mongoose.Schema { 
-							email: {type: String, index: {unique: true}}, 
-							hashed_password: String, 
+User = new mongoose.Schema {
+							email: {type: String, index: {unique: true}},
+							hashed_password: String,
 							salt: String,
 							whitelist: {type: [String], default:
 								[

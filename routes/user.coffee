@@ -128,6 +128,16 @@ exports.login_get = (req, res) ->
     msg: req.session.messages.pop()
 
 ###
+# /logout
+# The view for the login form
+###
+exports.logout = (req, res) ->
+  console.log req.session.destroy()
+  res.render "login",
+    msg: "Successfully logged out!"
+
+
+###
 # /user/:id.json
 # gives back a json view
 ###
