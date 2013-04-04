@@ -159,9 +159,13 @@ function setUpAppSelection(){
         width: 25*appArray.length,
         height: 25
       });
-      var layer = new Kinetic.Layer();
 
-      boxes = [];
+      var layer = new Kinetic.Layer();
+      var canvas = layer.getCanvas();
+      canvas.element.style.position = "relative";
+    //canvas.setAttribute('style', 'position: relative;');
+
+    boxes = [];
 
     for(var k = 0; k< appArray.length; k++){
         // anonymous function to induce scope
@@ -204,7 +208,6 @@ function setUpAppSelection(){
         layer.add(box);
         })();
     }
-
       // add the layer to the stage
       stage.add(layer);    
 }
@@ -217,7 +220,6 @@ function clearApp(){
 }
 
 function printApp(d){
-  console.log(d);
   var fieldNameElement = document.getElementById("appname");
   while(fieldNameElement.childNodes.length >= 1) {
     fieldNameElement.removeChild(fieldNameElement.firstChild);

@@ -1,50 +1,43 @@
 (function(){
   $('document').ready(function() {
       var VIS_COUNT = 3; // $('.vis').length;
-      var move_count = 0;
-      console.log(VIS_COUNT);
+
       $('#visualizations').width(VIS_COUNT*$(window).width() + 5 + 'px');
       $('#circles').width($(window).width() + 'px');
       $('#lines').width($(window).width() + 'px');
 
-      $('#timelines-toggle').click(function() {
-          // console.log("timelines");
-          // console.log($('#visualizations').position().left);
-          // console.log(-(VIS_COUNT - 1) * $(window).width());
-          if(move_count < VIS_COUNT - 1) {
-            move_count++;
-            $('#visualizations').stop().animate({
-                // we should probably have -1 * vis_number * width (to scale)
-                
-                left: -move_count * $(window).width() + 'px'
-            }, 300, function() {
-            });
-          }
+      $('#grid-toggle').click(function() {
+          $('#visualizations').stop().animate({
+              // we should probably have -1 * vis_number * width (to scale)
+              left: 0
+          }, 300);
       });
 
       $('#clusters-toggle').click(function() {
-        console.log('animate');
-          if(move_count > 0) {
-            move_count--;
-            console.log(move_count * $(window).width() + 'px');
-            console.log(move_count);
-            $('#visualizations').stop().animate({
-                left: -move_count * $(window).width() + 'px'
-            }, 300, function() {
-            });
-          }
+          $('#visualizations').stop().animate({
+              left: -1 * $(window).width() + 'px'
+          }, 300);
+      });
+
+      $('#timelines-toggle').click(function() {
+          $('#visualizations').stop().animate({
+              left: -2 * $(window).width() + 'px'
+          }, 300);
       });
 
       $('#add-account-toggle').click(function() {
-          console.log("adding account");
           $("#add-app-box").toggle();
       });
-      
-      // MOUSE ENTER MOUSE LEAVE SUPPORT FROM https://gist.github.com/shawnbot/4166283
-      // get a reference to the d3.selection prototype,
-      // and keep a reference to the old d3.selection.on
-      var d3_selectionPrototype = d3.selection.prototype,
-          d3_on = d3_selectionPrototype.on;
+
+      $('.close-more-apps').click(function() {
+          $("#more-apps-box").toggle();
+      });
+
+    // MOUSE ENTER MOUSE LEAVE SUPPORT FROM https://gist.github.com/shawnbot/4166283
+    // get a reference to the d3.selection prototype,
+    // and keep a reference to the old d3.selection.on
+    var d3_selectionPrototype = d3.selection.prototype,
+        d3_on = d3_selectionPrototype.on;
 
       // our shims are organized by event:
       // "desired-event": ["shimmed-event", wrapperFunction]
