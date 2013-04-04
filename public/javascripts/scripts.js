@@ -16,7 +16,7 @@ root = typeof exports !== "undefined" && exports !== null ? exports : this;
 
     //get the JSON file
     $.ajax({
-      url: 'apps.json',
+      url: 'http://www.davidxu.me:3000/apps.json',
       dataType: 'json',
       error: function(err) {
         console.log(err);
