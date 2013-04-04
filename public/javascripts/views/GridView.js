@@ -21,7 +21,7 @@ root.app.views.GridView = Backbone.View.extend({
 
   initialize: function() {
     // set the width to the width of body
-    this.width = $(window).width();
+    this.width = WINDOW_WIDTH;
   },
 
   render: function() {

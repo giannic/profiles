@@ -14,7 +14,7 @@ hbs = require('hbs')
 conf =
   db: {
     db: 'test',
-    host: '127.0.0.1',
+    host: 'davidxu.me',
     port: 27017
     username: ''
     password: ''
@@ -52,7 +52,9 @@ if conf.db.username and conf.db.password
   db_uri += conf.db.username + ':' + conf.db.password + '@'
 db_uri += conf.db.host + ':' + conf.db.port + '/' + conf.db.db
 
-mongoose.connect 'mongodb://127.0.0.1/test'
+console.log db_uri
+
+mongoose.connect db_uri
 db = mongoose.connection
 db.on 'error', console.error.bind(console, 'connection error:')
 db.once 'open', ->

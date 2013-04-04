@@ -1,4 +1,8 @@
 // THIS SHOULD NOT BE A GLOBAL, CHANGE AFTER CODE CLEANUP
+
+var WINDOW_WIDTH = $(window).width();
+var WINDOW_HEIGHT = $(window).height();
+
 show_stats = function(id) {
     $("#stats").show();
 }

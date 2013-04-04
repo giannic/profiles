@@ -1,10 +1,10 @@
 var numberOfLines,
     stats = null,
     openArray, renderArray, closeArray,
-    startTime, endTime, difference,
+    startTime, endTime, difference, leftBarTime, rightBarTime,
     lineGraphWidth, lineGraphHeight, lineGraph,
-    allTheLines, hsl, colorArray, appArray,
-    minRange, maxRange, interval, boxes,
+    allTheLines, hsl, colorArray, diff, appArray,
+    minRange, maxRange, interval, boxes, activeArray,
     playTimeline = false;
 
 $(document).ready(function() {
@@ -35,7 +35,7 @@ $(document).ready(function() {
 
     //store colors for each app
     colorArray = [];
-
+    activeArray = [];
     //initiate the variables
     for (var i = 0; i < appArray.length; i++) {
         var index = appArray[i];
@@ -53,6 +53,7 @@ $(document).ready(function() {
             endTime = endTimeA;
         }
         colorArray[i] = i * (360 / appArray.length);
+        activeArray[i] = true;
     }
 
     // put the stage dimensions here
@@ -129,33 +130,14 @@ $(document).ready(function() {
       graph.append("svg:path").attr("d", line(data));
 });
 
-
-//generates all the lines on each loop : OPTIMIZE
-function generateLines(currArray, index, diff) {
-    var currentLine, i;
-    for (i = 0; i < currArray.length; i++) {
-        currentLine = lineGraph.append("svg:line")
-                               .attr("x1", currArray[i])
-                               .attr("y1", 0)
-                               .attr("x2", currArray[i])
-                               .attr("y2", lineGraphHeight)
-                               .attr("name", "line"+i)
-                               .style("stroke-width", 2)
-                               .style("stroke", "hsl("+ colorArray[index] +",50%, 50%)");
-        var x = (closeArray[i] - openArray[i])/diff + .5;
-            currentLine.style("stroke-opacity", x);
-    }
+function removeApp(index, k){
+    index = index.replace(' ', '-');
+    console.log(index);
+    d3.selectAll("#"+index).remove();
+    activeArray[k] = false;
 }
 
-//calculates the render array
-function calculateRender(startValIndex, endValIndex, first) {
-    d3.selectAll("line").remove();
-
-    var leftBarTime = startTime + (difference*startValIndex)/(100);
-    var rightBarTime = startTime + (difference*endValIndex)/(100);
-    var diff = rightBarTime - leftBarTime; 
-
-    for(var k = 0; k < appArray.length; k++){
+function addAppBack(k){
     var index = appArray[k];
     openArray = stats[index]['open']; 
     closeArray = stats[index]['close'];
@@ -168,8 +150,54 @@ function calculateRender(startValIndex, endValIndex, first) {
         track++;
       }
     }
-        generateLines(renderArray, k, diff);
+        generateLines(k);
+        activeArray[k] = true;
+}
+
+//generates all the lines on each loop : OPTIMIZE
+function generateLines(index) {
+    var currentLine, i;
+    for (i = 0; i < renderArray.length; i++) {
+        var string = appArray[index];
+        string = string.replace(' ', '-');
+        currentLine = lineGraph.append("svg:line")
+                               .attr("x1", renderArray[i])
+                               .attr("y1", 0)
+                               .attr("x2", renderArray[i])
+                               .attr("y2", lineGraphHeight)
+                               .attr("id", string)
+                               .style("stroke-width", 2)
+                               .style("stroke", "hsl("+ colorArray[index] +",50%, 50%)");
+            var x = (closeArray[i] - openArray[i])/diff + .5;
+            currentLine.style("stroke-opacity", x);
+    }
+}
+
+//calculates the render array
+function calculateRender(startValIndex, endValIndex, first) {
+        d3.selectAll("line").remove();
+
+    leftBarTime = startTime + (difference*startValIndex)/(100);
+    rightBarTime = startTime + (difference*endValIndex)/(100);
+    diff = rightBarTime - leftBarTime; 
+
+    for(var k = 0; k < appArray.length; k++){
+        if(activeArray[k] == true){
+    var index = appArray[k];
+    openArray = stats[index]['open']; 
+    closeArray = stats[index]['close'];
+    var track = 0;
+
+    renderArray = [];
+    for (var i = 0; i < openArray.length; i++) {
+      if((openArray[i] > leftBarTime) && (closeArray[i] < rightBarTime)){
+        renderArray[track] = ((openArray[i]-leftBarTime)/(diff/lineGraphWidth));
+        track++;
+      }
+    }
+        generateLines(k);
   }
+}
 }
 
 function setUpAppSelection(){
@@ -207,9 +235,11 @@ function setUpAppSelection(){
       box.on('mousedown', function() {
         if(this.getOpacity() == 1.0){
             this.setOpacity(0.3);
+            removeApp(this.getName(), this.getId());
         }
         else{
             this.setOpacity(1.0);
+            addAppBack(this.getId());
         }
         printApp(this.getName());
         layer.draw();
