@@ -1,10 +1,17 @@
+
 (function(){
   $('document').ready(function() {
       var VIS_COUNT = 3; // $('.vis').length;
 
-      $('#visualizations').width(VIS_COUNT*$(window).width() + 5 + 'px');
-      $('#circles').width($(window).width() + 'px');
-      $('#lines').width($(window).width() + 'px');
+      console.log(WINDOW_WIDTH);
+
+      $('.vis').width(WINDOW_WIDTH);
+      console.log(WINDOW_WIDTH);
+      console.log($('.vis').width());
+      $('#visualizations').width(VIS_COUNT*WINDOW_WIDTH + 5 + 'px');
+      console.log($('#visualizations').width());
+      console.log($('#grid').width());
+      // $('#lines').width(WINDOW_WIDTH + 'px');
 
       $('#grid-toggle').click(function() {
           $('#visualizations').stop().animate({
@@ -15,13 +22,13 @@
 
       $('#clusters-toggle').click(function() {
           $('#visualizations').stop().animate({
-              left: -1 * $(window).width() + 'px'
+              left: -1 * WINDOW_WIDTH + 'px'
           }, 300);
       });
 
       $('#timelines-toggle').click(function() {
           $('#visualizations').stop().animate({
-              left: -2 * $(window).width() + 'px'
+              left: -2 * WINDOW_WIDTH + 'px'
           }, 300);
       });
 
