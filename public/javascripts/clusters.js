@@ -1,6 +1,6 @@
 $(function(){
-    var window_width = $(window).width() - 30,
-        window_height = $(window).height() - 50, // TODO: subtract size of menubar
+    var window_width = WINDOW_WIDTH - 30,
+        window_height = WINDOW_HEIGHT - 50, // TODO: subtract size of menubar
         image_width = [], // image widths of the apps
         image_height = [],
         stroke_color = 'rgba(201, 219, 242, 0.8)',
@@ -390,8 +390,8 @@ $(function(){
                            .height(0)
                            .show()
                            .animate({
-                                width: $(window).width(),
-                                height: $(window).height()
+                                width: WINDOW_WIDTH,
+                                height: WINDOW_HEIGHT 
                            }, 500);
     }
 });
