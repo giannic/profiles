@@ -1,21 +1,42 @@
+@import 'definitions';
+
 .vis {
-  // display: inline-block;
-  vertical-align: top;
-  float:left;
+    // display: inline-block;
+    vertical-align: top;
+    float:left;
 }
 
 #visualizations {
-  position: absolute;
+    position: absolute;
+}
+
+.vis-shape {
+    stroke: $SHAPE_STROKE;
+    stroke-width: 2px;
+    fill: $SHAPE_FILL;
+}
+
+.vis-label {
+    font-family: $FONT_STACK;
+    alignment-basline: middle;
+    text-anchor: middle;
+    fill: $TEXT_FILL;
+}
+
+.vis-sublabel {
+    font-family: $FONT_STACK;
+    text-anchor: middle;
+    fill: $LIGHT_GREY;
 }
 
 #circles {
-  position: relative;
+    position: relative;
 }
 
 #lines {
-  top: 100px;
-  position: relative;
-  margin: 0 auto;
+    top: 100px;
+    position: relative;
+    margin: 0 auto;
 
 }
 

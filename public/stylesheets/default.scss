@@ -48,12 +48,11 @@ svg {
 
 #header {
     width: 100%;
-    height: 32px;
+    height: 64px;
     position: relative;
-    @include gradient(#FFF,#E4E4E4);
 
     background: {
-        color: $LIGHT_GREY;
+        color: $HEADER;
     }
 
     border: {
@@ -68,18 +67,16 @@ svg {
 
     .title {
         display: inline-block;
-        position: absolute;
-        bottom: 2px;
-        left: 10px;
-        text-transform: uppercase;
+        margin: 20px auto;
 
         font: {
             size: 21px;
-            weight: bold;
+            weight: 400;
         }
 
         &:hover {
             cursor: pointer;
+            text-decoration: none;
         }
     }
 
@@ -97,8 +94,9 @@ svg {
 }
 
 .type-nav {
-    float: right;
-    margin: 10px 10px 0px 0px;
+    position: absolute;
+    right: 0;
+    top: 0;
 
     ul {
         list-style: none;

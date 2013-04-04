@@ -11,7 +11,7 @@ exports.index = (req, res) ->
     console.log req.session.user_id
 
     res.render "home",
-      title: "Profiles"
+      title: "datapp"
       msg: req.session.messages.pop()
 
 exports.grid = (req, res) ->
@@ -20,6 +20,6 @@ exports.grid = (req, res) ->
   req.session.messages = req.session.messages or []
 
   res.render "grid",
-    title: "Profiles"
+    title: "datapp"
     msg: req.session.messages.pop()
 
