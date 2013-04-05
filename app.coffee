@@ -74,7 +74,6 @@ app.get "/users/:id/whitelist.json", user.whitelist
 app.post "/users/allow", user.allow
 app.post "/users/disallow", user.disallow
 app.post "/users/delete_app", user.delete_app
-app.get "/users/:id/apps.json", user.apps_json
 app.get "/register", user.register_get
 app.post "/register", user.register_post
 app.get "/login", user.login_get
@@ -88,6 +87,7 @@ app.post "/apps/close", application.close
 app.post "/apps/delete", application.delete
 app.get "/apps/new", application.new_test  # just for testing
 app.get "/apps/:id.json", application.view
+app.get "/apps/user", application.get_by_user  # apps specific to a user - should probably rename
 
 # handlebars templates
 # hbs.registerPartial('home', 'home')
