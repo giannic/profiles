@@ -7,7 +7,8 @@ $(function(){
         clicked_category,
         cluster_apps = {},
         pad = 10, // padding for boundary circle + app circles
-        max_apps = -1; // max number of apps that exists in user's categories
+        max_apps = -1, // max number of apps that exists in user's categories
+        cap_apps = 4, // cap for the more button
         num_categories = 0,
         nodes = {},
         force = 0,
@@ -144,8 +145,17 @@ $(function(){
                 return 0.16*x.r;
             });
 
+        // append this only if there are more than x? apps!
         groups.append("text")
             .text("More")
+            .attr("id", function(x){
+                return "more_" + x.id;
+            })
+            .attr({
+                //"alignment-baseline": "middle",
+                "text-anchor": "middle",
+                "font-family": "Helvetica"
+            })
             .attr("class", "vis-sublabel")
             .attr("font-size", function(x) {
                 // reduce the font size based on the radius
@@ -153,11 +163,15 @@ $(function(){
                     return 12;
                 return 0.1*x.r;
             })
+            .attr("display", function(d) {
+                // change to visible when selecting category
+                return "none";
+            })
             .attr("dy", "14px")
-            .on("mousedown", function() {
-                more_apps();
+            .style('fill', "#666")
+            .on("mousedown", function(d) {
+                more_apps(d);
             });
-        
     });
 
     $('#circles').click(function(e) {
@@ -209,6 +223,7 @@ $(function(){
                     foci = [];
                 }
                 if (!foci[i]) {
+                    // collide one more time to ensure no overlap
                     foci[i] = {x: d.x, y: d.y};
                 }
                 return "translate(" + [d.x, d.y] + ")";
@@ -233,15 +248,8 @@ $(function(){
             }
         });
 
-      // Find the largest node for each cluster.
-      nodes.forEach(function(d) {
-        if (!(d.color in max) || (d.radius > max[d.color].radius)) {
-          max[d.color] = d;
-        }
-      });
-
       return function(d) {
-        var node = max[d.color],
+        var node = max,
             l, r, x, y,
             k = 1,
             i = -1;
@@ -296,7 +304,10 @@ $(function(){
     }
 
     function select_new_cluster(x, i) {
-        var angle = (360/x.apps.length)*Math.PI/180, // RADIANS
+        var length = x.apps.length;
+        if (length > cap_apps)
+            length = cap_apps;
+        var angle = (360/length)*Math.PI/180, // RADIANS
             selected_circle = d3.select("#circle_" + selected_category),
             selected_text = d3.select("#text_" + selected_category),
             r = x.r;
@@ -313,9 +324,20 @@ $(function(){
 
         var category = svg.selectAll("#" + x.id);
 
+        // cap the data for x.apps...
+        var capped_apps = [];
+        if (x.apps.length < cap_apps)
+            capped_apps = x.apps;
+        else {
+            for (var j = 0; j < cap_apps; j++) {
+                capped_apps[j] = x.apps[j];
+            }
+        }
+
         // assign the created objects into the corresponding cluster_objects
         cluster_apps[selected_category] =
             category.selectAll()
+                .data(capped_apps)
                 .enter()
                 .append("a")
                 .attr("data-category", x.name)
@@ -371,6 +393,18 @@ $(function(){
             .on("mouseleave", function() {
                 hide_stats();
             });
+
+        // make the more visible for those categories with too many apps
+        svg.select("#more_" + x.id)
+            .attr("display", function(x){
+                if (x.apps.length > cap_apps && 
+                    (x.id == selected_category) || (x.id == clicked_category)) {
+                    // check if it's selected
+                    return "visible";
+                }
+                else
+                    return "none";
+            });
     }
 
     function deselect_old_cluster(old_category) {
@@ -394,6 +428,10 @@ $(function(){
             .transition()
             .attr('width', 0)
             .attr('height', 0);
+
+        // make the more button not visible
+        svg.select("#more_" + old_category)
+            .attr("display", "none");
 
         var old_apps = typeof old_category === 'undefined' ? svg.selectAll()
             : svg.selectAll("." + old_category);
@@ -428,7 +466,7 @@ $(function(){
     }
 
     // displays the shadow box over apps for more apps
-    function more_apps() {
+    function more_apps(d) {
         $("#more-apps-box").width(0)
                            .height(0)
                            .show()
