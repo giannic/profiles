@@ -100,6 +100,16 @@ svg {
 
         li {
             display: inline-block;
+            margin: 15px 20px 0px 0px;
+        }
+    }
+
+    .menu-button {
+        width: 32px;
+        height: 32px;
+
+        &:hover {
+            cursor: pointer;
         }
     }
 }
@@ -168,8 +178,4 @@ svg {
     }
 }
 
-.menu-button {
-    display: inline-block;
-    width: 32px;
-    height: 32px;
-}
+

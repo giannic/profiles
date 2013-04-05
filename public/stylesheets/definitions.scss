@@ -3,13 +3,16 @@
  ***************/
 $LIGHT_GREY: #666;
 $PRIMARY: #549DD1;
-$BACKGROUND: #98AEB5;
+//$BACKGROUND: #98AEB5;
+$BACKGROUND: #FFF;
 //$HEADER: #F7F8F4;
 $HEADER: #FFFFFF;
 $SHAPE_STROKE: rgba(201, 219, 242, 1.0);
-$SHAPE_FILL: #F7F8F4;
+//$SHAPE_FILL: #F7F8F4;
+$SHAPE_FILL: #000;
 $ACCENT: #CF5300;
-$TEXT_FILL: rgba(120, 174, 255, 1.0);
+//$TEXT_FILL: rgba(120, 174, 255, 1.0);
+$TEXT_FILL: #FFF;
 $SHADOW: rgba(0, 0, 0, 0.8);
 $FONT_STACK: Helvetica, Arial, sans-serif; // please change
 
@@ -31,6 +34,12 @@ $FONT_STACK: Helvetica, Arial, sans-serif; // please change
 
     /* Opera 11.10+ */
     background-image: -o-linear-gradient($from, $to);
+}
+
+@mixin shadow($x, $y, $blur, $spread, $color) {
+    -moz-box-shadow: $x, $y, $blur, $spread, $color;
+    -webkit-box-shadow: $x, $y, $blur, $spread, $color;
+    box-shadow: $x, $y, $blur, $spread, $color;
 }
 
 // rounded corners on rectangles
