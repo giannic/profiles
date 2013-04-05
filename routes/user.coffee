@@ -247,25 +247,6 @@ exports.delete_app = (req, res) ->
     remove_from_whitelist(user_id, domain, res)
   )
 
-
-###
-# /users/:id/apps.json
-# accepts id
-# returns Applications tracked by user of that id
-###
-exports.apps_json = (req, res) ->
-  user_id = req.params.id
-
-  Application.find(
-    {userid: user_id},
-    'category img url open close',
-    (err, result) ->
-      if err
-        res.send(error: err)
-      else
-        res.send(apps: result)
-  )
-
 ###
 # Helper Functions
 ###

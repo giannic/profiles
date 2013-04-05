@@ -74,7 +74,6 @@ app.get "/users/:id/whitelist.json", user.whitelist
 app.post "/users/allow", user.allow
 app.post "/users/disallow", user.disallow
 app.post "/users/delete_app", user.delete_app
-app.get "/users/:id/apps.json", user.apps_json
 app.get "/register", user.register_get
 app.post "/register", user.register_post
 app.get "/login", user.login_get
