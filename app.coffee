@@ -88,6 +88,7 @@ app.post "/apps/delete", application.delete
 app.get "/apps/new", application.new_test  # just for testing
 app.get "/apps/:id.json", application.view
 app.get "/apps/user", application.get_by_user  # apps specific to a user - should probably rename
+app.post "/apps/category", application.update_category
 
 # handlebars templates
 # hbs.registerPartial('home', 'home')
