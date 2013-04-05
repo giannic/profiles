@@ -22,6 +22,7 @@ root = typeof exports !== "undefined" && exports !== null ? exports : this;
         console.log(err);
       },
       success: function(data) {
+        console.log("HERE")
         console.log(data);
         TEST_DATA = data;
         root.app.applications = new app.collections.Applications(data);

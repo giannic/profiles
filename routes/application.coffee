@@ -120,5 +120,5 @@ exports.get_by_user = (req, res) ->
         if err
           res.send(error: err)
         else
-          res.send(apps: result)
+          res.json result
 
