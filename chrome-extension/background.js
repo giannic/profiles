@@ -1,24 +1,31 @@
-var baseUrl = "http://davidxu.me:3000";
-//var baseUrl = "http://127.0.0.1:3000";
+//var baseUrl = "http://davidxu.me:3000";
+var baseUrl = "http://127.0.0.1:3000";
 var apiUrlOpen = baseUrl + "/apps/open";
 var apiUrlClose = baseUrl + "/apps/close";
 var userid = null;
 var storage = chrome.storage.local;
 var tabDomains = {}; // maps tab ids to URLs
 var activeDomains = {}; // domains that are open already
-var whitelist = {};
+var whitelist = [];
+var _recording = true;
 
 $(document).ready(function() {
   init();
 });
 
 function init() {
-  loadUserId();
-  console.log("Loaded")
   //printChromeStorage();
-  checkDirtyClose();
-  storage.set({"activeDomains": activeDomains});
-  getWhitelist();
+  storage.get({"userid": null}, function(items) {
+    userid = items.userid; 
+    if (userid) {
+      console.log("Loaded userid " + userid);
+      getWhitelist();
+    }
+    else {
+      console.log("No userid to be loaded");
+    }
+  });
+  console.log("Init finished")
 }
 
 //==================
@@ -32,24 +39,30 @@ function checkDirtyClose() {
       var domains = items.activeDomains;
       // if we do, post close with the last recorded time
       if (domains) {
+        console.log("dirty-closed domains: ");
+        console.log(domains);
         for (var d in domains) {
-          if (domains.hasOwnProperty(d)) {
+          console.log("domain: " + d);
+          if (isInWhitelist(d)) {
             var appId = domains[d]["appId"];
+            console.log("------appid=" + appId + "--------");
             var posixTime = items.lastKnownTime;
             if (!posixTime) {
               posixTime = getCurrentTime();
             }
-            //postToClose(d, appId, posixTime);
+            postToClose(d, appId, posixTime);
           }
         }
       }
-    storage.set({"activeDomains": null});
-    // 
-    registerAllTabs();
-    window.setInterval(logTime, 5000);
+      storage.set({"activeDomains": null});
+      registerAllTabs();
+      window.setInterval(logTime, 5000);
   });
 };
 
+// Gets all open tabs and stores their domains in memory and in chrome storage
+// Call this function if the extension is loaded after tabs have been opened
+// or if the user logs in after tabs have been loaded
 function registerAllTabs() {
   chrome.windows.getAll({"populate": true}, function(windows) {
     for (var i = 0; i < windows.length; i ++ ) {
@@ -61,6 +74,7 @@ function registerAllTabs() {
       }
     }
   });
+  storage.set({"activeDomains": activeDomains});
   console.log("Registered all active tabs");
 }
 
@@ -70,26 +84,22 @@ function registerAllTabs() {
 
 // Records the time to Chrome storage
 function logTime() {
-  storage.set({"lastKnownTime": Math.round((new Date()).getTime() / 1000)});
+  var time = Math.round((new Date()).getTime() / 1000);
+  storage.set({"lastKnownTime": time});
 };
 
-// Load user id from Chrome storage
-function loadUserId() {
-  userid = storage.get({"userid": null}, function(items) {
-    userid = items.userid; 
-  });
-  console.log("Loaded userid " + userid);
-}
-
 function processUrl(tabId, url) {
-  var domain = getGeneralDomain($.url(url).attr("host"));
+  var domain = getDomain(url);
+  //console.log("got url " + url);
+  //console.log("got host " + host);
+  //console.log("got domain " + domain);
+
   // If user opened chrome://*, ignore and return
-  /*
   var excludedDomains = ["chrome", "extensions", "devtools"];
   if (excludedDomains.indexOf(domain) != -1) {
     return false;
   }
-  */
+
   var oldDomain = tabDomains[tabId];
 
   // if new tab
@@ -110,22 +120,26 @@ function processUrl(tabId, url) {
   // Remember the current domain for this tab in case we close it later
   tabDomains[tabId] = domain;
 
-  return true;
+  return domain;
 };
 
 function incrementDomainCount(domain) {
-  if (!(domain in activeDomains)) {
-    activeDomains[domain] = {"count": 0};
-    if (userid && isInWhitelist(domain)) {
-      postToOpen(domain);
-    }
+  // If this app is not in the whitelist, just return
+  if(!isInWhitelist(domain)) {
+    return;
   }
-  activeDomains[domain]["count"] += 1;
-  storage.set({"activeDomains": activeDomains});
-  console.log(activeDomains[domain]["count"] + " tabs open for " + domain);
+
+  if (!(domain in activeDomains) && userid) {
+    postToOpen(domain);
+  }
 }
 
 function decrementDomainCount(domain) {
+  // If this app is not in the whitelist, just return
+  if(!isInWhitelist(domain)) {
+    return;
+  }
+
   // If last tab for that domain, delete from active domains
   if (domain in activeDomains && activeDomains[domain]["count"] == 1) {
     var appId = activeDomains[domain]["appId"];
@@ -140,6 +154,7 @@ function decrementDomainCount(domain) {
     activeDomains[domain]["count"] = activeDomains[domain]["count"] - 1;
     console.log(activeDomains[domain]["count"] + " tabs open for " + domain);
   }
+  //console.log(activeDomains);
   storage.set({"activeDomains": activeDomains});
 };
 
@@ -161,28 +176,24 @@ function getCategory(domain) {
 }
 
 function getWhitelist() {
-  whitelist = {"twitter.com": true,
-                "facebook.com": true,
-                "google.com": true,
-                "tumblr.com": true,
-                "pinterest.com": true,
-                "youtube.com": true,
-                "linkedin.com": true,
-                "myspace.com": true,
-                "vimeo.com": true,
-                "blogger.com": true,
-                "pandora.com": true,
-                "spotify.com": true,
-                "github.com": true,
-                "stackoverflow.com": true,
-                "ycombinator.com": true,
-                "reddit.com": true,
-                "mint.com": true,
-              };
+  $.getJSON(baseUrl + "/users/" + userid + "/whitelist.json",
+    function(data){
+      whitelist = data;
+      checkDirtyClose();
+    });
 }
 
 function isInWhitelist(domain) {
-  return domain in whitelist;
+  return (whitelist.indexOf(domain) != -1); 
+};
+
+function addToWhiteList(tabid, url) {
+  var domain = getDomain(url);
+  console.log("Adding " + domain + " to whitelist");
+  if (!(domain in whitelist)) {
+    whitelist.append(domain);
+  }
+  postToAllowApp(domain);
 };
 
 //=======================
@@ -190,6 +201,9 @@ function isInWhitelist(domain) {
 //=======================
 
 function postToClose(domain, appId, posixTime) {
+  if (!appId) {
+    console.log("WARNING APPID IS NULL");
+  }
   var postData = {"appid": appId, "close_date": posixTime};
   $.post(apiUrlClose, postData);
   console.log("POST to close for domain " + domain + ": " + JSON.stringify(postData));
@@ -209,21 +223,33 @@ function postToOpen(domain) {
     url: apiUrlOpen,
     data: postData,
     success: function(data) {
-      console.log(JSON.stringify(data));
+      activeDomains[domain] = {"count": 1};
+      console.log("POST open success\n" + JSON.stringify(data));
       activeDomains[domain]["appId"] = data["appid"];
       console.log("new appId added " + activeDomains[domain]["appId"]);
+      storage.set({"activeDomains": activeDomains});
+      console.log("POST to " + apiUrlOpen + ": " + JSON.stringify(postData));
     }
   });
-  console.log("POST to " + apiUrlOpen + ": " + JSON.stringify(postData));
+};
+
+function postToAllowApp(domain) {
+  if (!userid) {
+    console.log("Null userid, cannot POST"); 
+    return;
+  }
+  var postData = {"id": userid, "domain": domain};
+  $.post(baseUrl + "/users/allow", postData);
+  console.log("POST to /users/allow; domain: " + domain);
 };
 
 //===============
 // Utilities
 //===============
 
-// Replaces subdomain.domain.com with www.domain.com
-// ex. maps.google.com --> www.google.com
-function getGeneralDomain(domain) {
+// Returns a domain of form domain.com from a url
+function getDomain(url) {
+  var domain = $.url(url).attr("host");
   if (domain.indexOf("chrome://") !== -1) {
     return "chrome";
   }
@@ -251,25 +277,75 @@ function printChromeStorage() {
   });
 }
 
-//====================
-// Chrome listeners
-//====================
+//==============================
+// Chrome listeners and helpers
+//==============================
 
+// Message listener to listen to popup.js
 chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
   console.log("message listener");
-  userid = message["userid"];
-  storage.set({"userid": userid}, function() {
-    console.log("Stored user id")
-  });
-  console.log("Logged in as " + userid);
-  registerAllTabs();
+  console.log(message);
+
+  // Toggle recording
+  if ("recording" in message) {
+    toggleRecording(message);
+  }
+
+  // If user has turned off recording, do nothing
+  if (!_recording) {
+    return;
+  }
+  
+  // Handle userid returned from chrome extension login
+  if ("userid" in message) {
+    setUserId(message);
+  }
+
+  // Handle add app
+  if ("allowed_url" in message) {
+    var url = message["allowed_url"];
+    addToWhiteList(tabid, url);
+    if ("tabid" in message) {
+      var tabid = message["tabid"];
+      tabDomains[tabId] = getDomain(url); 
+    }
+  }
 });
 
+function toggleRecording(message) {
+    _recording = message["recording"];
+    if (_recording) {
+      init();
+    }
+    console.log("recording: " + _recording);
+};
+
+function setUserId(message) {
+    console.log("setting userid");
+    userid = message["userid"];
+    storage.set({"userid": userid}, function() {
+      console.log("Stored user id " + userid);
+      init();
+    });
+};
+
+// Tab created listener
 chrome.tabs.onCreated.addListener(function(tab) {
+  // If user has toggled off recording, do nothing
+  if (!_recording) {
+    return;
+  }
+
   tabDomains[tab["id"]] = null;
 });
 
+// Tab updated listener
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {         
+  // If user has toggled off recording, do nothing
+  if (!_recording) {
+    return;
+  }
+
   // If tab has no URL yet, return
   if (!("url" in changeInfo) || changeInfo["url"] == "chrome://newtab/") {
     return;
@@ -278,10 +354,22 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   processUrl(tabId, changeInfo["url"]);
 });
 
+// Tab close listener
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
-  var closedDomain = tabDomains[tabId];
-  if (tabId in tabDomains) {
-    delete tabDomains[tabId];
-    decrementDomainCount(closedDomain);
+  // If user has toggled off recording, do nothing
+  if (!_recording) {
+    return;
   }
+
+  // Wait 1s - if this listener is triggered by application quit,
+  // we want to register the close next time Chrome is opened
+  // so decrementDomainCount() doesn't quit in the middle of execution
+
+  var closedDomain = tabDomains[tabId];
+  setTimeout(function(){
+    if (tabId in tabDomains) {
+      delete tabDomains[tabId];
+      decrementDomainCount(closedDomain);
+    }
+  }, 1000);
 });
