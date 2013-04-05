@@ -132,9 +132,10 @@ exports.login_get = (req, res) ->
 # The view for the login form
 ###
 exports.logout = (req, res) ->
-  console.log req.session.destroy()
-  res.render "login",
-    msg: "Successfully logged out!"
+  # req.session.destroy()
+  delete req.session.user_id
+  req.session.messages.push "Successfully logged out!"
+  res.redirect "login"
 
 
 ###
