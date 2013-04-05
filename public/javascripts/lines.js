@@ -121,11 +121,11 @@ $(document).ready(function() {
     var x = d3.scale.linear().domain([0,10]).range([0, 200]);
     var y = d3.scale.linear().domain([0,10]).range([0, 10]);
     var line = d3.svg.line()
-      .x(function(d,i) { 
-        return x(i); 
+      .x(function(d,i) {
+        return x(i);
       })
-      .y(function(d) { 
-        return y(d); 
+      .y(function(d) {
+        return y(d);
       })
       graph.append("svg:path").attr("d", line(data));
 });
@@ -139,7 +139,7 @@ function removeApp(index, k){
 
 function addAppBack(k){
     var index = appArray[k];
-    openArray = stats[index]['open']; 
+    openArray = stats[index]['open'];
     closeArray = stats[index]['close'];
     var track = 0;
 
@@ -179,12 +179,12 @@ function calculateRender(startValIndex, endValIndex, first) {
 
     leftBarTime = startTime + (difference*startValIndex)/(100);
     rightBarTime = startTime + (difference*endValIndex)/(100);
-    diff = rightBarTime - leftBarTime; 
+    diff = rightBarTime - leftBarTime;
 
     for(var k = 0; k < appArray.length; k++){
         if(activeArray[k] == true){
     var index = appArray[k];
-    openArray = stats[index]['open']; 
+    openArray = stats[index]['open'];
     closeArray = stats[index]['close'];
     var track = 0;
 
@@ -202,64 +202,63 @@ function calculateRender(startValIndex, endValIndex, first) {
 
 function setUpAppSelection(){
 
-      var stage = new Kinetic.Stage({
+    var stage = new Kinetic.Stage({
         container: 'container',
         width: 25*appArray.length,
         height: 25
-      });
+    });
 
-      var layer = new Kinetic.Layer();
-      var canvas = layer.getCanvas();
-      canvas.element.style.position = "relative";
+    var layer = new Kinetic.Layer();
+    var canvas = layer.getCanvas();
+    canvas.element.style.position = "relative";
     //canvas.setAttribute('style', 'position: relative;');
 
     boxes = [];
 
-    for(var k = 0; k< appArray.length; k++){
+    for (var k = 0; k< appArray.length; k++) {
         // anonymous function to induce scope
         (function() {
-        colortrack = colorArray[k];
-        var colorset = "hsl(" + colortrack + ",50%,50%)";
-        var box = new Kinetic.Rect({
-        x: k * 25,
-        y: 0,
-        width: 20,
-        height: 20,
-        id: k,
-        name: appArray[k],
-        fill: colorset,
-        });
+            colortrack = colorArray[k];
+            var colorset = "hsl(" + colortrack + ",50%,50%)";
+            var box = new Kinetic.Rect({
+                x: k * 25,
+                y: 0,
+                width: 20,
+                height: 20,
+                id: k,
+                name: appArray[k],
+                fill: colorset
+            });
 
-        boxes[k] = box;
+            boxes[k] = box;
 
-      box.on('mousedown', function() {
-        if(this.getOpacity() == 1.0){
-            this.setOpacity(0.3);
-            removeApp(this.getName(), this.getId());
-        }
-        else{
-            this.setOpacity(1.0);
-            addAppBack(this.getId());
-        }
-        printApp(this.getName());
-        layer.draw();
-      });
+            box.on('mousedown', function() {
+                if (this.getOpacity() == 1.0) {
+                    this.setOpacity(0.3);
+                    removeApp(this.getName(), this.getId());
+                } else {
+                    this.setOpacity(1.0);
+                    addAppBack(this.getId());
+                }
+                printApp(this.getName());
+                layer.draw();
+            });
 
-      box.on('mouseover', function() {
-        printApp(this.getName());
-        layer.draw();
-      });
+            box.on('mouseover', function() {
+                printApp(this.getName());
+                layer.draw();
+            });
 
-      box.on('mouseout', function() {
-        clearApp();
-        layer.draw();
-      });
+            box.on('mouseout', function() {
+                clearApp();
+                layer.draw();
+            });
 
-        layer.add(box);
+            layer.add(box);
         })();
     }
       // add the layer to the stage
-      stage.add(layer);    
+      stage.add(layer);
 }
 
 function clearApp(){

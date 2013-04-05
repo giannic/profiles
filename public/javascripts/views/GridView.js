@@ -7,7 +7,7 @@ root.app.views.GridView = Backbone.View.extend({
   className: 'vis',
   // default width of 1024
   width: 1024,
-  
+
 
   template: _.template(root.app.templates.grid),
 
@@ -32,7 +32,7 @@ root.app.views.GridView = Backbone.View.extend({
     this.$el.html(this.template(this.collection.toJSON()));
     // this.$el.toggleClass('done', this.model.get('done'));
     // this.input = this.$('.edit');
-    
+
 
     // iterate over it. for every 5, create a new table row, and then start appending to that row.
     var current_row;
@@ -91,7 +91,7 @@ root.app.views.GridView = Backbone.View.extend({
 
   updateOnEnter: function(e) {
     // if (e.keyCode == 13) this.close();
-  }, 
+  },
   clear: function() {
     // this.model.destroy();
   }

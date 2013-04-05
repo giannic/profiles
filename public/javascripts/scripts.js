@@ -1,16 +1,15 @@
 root = typeof exports !== "undefined" && exports !== null ? exports : this;
 
-// GENERATES GRID 
+// GENERATES GRID
 (function(){
-
   // backbone globals setup
 
-  root.app = {
-    models: {},
-    collections: {},
-    views: {},
-    templates: {}
-  };
+    root.app = {
+        models: {},
+        collections: {},
+        views: {},
+        templates: {}
+    };
 
   $(function(){
 
@@ -36,7 +35,7 @@ root = typeof exports !== "undefined" && exports !== null ? exports : this;
     });
 
 
-    // sample socket 
+    // sample socket
     // var socket = io.connect(window.location.hostname);
     // socket.on('news', function (data) {
     //   console.log(data);
