@@ -3,9 +3,6 @@ $(function(){
         window_height = WINDOW_HEIGHT - 50, // TODO: subtract size of menubar
         image_width = [], // image widths of the apps
         image_height = [],
-        stroke_color = 'rgba(201, 219, 242, 0.8)',
-        cluster_fill = 'rgba(200, 220, 255, 0.4)',
-        text_color = 'rgba(120,174,255,1.0)',
         selected_category,  // selected on hover, app id
         clicked_category,
         cluster_apps = {},
@@ -124,8 +121,7 @@ $(function(){
 
         // category circles
         circles = groups.append("circle")
-            .style("stroke", stroke_color)
-            .style("fill", cluster_fill)
+            .attr("class", "vis-shape")
             .attr("r", function(x){
                 return x.r;
             })
@@ -137,29 +133,20 @@ $(function(){
             .text(function(x){
                 return x.name;
             })
+            .attr("class", "vis-label")
             .attr("id", function(x){
                 return "text_" + x.id;
-            })
-            .attr({
-                "alignment-baseline": "middle",
-                "text-anchor": "middle",
-                "font-family": "Helvetica"
             })
             .attr("font-size", function(x){
                 // reduce the font size based on the radius
                 if (0.16*x.r < 12)
                     return 12;
                 return 0.16*x.r;
-            })
-            .style('fill', text_color);
+            });
 
         groups.append("text")
-            .html("More")
-            .attr({
-                //"alignment-baseline": "middle",
-                "text-anchor": "middle",
-                "font-family": "Helvetica"
-            })
+            .text("More")
+            .attr("class", "vis-sublabel")
             .attr("font-size", function(x) {
                 // reduce the font size based on the radius
                 if (0.16*x.r < 12)
@@ -167,7 +154,6 @@ $(function(){
                 return 0.1*x.r;
             })
             .attr("dy", "14px")
-            .style('fill', "#666")
             .on("mousedown", function() {
                 more_apps();
             });
@@ -205,7 +191,7 @@ $(function(){
                 });
             }
         }
-        
+
         //force.friction(0.1);
         while (++i < n) {
             q.visit(collide(nodes[i]));
@@ -247,20 +233,24 @@ $(function(){
             }
         });
 
-        return function(d) {
-            var node = max,
-                l,
-                r,
-                x,
-                y,
-                k = 1,
-                i = -1;
+      // Find the largest node for each cluster.
+      nodes.forEach(function(d) {
+        if (!(d.color in max) || (d.radius > max[d.color].radius)) {
+          max[d.color] = d;
+        }
+      });
 
-            // For cluster nodes, apply custom gravity.
-            if (node == d) {
-                node = {x: window_width / 2, y: window_height / 2, radius: -d.radius};
-                k = .1 * Math.sqrt(d.radius);
-            }
+      return function(d) {
+        var node = max[d.color],
+            l, r, x, y,
+            k = 1,
+            i = -1;
+
+        // For cluster nodes, apply custom gravity.
+        if (node == d) {
+          node = {x: window_width / 2, y: window_height / 2, radius: -d.radius};
+          k = .1 * Math.sqrt(d.radius);
+        }
 
             x = d.x - node.x;
             y = d.y - node.y;
@@ -295,7 +285,7 @@ $(function(){
                     node.x -= x *= l;
                     node.y -= y *= l;
                     quad.point.x += x;
-                    quad.point.y += y;                
+                    quad.point.y += y;
                 }
             }
             return x1 > nx2 ||
@@ -326,7 +316,6 @@ $(function(){
         // assign the created objects into the corresponding cluster_objects
         cluster_apps[selected_category] =
             category.selectAll()
-                .data(x.apps)
                 .enter()
                 .append("a")
                 .attr("data-category", x.name)
@@ -445,7 +434,7 @@ $(function(){
                            .show()
                            .animate({
                                 width: WINDOW_WIDTH,
-                                height: WINDOW_HEIGHT 
+                                height: WINDOW_HEIGHT
                            }, 500);
     }
 });
