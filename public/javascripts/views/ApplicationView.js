@@ -10,6 +10,7 @@
       height: Math.floor(1000/6), // square for now
       margin: 7,
       r: 1000/12, // temporary
+      opacity: 0.6,
 
 
       template: _.template(app.templates.application),
@@ -26,9 +27,13 @@
 
       // passes in the window width/height
       initialize: function(data) {
+          var that = this;
           this.width = Math.floor(data.width * 3/4) - 2 * this.margin;
           this.height = Math.floor(data.height * 3/4) - 2 * this.margin;
-          this.$el.css('margin', this.margin);
+          this.$el.css({
+            'margin': that.margin,
+            'opacity': that.opacity
+          });
           this.r = (data.width) / 2 - this.margin - 1;  // subtract the border
           this.cx = this.r;
           this.cy = this.r;
@@ -53,7 +58,7 @@
       hover_contract: function() {
         var that = this;
         this.$el.stop().animate({
-          opacity: 1.0,
+          opacity: 0.6,
           height: that.height,
           width: that.width
         }, 300, function(){
