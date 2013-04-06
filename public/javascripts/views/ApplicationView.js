@@ -1,4 +1,4 @@
-root.app.views.ApplicationView = Backbone.View.extend({
+app.views.ApplicationView = Backbone.View.extend({
     fsize: 16,
     tagName:  'div',
     className: 'application',
@@ -11,7 +11,7 @@ root.app.views.ApplicationView = Backbone.View.extend({
     r: 1000/12, // temporary
 
 
-    template: _.template(root.app.templates.application),
+    template: _.template(app.templates.application),
 
     events: {
         // "click .toggle"   : "toggleDone",

@@ -1,17 +1,23 @@
 // THIS SHOULD NOT BE A GLOBAL, CHANGE AFTER CODE CLEANUP
 
-var APP_DATA = [];
-var CAT_DATA = {};
-var WINDOW_WIDTH = $(window).width();
-var WINDOW_HEIGHT = $(window).height();
+var APP_DATA = [],
+    CAT_DATA = {}, 
+    WINDOW_WIDTH = $(window).width(), 
+    WINDOW_HEIGHT = $(window).height(),
+    app = {
+        models: {},
+        collections: {},
+        views: {},
+        templates: {}
+    };
 
 show_stats = function(id) {
     $("#stats").show();
-}
+};
 
 hide_stats = function() {
     $("#stats").hide();
-}
+};
 
 $(document).mousemove(function(e) {
     $("#stats").css({
@@ -51,4 +57,5 @@ $(function() {
 var init = function(){
   clusters_init();
   lines_init();
+  grid_init();
 };

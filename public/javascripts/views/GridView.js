@@ -1,4 +1,4 @@
-root.app.views.GridView = Backbone.View.extend({
+app.views.GridView = Backbone.View.extend({
 
   tagName:  "div",
   COLUMNS: 6,  // the number items in each row
@@ -9,7 +9,7 @@ root.app.views.GridView = Backbone.View.extend({
   width: 1024,
 
 
-  template: _.template(root.app.templates.grid),
+  template: _.template(app.templates.grid),
 
   events: {
     // "click .toggle"   : "toggleDone",
