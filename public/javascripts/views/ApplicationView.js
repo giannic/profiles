@@ -8,10 +8,9 @@
       // DEFAULT VALUES FOR WIDTH/HEIGHT
       width: Math.floor(1000/6), // $('#grid').width() / 6,
       height: Math.floor(1000/6), // square for now
-      margin: 7,
+      margin: 15,
       r: 1000/12, // temporary
       opacity: 0.6,
-
 
       template: _.template(app.templates.application),
 
@@ -43,15 +42,16 @@
         // return render_d3.call(this);
         return render_html.call(this);
       },
-      
+
       hover_expand: function() {
         var that = this;
         this.$el.stop().animate({
           opacity: 1.0,
           height: that.margin * 2 + that.height + that.height / 2,
-          width: that.margin * 2 + that.width + that.width / 2
-        }, 300, function(){
-          console.log('expanded!');  
+          width: that.margin * 2 + that.width + that.width / 2,
+          margin: 0
+        }, 200, function(){
+          //console.log('expanded!');
         });
       },
 
@@ -60,9 +60,10 @@
         this.$el.stop().animate({
           opacity: 0.6,
           height: that.height,
-          width: that.width
-        }, 300, function(){
-          console.log('contracted!');  
+          width: that.width,
+          margin: 15
+        }, 200, function(){
+          //console.log('contracted!');
         });
 
       }
@@ -93,8 +94,10 @@
   function render_html() {
     this.$el.html(this.template({application: this.model.toJSON()}));
     // TEMPORAROY TODO: remove image
-    this.$el.css('background-image', 'url(' + images[Math.floor(Math.random() * (images.length))] + ')');
-    this.$el.css('background-size', '100% 100%');  // resize backgorund image
+    //this.$el.append($(app.templates.grid_img));
+    this.$el.append(_.template(app.templates.grid_img, {img: images[Math.floor(Math.random() * (images.length))]}));
+    //this.$el.css('background-image', 'url(' + images[Math.floor(Math.random() * (images.length))] + ')');
+    //this.$el.css('background-size', '100% 100%');  // resize backgorund image
     this.$el.width(this.width);
     this.$el.height(this.height);
     return this;

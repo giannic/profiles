@@ -14,6 +14,10 @@ $ACCENT: #CF5300;
 //$TEXT_FILL: rgba(120, 174, 255, 1.0);
 $TEXT_FILL: #FFF;
 $SHADOW: rgba(0, 0, 0, 0.8);
+
+$UNSATURATED: 50%;
+$SATURATED: 100%;
+
 $FONT_STACK: Helvetica, Arial, sans-serif; // please change
 
 /*****************
@@ -59,4 +63,58 @@ $FONT_STACK: Helvetica, Arial, sans-serif; // please change
     -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
     -o-transition: border linear 0.2s, box-shadow linear 0.2s;
     transition: border linear 0.2s, box-shadow linear 0.2s;
+}
+
+@mixin saturate($percent) {
+    filter: saturate($percent);
+    -moz-filter: saturate($percent);
+    -webkit-filter: saturate($percent);
+    -o-filter: saturate($percent);
+    -ms-filter: saturate($percent);
+}
+
+@mixin saturate_animation($from, $to, $time) {
+    @keyframes saturate {
+        from {
+            filter: saturate($from);
+            -ms-filter: saturate($from);
+        }
+
+        to {
+            filter: saturate($to);
+            -ms-filter: saturate($to);
+        }
+    }
+
+    @-moz-keyframes saturate {
+        from {
+            -moz-filter: saturate($from);
+        }
+
+        to {
+            -moz-filter: saturate($to);
+        }
+    }
+
+    @-webkit-keyframes saturate {
+        from {
+            -webkit-filter: saturate($from);
+        }
+
+        to {
+            -webkit-filter: saturate($to);
+        }
+    }
+
+    @-o-keyframes saturate {
+        from {
+            -o-filter: saturate($from);
+        }
+
+        to {
+            -o-filter: saturate($to);
+        }
+    }
+
+    animation: saturate $time;
 }
