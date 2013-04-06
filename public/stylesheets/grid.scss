@@ -11,12 +11,12 @@ html, body {
 
 .row {
   margin: auto;
-  font-size: 0;
   text-align: center; // centering the row wrapper
   .row-wrapper{
     display: inline-block;
   }
   .application {
     display: inline-block;
+    background-color: green;
   }
 }

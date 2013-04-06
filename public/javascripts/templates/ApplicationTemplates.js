@@ -1,4 +1,4 @@
-app.templates.application = 'this is an app';
+app.templates.application = '<a href="http://<%= application.url %>"> <%= application.url %> </a>';
 
 app.templates.grid = '<!-- <div id="grid"> -->\
                           <!-- <tr> --> \
