@@ -41,10 +41,10 @@ app.views.GridView = Backbone.View.extend({
     this.collection.each(function(item, i) {
       if(row_index % row_count === 0) {
         that.$el.append(current_row);
-        current_row = $('<div class="row"><div class="row_wrapper"></div></div>');
+        current_row = $(app.templates.grid_row);
         current_row.width(that.width);
       }
-      current_row.find('.row_wrapper').append(new app.views.ApplicationView({model: item, 
+      current_row.find('.row-wrapper').append(new app.views.ApplicationView({model: item, 
                                                         width: current_column_width, 
                                                         height: current_column_width}).render().el);
       row_index++;
@@ -77,10 +77,10 @@ app.views.GridView = Backbone.View.extend({
     //       row_index = 0;
     //     }
     //     that.$el.append(current_row);
-    //     current_row = $('<div class="row"><div class="row_wrapper"></div></div>');
+    //     current_row = $('<div class="row"><div class="row-wrapper"></div></div>');
     //     current_row.width(that.width);
     //   }
-    //   current_row.find('.row_wrapper').append(new app.views.ApplicationView({model: item, 
+    //   current_row.find('.row-wrapper').append(new app.views.ApplicationView({model: item, 
     //                                                     width: current_column_width, 
     //                                                     height: current_column_width}).render().el);
     //   row_index++;
