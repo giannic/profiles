@@ -34,45 +34,26 @@
 
         <nav class="type-nav">
             <ul>
-                <li><a id="grid-toggle">grid</a></li> |
-                <li><a id="clusters-toggle">clusters</a></li> |
-                <li><a id="timelines-toggle">timelines</a></li> |
-                <li><a id="add-account-toggle">ADD APP</a></li>
+                <li><img class="menu-button" id="grid-toggle" src="img/grid.png"/></li>
+                <li><img class="menu-button" id="clusters-toggle" src="img/cluster.png"/></li>
+                <li><img class="menu-button" id="timelines-toggle" src="img/timelines.png"/></li>
+                <li><img class="menu-button" id="add-account-toggle" src="img/add.png"/></li>
+                <li><img class="menu-button" id="logout-button" src="img/logout.png"/></li>
             </ul>
         </nav>
     </div>
 
-  <!--<div class="alert"> {{{msg}}} </div>-->
-
-  <!--
-  <div id="form-wrapper">
-      <form action="/register" method="POST">
-          <div class="alert"> {{{msg}}} </div>
-          <label for="input-username">Username</label>
-          <input id="input-username" type="text" name="email" {{#if msg}} class="error" {{/if}} />
-          <label for="input-password">Password</label>
-          <input id="input-password" type="password" name="password" {{#if msg}} class="error" {{/if}} />
-          <input type="submit" value="Register" />
-      </form>
-  </div>
-  -->
-  <style>
-      #timeline_test path {
-        stroke: steelblue;
-        stroke-width: 1;
-        fill: none; }
-    </style>
     <div id="visualizations">
         <div id="circles" class="vis"></div>
 
         <div id="lines" class="vis">
-              <p id="app_details" style="background-color: black;">
-          <div id="container" style="position: relative; margin: 0px auto; width: 500px;">
-          <div id="layer" style="position: relative; display: inline-block; width: 475px; height: 25px;" class="kineticjs-content">
-              <canvas id="group" style="padding: 0px; margin: 0px; border: 0px; background-color: transparent; width: 475px; height: 25px; position: relative; background-position: initial initial; background-repeat: initial initial;" width="475" height="25"></canvas>
+            <p id="app_details" style="background-color: black;">
+            <div id="container" style="position: relative; margin: 0px auto; width: 500px;">
+            <div id="layer" style="position: relative; display: inline-block; width: 475px; height: 25px;" class="kineticjs-content">
+            <canvas id="group" style="padding: 0px; margin: 0px; border: 0px; background-color: transparent; width: 475px; height: 25px; position: relative; background-position: initial initial; background-repeat: initial initial;" width="475" height="25"></canvas>
         </div>
-              </div>
-              <div id="appname" style="text-align: center; height: 45px;"></div>
+    </div>
+    <div id="appname" style="text-align: center; height: 45px;"></div>
             </p>
             <div id="D3line"></div>
             <div id="timeline_panel">
@@ -103,7 +84,6 @@
                            name="image"
                            width="31"
                            height="20">
-
               </p>
               </div>
             </div>

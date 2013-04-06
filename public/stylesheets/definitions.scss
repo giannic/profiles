@@ -3,11 +3,21 @@
  ***************/
 $LIGHT_GREY: #666;
 $PRIMARY: #549DD1;
-$HEADER: #F7F8F4;
-$SHAPE_STROKE: rgba(201, 219, 242, 0.8);
-$SHAPE_FILL: rgba(200, 220, 255, 0.4);
-$TEXT_FILL: rgba(120, 174, 255, 1.0);
-$SHADOW: rgba(0,0,0,0.8);
+//$BACKGROUND: #98AEB5;
+$BACKGROUND: #FFF;
+//$HEADER: #F7F8F4;
+$HEADER: #FFFFFF;
+$SHAPE_STROKE: rgba(201, 219, 242, 1.0);
+//$SHAPE_FILL: #F7F8F4;
+$SHAPE_FILL: #000;
+$ACCENT: #CF5300;
+//$TEXT_FILL: rgba(120, 174, 255, 1.0);
+$TEXT_FILL: #FFF;
+$SHADOW: rgba(0, 0, 0, 0.8);
+
+$UNSATURATED: 50%;
+$SATURATED: 100%;
+
 $FONT_STACK: Helvetica, Arial, sans-serif; // please change
 
 /*****************
@@ -30,6 +40,12 @@ $FONT_STACK: Helvetica, Arial, sans-serif; // please change
     background-image: -o-linear-gradient($from, $to);
 }
 
+@mixin shadow($x, $y, $blur, $spread, $color) {
+    -moz-box-shadow: $x, $y, $blur, $spread, $color;
+    -webkit-box-shadow: $x, $y, $blur, $spread, $color;
+    box-shadow: $x, $y, $blur, $spread, $color;
+}
+
 // rounded corners on rectangles
 @mixin rounded($radius) {
     border-radius: $radius;
@@ -47,4 +63,58 @@ $FONT_STACK: Helvetica, Arial, sans-serif; // please change
     -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
     -o-transition: border linear 0.2s, box-shadow linear 0.2s;
     transition: border linear 0.2s, box-shadow linear 0.2s;
+}
+
+@mixin saturate($percent) {
+    filter: saturate($percent);
+    -moz-filter: saturate($percent);
+    -webkit-filter: saturate($percent);
+    -o-filter: saturate($percent);
+    -ms-filter: saturate($percent);
+}
+
+@mixin saturate_animation($from, $to, $time) {
+    @keyframes saturate {
+        from {
+            filter: saturate($from);
+            -ms-filter: saturate($from);
+        }
+
+        to {
+            filter: saturate($to);
+            -ms-filter: saturate($to);
+        }
+    }
+
+    @-moz-keyframes saturate {
+        from {
+            -moz-filter: saturate($from);
+        }
+
+        to {
+            -moz-filter: saturate($to);
+        }
+    }
+
+    @-webkit-keyframes saturate {
+        from {
+            -webkit-filter: saturate($from);
+        }
+
+        to {
+            -webkit-filter: saturate($to);
+        }
+    }
+
+    @-o-keyframes saturate {
+        from {
+            -o-filter: saturate($from);
+        }
+
+        to {
+            -o-filter: saturate($to);
+        }
+    }
+
+    animation: saturate $time;
 }

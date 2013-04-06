@@ -1,4 +1,4 @@
-root.app.models.Application = Backbone.Model.extend({
+app.models.Application = Backbone.Model.extend({
 
   defaults: function() {
     return {
@@ -18,9 +18,9 @@ root.app.models.Application = Backbone.Model.extend({
 
 });
 
-root.app.collections.Applications = Backbone.Collection.extend({
+app.collections.Applications = Backbone.Collection.extend({
 
-  model: root.app.models.Application,
+  model: app.models.Application,
 
   initialize: function() {
     this.by = 'open';
@@ -39,7 +39,7 @@ root.app.collections.Applications = Backbone.Collection.extend({
   },
   comparator: function(model) {
     // number of times opened
-    
+
     return -model.get(this.by).length;
   }
 

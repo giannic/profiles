@@ -11,8 +11,8 @@
 }
 
 .vis-shape {
-    stroke: $SHAPE_STROKE;
-    stroke-width: 2px;
+    // stroke: $SHAPE_STROKE;
+    // stroke-width: 2px;
     fill: $SHAPE_FILL;
 }
 
@@ -47,7 +47,7 @@
 }
 
 #timeline {
-  padding-bottom: 22px;
+    padding-bottom: 22px;
 }
 
 #timeline_details {
@@ -58,14 +58,14 @@
         variant: small-caps;
     }
 
-#app_details {
-    margin: 0 auto;
-    height: 25px;
-    font: {
-        size: 0.8em;
-        variant: small-caps;
+    #app_details {
+        margin: 0 auto;
+        height: 25px;
+        font: {
+            size: 0.8em;
+            variant: small-caps;
+        }
     }
-}
 
     span {
         display: inline-block;

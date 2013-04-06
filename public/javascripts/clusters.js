@@ -1,4 +1,4 @@
-$(function(){
+clusters_init = function(){
     var window_width = WINDOW_WIDTH - 30,
         window_height = WINDOW_HEIGHT - 50, // TODO: subtract size of menubar
         image_width = [], // image widths of the apps
@@ -570,6 +570,6 @@ $(function(){
         svg.select("#less_" + d.id)
             .attr("display", "none");
     }
-});
+};
 
 

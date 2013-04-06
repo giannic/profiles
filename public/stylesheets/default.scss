@@ -41,9 +41,12 @@ svg {
     text-align: center;
     font: {
         family: $FONT_STACK;
-        weight: 300;
     }
     color: #4d4d4d;
+
+    background: {
+        color: $BACKGROUND;
+    }
 }
 
 #header {
@@ -53,12 +56,6 @@ svg {
 
     background: {
         color: $HEADER;
-    }
-
-    border: {
-        style: solid;
-        color: #DBDBDB;
-        width: 0px 0px 1px 0px;
     }
 
     font: {
@@ -103,6 +100,16 @@ svg {
 
         li {
             display: inline-block;
+            margin: 15px 20px 0px 0px;
+        }
+    }
+
+    .menu-button {
+        width: 32px;
+        height: 32px;
+
+        &:hover {
+            cursor: pointer;
         }
     }
 }

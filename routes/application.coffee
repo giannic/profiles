@@ -103,14 +103,35 @@ exports.new_test = (req, res) ->
 exports.view = (req, res) ->
   # res.render "hi"
   app_id = req.params.id
-  Application.findOne({_id: app_id}, (err, result) ->
+  Application.findOne {_id: app_id}, (err, result) ->
     if err
       res.send(error: err)
     if not result
       res.send(error: "Could not find any application with id: " + app_id)
 
     res.json result
-  )
+
+
+###
+# POST /apps/category
+###
+exports.update_category = (req, res) ->
+  console.log req.body.category
+  category = req.body.category
+  app_id = req.body.appid
+  console.log app_id
+  Application.findByIdAndUpdate app_id, $set: { category: category }, {upsert: true}, (err, result) ->
+    if err
+      console.log "ERROR: Category unable to be updated."
+      res.send error: err
+      return
+    else
+      console.log "Category updated."
+      res.send success: "Category updated."
+
+
+
+
 
 # if there is no userid, then don't return any data, redirect to login
 exports.get_by_user = (req, res) ->

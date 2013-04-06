@@ -24,8 +24,7 @@ User = new mongoose.Schema {
 									"stackoverflow.com",
 									"ycombinator.com",
 									"reddit.com",
-									"mint.com" ] }
-							}
+									"mint.com" ] } }
 
 User.methods.makeSalt = ->
   return Math.round(new Date().valueOf() * Math.random() + '')
