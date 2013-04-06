@@ -125,6 +125,7 @@ exports.login_post = (req, res) ->
 exports.login_get = (req, res) ->
   req.session.messages = req.session.messages or []
   res.render "login",
+    title: "datapp"
     msg: req.session.messages.pop()
 
 ###

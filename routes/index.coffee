@@ -22,4 +22,3 @@ exports.grid = (req, res) ->
   res.render "grid",
     title: "datapp"
     msg: req.session.messages.pop()
-

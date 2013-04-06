@@ -1,4 +1,5 @@
 {{#extend "stylesheets"}}
+    <link rel="stylesheet" href="/stylesheets/default.css" />
     <link rel="stylesheet" href="/stylesheets/forms.css">
 {{/extend}}
 
@@ -6,16 +7,30 @@
 {{/extend}}
 
 
-<div id="wrapper"> 
-  <div id="form-wrapper">
-    <form method="POST">
-      <div class="alert"> {{{msg}}} </div>
-      <!-- <h4> Login </h4>-->
-      <label for="input-username">Username</label>
-      <input id="input-username" type="text" name="email" {{#if msg}} class="error" {{/if}} />
-      <label for="input-password">Password</label>
-      <input id="input-password" type="password" name="password" {{#if msg}} class="error" {{/if}} />
-      <input type="submit" value="Login"/>
-    </form>
-  </div>
+<div id="wrapper">
+    <div id="header">
+        <a class="title" href="#">{{{title}}}</a>
+    </div>
+
+    <div id="form-wrapper">
+        <form method="POST">
+            <div class="alert"> {{{msg}}} </div>
+            <!-- <h4> Login </h4>-->
+            <label for="input-username">Username</label>
+            <input class="user-input-field" id="input-username"
+                   type="text" name="email"
+                {{#if msg}}
+                    class="error"
+                {{/if}}
+            />
+            <label for="input-password">Password</label>
+            <input class="user-input-field" id="input-password"
+                   type="password" name="password"
+                {{#if msg}}
+                    class="error"
+                {{/if}}
+            />
+            <input class="form-button" type="submit" value="LOGIN"/>
+        </form>
+    </div>
 </div>

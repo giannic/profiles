@@ -1,24 +1,78 @@
+// NOTE: the transitions are repeated in a lot of places, need to combine
+
+/***************
+ * DIRECTORIES *
+ ***************/
+$FONT_DIR: '../fonts/';
+
+/*********
+ * FONTS *
+ *********/
+@font-face {
+    font-family: Intro;
+    src: url($FONT_DIR + 'Intro.otf');
+    font-weight: 100;
+}
+
+@font-face {
+    font-family: Novecento-Bold;
+    src: url($FONT_DIR + 'Novecentowide-Bold.otf');
+}
+
+@font-face {
+    font-family: Novecento-Normal;
+    src: url($FONT_DIR + 'Novecentowide-Normal.otf');
+}
+
+@font-face {
+    font-family: Nexa-Light;
+    src: url($FONT_DIR + 'Nexa-Light.otf');
+}
+
+@font-face {
+    font-family: Nexa-Bold;
+    src: url($FONT_DIR + 'Nexa-Bold.otf');
+}
+
+@font-face {
+    font-family: Arvo-Regular;
+    src: url($FONT_DIR + 'Arvo-Regular.ttf');
+}
+
 /***************
  * GLOBAL VARS *
  ***************/
+// fonts
+$TITLE_STACK: Nexa-Bold, Novecento-Normal, Helvetica, Arial, sans-serif;
+$BODY_STACK: Arvo-Regular, Georgia, Times, serif;
+
+// colors
 $LIGHT_GREY: #666;
 $PRIMARY: #549DD1;
-//$BACKGROUND: #98AEB5;
-$BACKGROUND: #FFF;
-//$HEADER: #F7F8F4;
-$HEADER: #FFFFFF;
-$SHAPE_STROKE: rgba(201, 219, 242, 1.0);
-//$SHAPE_FILL: #F7F8F4;
-$SHAPE_FILL: #000;
 $ACCENT: #CF5300;
-//$TEXT_FILL: rgba(120, 174, 255, 1.0);
+
+// header
+$HEADER_HEIGHT: 64px;
+$HEADER_BACKGROUND: #FFFFFF;
+$HEADER_SHADOW: #666666;
+
+// background
+$BACKGROUND: #FFF;
+
+// d3 shapes
+$SHAPE_STROKE: rgba(201, 219, 242, 1.0);
+$SHAPE_FILL: #000;
+
+// text
 $TEXT_FILL: #FFF;
-$SHADOW: rgba(0, 0, 0, 0.8);
+
+// spacing
+$BUTTON_PADDING_X: 20px;
+$BUTTON_PADDING_Y: 5px;
 
 $UNSATURATED: 50%;
 $SATURATED: 100%;
-
-$FONT_STACK: Helvetica, Arial, sans-serif; // please change
+$SHADOW: rgba(0, 0, 0, 0.8);
 
 /*****************
  * GLOBAL MIXINS *
@@ -41,9 +95,14 @@ $FONT_STACK: Helvetica, Arial, sans-serif; // please change
 }
 
 @mixin shadow($x, $y, $blur, $spread, $color) {
-    -moz-box-shadow: $x, $y, $blur, $spread, $color;
-    -webkit-box-shadow: $x, $y, $blur, $spread, $color;
-    box-shadow: $x, $y, $blur, $spread, $color;
+    -moz-box-shadow: $x $y $blur $spread $color;
+    -webkit-box-shadow: $x $y $blur $spread $color;
+    box-shadow: $x $y $blur $spread $color;
+
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
 }
 
 // rounded corners on rectangles
@@ -55,6 +114,17 @@ $FONT_STACK: Helvetica, Arial, sans-serif; // please change
 
 // text box focus glow
 @mixin focus_glow {
+    border-color: #2d6987;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7ab5d3;
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7ab5d3;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7ab5d3;
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+}
+
+@mixin button_hover {
     border-color: #2d6987;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7ab5d3;
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7ab5d3;
