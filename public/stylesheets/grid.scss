@@ -7,7 +7,7 @@ html, body {
 #grid {
  width: 100%;
  height: 100%;
-}
+ }
 
 .row {
   margin: auto;
@@ -23,6 +23,7 @@ html, body {
       position: absolute;
       bottom: 0;
       left: 0;  // TODO: WHY DOESN'T THIS WORK???
+      color: white;
     }
   }
 }

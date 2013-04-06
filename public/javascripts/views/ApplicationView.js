@@ -20,6 +20,8 @@
           // "click a.destroy" : "clear",
           // "keypress .edit"  : "updateOnEnter",
           // "blur .edit"      : "close"
+          "mouseenter" : "hover_expand",
+          "mouseleave" : "hover_contract"
       },
 
       // passes in the window width/height
@@ -35,6 +37,29 @@
       render: function() {
         // return render_d3.call(this);
         return render_html.call(this);
+      },
+      
+      hover_expand: function() {
+        var that = this;
+        this.$el.stop().animate({
+          opacity: 1.0,
+          height: that.margin * 2 + that.height + that.height / 2,
+          width: that.margin * 2 + that.width + that.width / 2
+        }, 300, function(){
+          console.log('expanded!');  
+        });
+      },
+
+      hover_contract: function() {
+        var that = this;
+        this.$el.stop().animate({
+          opacity: 1.0,
+          height: that.height,
+          width: that.width
+        }, 300, function(){
+          console.log('contracted!');  
+        });
+
       }
   });
 
