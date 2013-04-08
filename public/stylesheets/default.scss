@@ -16,7 +16,7 @@ html {
 body {
     height: 100%;
     width: 100%;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 a {
@@ -40,46 +40,37 @@ svg {
     height: 100%;
     text-align: center;
     font: {
-        family: $FONT_STACK;
-        weight: 300;
+        family: $BODY_STACK;
     }
     color: #4d4d4d;
+
+    background: {
+        color: $BACKGROUND;
+    }
 }
 
 #header {
     width: 100%;
-    height: 32px;
+    height: $HEADER_HEIGHT;
     position: relative;
-    @include gradient(#FFF,#E4E4E4);
+    @include shadow(0px, -3px, 10px, 0px, $HEADER_SHADOW);
 
     background: {
-        color: $LIGHT_GREY;
-    }
-
-    border: {
-        style: solid;
-        color: #DBDBDB;
-        width: 0px 0px 1px 0px;
-    }
-
-    font: {
-        family: $FONT_STACK;
+        color: $HEADER_BACKGROUND;
     }
 
     .title {
         display: inline-block;
-        position: absolute;
-        bottom: 2px;
-        left: 10px;
-        text-transform: uppercase;
+        margin: 20px auto;
 
         font: {
             size: 21px;
-            weight: bold;
+            family: $TITLE_STACK;
         }
 
         &:hover {
             cursor: pointer;
+            text-decoration: none;
         }
     }
 
@@ -91,20 +82,37 @@ svg {
 
         font: {
             size: 18px;
+            family: $BODY_STACK;
         }
     }
+
+    &:hover {
+        @include shadow(0px, 0px, 10px, 0px, $HEADER_SHADOW);
+    }
+
     z-index: 9001;
 }
 
 .type-nav {
-    float: right;
-    margin: 10px 10px 0px 0px;
+    position: absolute;
+    right: 0;
+    top: 0;
 
     ul {
         list-style: none;
 
         li {
             display: inline-block;
+            margin: 15px 20px 0px 0px;
+        }
+    }
+
+    .menu-button {
+        width: 32px;
+        height: 32px;
+
+        &:hover {
+            cursor: pointer;
         }
     }
 }
@@ -147,3 +155,30 @@ svg {
     font-family: Helvetica, sans-serif;
     font-size: 10px;
 }
+
+#more-apps-box {
+    display: none;
+    width: 500px;
+    height: 400px;
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+
+    background: {
+        color: $SHADOW;
+    }
+
+    .close-more-apps {
+        display: block;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        color: #FFF;
+    }
+}
+
+

@@ -1,4 +1,4 @@
-root.app.models.Application = Backbone.Model.extend({
+app.models.Application = Backbone.Model.extend({
 
   defaults: function() {
     return {
@@ -6,6 +6,8 @@ root.app.models.Application = Backbone.Model.extend({
       number: 0,
       url: 'http://www.google.com',
       img: 'http://www.placekitten.com/50/50',
+      open: [],
+      close: [],
       category: 'stuff'
     };
   },
@@ -16,9 +18,13 @@ root.app.models.Application = Backbone.Model.extend({
 
 });
 
-root.app.collections.Applications = Backbone.Collection.extend({
+app.collections.Applications = Backbone.Collection.extend({
 
-  model: root.app.models.Application,
+  model: app.models.Application,
+
+  initialize: function() {
+    this.by = 'open';
+  },
 
   done: function() {
     return this.where({done: true});
@@ -31,6 +37,10 @@ root.app.collections.Applications = Backbone.Collection.extend({
     if (!this.length) return 1;
     return this.last().get('order') + 1;
   },
-  comparator: 'order'
+  comparator: function(model) {
+    // number of times opened
+
+    return -model.get(this.by).length;
+  }
 
 });

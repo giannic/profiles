@@ -14,7 +14,7 @@ hbs = require('hbs')
 conf =
   db: {
     db: 'test',
-    host: '127.0.0.1',
+    host: 'davidxu.me',
     port: 27017
     username: ''
     password: ''
@@ -52,7 +52,9 @@ if conf.db.username and conf.db.password
   db_uri += conf.db.username + ':' + conf.db.password + '@'
 db_uri += conf.db.host + ':' + conf.db.port + '/' + conf.db.db
 
-mongoose.connect 'mongodb://127.0.0.1/test'
+console.log db_uri
+
+mongoose.connect db_uri
 db = mongoose.connection
 db.on 'error', console.error.bind(console, 'connection error:')
 db.once 'open', ->
@@ -72,11 +74,11 @@ app.get "/users/:id/whitelist.json", user.whitelist
 app.post "/users/allow", user.allow
 app.post "/users/disallow", user.disallow
 app.post "/users/delete_app", user.delete_app
-app.get "/users/:id/apps.json", user.apps_json
 app.get "/register", user.register_get
 app.post "/register", user.register_post
 app.get "/login", user.login_get
 app.post "/login", user.login_post
+app.get "/logout", user.logout
 
 # Applications
 app.get "/apps.json", application.json_all
@@ -85,6 +87,8 @@ app.post "/apps/close", application.close
 app.post "/apps/delete", application.delete
 app.get "/apps/new", application.new_test  # just for testing
 app.get "/apps/:id.json", application.view
+app.get "/apps/user", application.get_by_user  # apps specific to a user - should probably rename
+app.post "/apps/category", application.update_category
 
 # handlebars templates
 # hbs.registerPartial('home', 'home')

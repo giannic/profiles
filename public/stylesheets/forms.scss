@@ -54,7 +54,6 @@ input[type=text], input[type=password] {
         bottom: 0;
         left: 0;
         right: 0;
-        background-color: rgb(241, 245, 245);
         width:400px;
         height:150px;
 
@@ -66,10 +65,19 @@ input[type=text], input[type=password] {
             line-height: 30px;
         }
 
-        #input-username, #input-password{
+        .user-input-field {
             display:block;
             margin: auto;
             width: 60%;
+            @include rounded(0px);
+        }
+
+        #input-username {
+
+        }
+
+        #input-password {
+
         }
 
         input[type=submit] {
@@ -77,8 +85,29 @@ input[type=text], input[type=password] {
         }
 
         label {
-            font-size: 18px;
+            font-size: 16px;
         }
+    }
+}
+
+.form-button {
+    padding: $BUTTON_PADDING_Y $BUTTON_PADDING_X;
+
+    font: {
+        family: $BODY_STACK;
+        size: 14px;
+    }
+
+    letter-spacing: 1px;
+
+    border: {
+        width: 1px;
+        style: solid;
+        color: #000;
+    }
+
+    &:hover {
+        @include button_hover;
     }
 }
 
