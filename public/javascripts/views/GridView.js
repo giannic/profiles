@@ -53,6 +53,10 @@ app.views.GridView = Backbone.View.extend({
         row_index++;
     });
 
+    // append the last row
+    that.$el.append(current_row);
+    current_row = $(app.templates.grid_row);
+    current_row.width(that.width);
 
 
     // OLD: Decreasing size per row
