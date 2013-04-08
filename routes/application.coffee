@@ -143,7 +143,7 @@ exports.update_category = (req, res) ->
 # if there is no userid, then don't return any data, redirect to login
 exports.get_by_user = (req, res) ->
   helpers.loadUser req, res, ->
-    Application.find userid: req.session.user_id, 'category img url open close',
+    Application.find userid: req.session.user_id, 'category img url open close open_count close_count',
       (err, result) ->
         if err
           res.send(error: err)
