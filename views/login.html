@@ -15,17 +15,18 @@
     <div id="form-wrapper">
         <form method="POST">
             <div class="alert"> {{{msg}}} </div>
-            <!-- <h4> Login </h4>-->
-            <label for="input-username">Username</label>
+            <!--<label for="input-username">Username</label>-->
             <input class="user-input-field" id="input-username"
                    type="text" name="email"
+                   placeholder="Username"
                 {{#if msg}}
                     class="error"
                 {{/if}}
             />
-            <label for="input-password">Password</label>
+            <!--<label for="input-password">Password</label>-->
             <input class="user-input-field" id="input-password"
                    type="password" name="password"
+                   placeholder="Password"
                 {{#if msg}}
                     class="error"
                 {{/if}}
