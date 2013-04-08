@@ -15,11 +15,13 @@
 		"management",
 		"http://localhost:3000/*",
 		"http://127.0.0.1:3000/*",
-        "http://ec2-50-19-65-30.compute-1.amazonaws.com/*",
         "http://davidxu.me/*"
 	],
+
 	"browser_action": {
-		"default_icon": "icon.png",
+		"default_icon": {
+			"19": "red.png"
+		},
 		"default_popup": "popup.html"
 	}
 }

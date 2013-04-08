@@ -21,6 +21,18 @@ $("#add-button").click(function () {
 	});
 });
 
+// Bind click listener for del site button
+$("#del-button").click(function () {
+	var url = null;
+	chrome.tabs.getSelected(null, function(tab) {
+		console.log(tab);
+		url = tab.url;
+		var msg = {"tabid": tab.id, "disallowed_url": url};
+		console.log("msg data " + msg);
+		chrome.extension.sendMessage(msg);
+	});
+});
+
 // Bind click listener for submit button
 $("#submit-button").click(function () {
 	var form = $("#loginform");
@@ -28,17 +40,21 @@ $("#submit-button").click(function () {
 	$.post(url, form.serialize())
 		.done(function(data) {
 			console.log("data callback");
+			// failure
 			if (!data || data["userid"] == undefined) {
 				console.log("Login failed")
 				$("body").append("<p>Login failed</p>");
-				return;
 			}
-			var userid = data["userid"];
-			console.log("userid " + userid);
-			chrome.extension.sendMessage({"userid": userid});
-			$("body").append("<p>Login succeeded</p>");
+			// success
+			else {
+				var userid = data["userid"];
+				console.log("userid " + userid);
+				chrome.extension.sendMessage({"userid": userid});
+				$("body").append("<p>Login succeeded</p>");
+			}
 		});
     form.find("input[type=text], textarea").val("");
+    form.find("input[type=password], textarea").val("");
 });
 
 // Funky workaround to make click listener persistent for toggle recording button
