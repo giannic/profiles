@@ -23,8 +23,7 @@ User = new mongoose.Schema {
 									"github.com",
 									"stackoverflow.com",
 									"ycombinator.com",
-									"reddit.com",
-									"mint.com" ] }
+									"reddit.com" ] }
 							}
 
 User.methods.makeSalt = ->

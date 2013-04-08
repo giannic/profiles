@@ -27,6 +27,7 @@ exports.open = (req, res) ->
     { userid: req.body.userid, url: req.body.url },
     {
       $push: {open: req.body.open_date}, 
+      $inc: {open_count: 1},
       $set: {
               category: req.body.category, 
               userid: req.body.userid, 
@@ -54,20 +55,26 @@ exports.close = (req, res) ->
   # TODO: Refactor. Using a nested db call....
   Application.findById(req.body.appid, (err, data) ->
     if err then res.send(error: "Could not update database: App Close")
-
+    if (not data)
+      res.send(error: "Could not update database: Null value")
     if data.close.length == data.open.length
       res.send(error: "Could not update database: Close and Open times are already equal!")
     if data.close.length > data.open.length
       res.send(error: "Could not update database: More close times than open times.")
 
-    Application.findByIdAndUpdate(req.body.appid,
-    {$push: {close: req.body.close_date}}, {upsert: true},
-        (err, results) ->
-          console.log('close updated!')
-          console.log('results: ' + results)
-          console.log('error: ' + err)
-          if err then res.send(error: "Could not update database: App Close")
-          res.send(success: "Database updated: App close")
+    Application.findByIdAndUpdate(
+      req.body.appid, 
+      { 
+        $push: {close: req.body.close_date},
+        $inc: {close_count: 1}, 
+      }, 
+      { upsert: true },
+      (err, results) ->
+        console.log('close updated!')
+        console.log('results: ' + results)
+        console.log('error: ' + err)
+        if err then res.send(error: "Could not update database: App Close")
+        res.send(success: "Database updated: App close")
     )
 
   )

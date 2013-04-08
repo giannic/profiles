@@ -1,8 +1,5 @@
-// To do
-// Toggle button doesn't re-log in
-
-//var baseUrl = "http://davidxu.me:3000";
-var baseUrl = "http://127.0.0.1:3000";
+var baseUrl = "http://davidxu.me:3000";
+//var baseUrl = "http://127.0.0.1:3000";
 var apiUrlOpen = baseUrl + "/apps/open";
 var apiUrlClose = baseUrl + "/apps/close";
 var userid = null;
@@ -17,10 +14,10 @@ $(document).ready(function() {
 });
 
 function init() {
-  //printChromeStorage();
-
+  // Get stored userid
   storage.get({"userid": null}, function(items) {
     userid = items.userid; 
+    // If userid has logged in before
     if (userid) {
       chrome.browserAction.setIcon({path: "green.png"}, function(){});
       console.log("Loaded userid " + userid);
@@ -29,15 +26,10 @@ function init() {
       getWhitelist();
     }
     else {
-      console.log("No userid to be loaded");
+      // Set icon to red if not logged in
+      chrome.browserAction.setIcon({path: "red.png"}, function(){});
     }
   });
-
-  // Set icon to red if not logged in
-  if (!userid) {
-    chrome.browserAction.setIcon({path: "red.png"}, function(){});
-  }
-  //console.log("Init finished")
 }
 
 //==================
@@ -50,14 +42,13 @@ function checkDirtyClose() {
     function(items) {
       var domains = items.activeDomains;
       // if we do, post close with the last recorded time
+      // for each domain that was dirty-closed
       if (domains) {
-        console.log("dirty-closed domains: ");
-        console.log(domains);
+        //console.log("dirty-closed domains: ");
+        //console.log(domains);
         for (var d in domains) {
-          //console.log("domain: " + d);
           if (isInWhitelist(d)) {
             var appId = domains[d]["appId"];
-            //console.log("------appid=" + appId + "--------");
             var posixTime = items.lastKnownTime;
             if (!posixTime) {
               posixTime = getCurrentTime();
@@ -66,10 +57,8 @@ function checkDirtyClose() {
           }
         }
       }
+      // Reset stored active domains
       storage.set({"activeDomains": null});
-      // Register tabs after 3s so all tabs have time to load
-      //setTimeout(registerAllTabs, 3000);
-
       registerAllTabs();
       // Begin logging time every 5s to prepare for dirty close
       window.setInterval(logTime, 5000);
@@ -77,21 +66,24 @@ function checkDirtyClose() {
 };
 
 // Gets all open tabs and stores their domains in memory and in chrome storage
+// Sends POST request to backend to register their open times
 // Call this function if the extension is loaded after tabs have been opened
 // or if the user logs in after tabs have been loaded
 function registerAllTabs() {
   chrome.windows.getAll({"populate": true}, function(windows) {
+    // For every window, get the tabs of that window
     for (var i = 0; i < windows.length; i ++ ) {
       var tabs = windows[i].tabs;
       for (var j = 0; j < tabs.length; j ++ ) {
+        // Handle the URL of this tab
         var id = tabs[j].id;
         var url = tabs[j].url;
         processUrl(id, url);
       }
     }
   });
+  // Store all the active domains
   storage.set({"activeDomains": activeDomains});
-  console.log("Registered all active tabs");
 }
 
 //==================
@@ -104,11 +96,9 @@ function logTime() {
   storage.set({"lastKnownTime": time});
 };
 
+// Make appropriate web requests when a tab is created or changed
 function processUrl(tabId, url) {
   var domain = getDomain(url);
-  //console.log("got url " + url);
-  //console.log("got host " + host);
-  //console.log("got domain " + domain);
 
   // If user opened chrome://*, ignore and return
   var excludedDomains = ["chrome", "extensions", "devtools"];
@@ -116,18 +106,18 @@ function processUrl(tabId, url) {
     return false;
   }
 
+  // Get the last known domain for this tab
   var oldDomain = tabDomains[tabId];
-  //console.log(oldDomain + " :: " + domain);
 
   // if new tab
   if (tabDomains[tabId] == null) {
-    //console.log("new tab " + tabId + " at " + domain);
+    // Record the domain for this tab
     tabDomains[tabId] = domain;
+    // Process the domain
     incrementDomainCount(domain);
   }
   // if user navigated from one domain to another
   else if (oldDomain != domain) {
-    //console.log("navigated from " + oldDomain + " to " + domain);
     // Increment number of active tabs with this domain
     incrementDomainCount(domain);
 
@@ -140,36 +130,37 @@ function processUrl(tabId, url) {
   tabDomains[tabId] = domain;
 };
 
+// Increment the number of tabs open for a domain
+// If no tabs open yet, POST to /open
 function incrementDomainCount(domain) {
   // If this app is not in the whitelist, just return
   if(!isInWhitelist(domain)) {
     return;
   }
 
+  // If this domain is already open in another tab
   if (domain in activeDomains) {
     activeDomains[domain]["count"] = activeDomains[domain]["count"] + 1;
   }
+  // If user is logged in and this is the first tab for this domain
   else if (!(domain in activeDomains) && userid) {
-    //console.log(activeDomains);
     postToOpen(domain);
   }
 }
 
+// Decrement the counter for number of tabs open with this domain
+// If the counter reaches 0, POST to /close
 function decrementDomainCount(domain) {
-  // If this app is not in the whitelist, just return
-  if(!isInWhitelist(domain)) {
+  // If this app is not in the whitelist or not in active domains, just return
+  if(!isInWhitelist(domain) || !(domain in activeDomains)) {
     return;
   }
-  console.log("Decrementing " + domain + "...");
-  if (!(domain in activeDomains)) {
-    console.log(domain + " not in list of active domains");
-    console.log(activeDomains);
-    return;
-  }
-  // If last tab for that domain, delete from active domains
+
+  // If last tab for that domain, make POST to /close
   if (domain in activeDomains && activeDomains[domain]["count"] == 1) {
     var appId = activeDomains[domain]["appId"];
-    console.log("No more tabs open for " + domain);
+    //console.log("No more tabs open for " + domain);
+    // Only POST if user logged in and domain is in whitelist
     if (userid && isInWhitelist(domain)) {
       postToClose(domain, appId, getCurrentTime());
     }
@@ -177,9 +168,9 @@ function decrementDomainCount(domain) {
   // Else, decrement
   else {
     activeDomains[domain]["count"] = activeDomains[domain]["count"] - 1;
-    console.log(activeDomains[domain]["count"] + " tabs open for " + domain);
+    //console.log(activeDomains[domain]["count"] + " tabs open for " + domain);
   }
-  //console.log(activeDomains);
+  // Update stored version of activeDomains
   storage.set({"activeDomains": activeDomains});
 };
 
@@ -200,10 +191,12 @@ function getCategory(domain) {
   }
 }
 
+// Gets the list of approved apps for tracking
 function getWhitelist() {
   $.getJSON(baseUrl + "/users/" + userid + "/whitelist.json",
     function(data){
       whitelist = data;
+      // Effectively chain callbacks so init() executes in order
       checkDirtyClose();
     });
 }
@@ -212,6 +205,7 @@ function isInWhitelist(domain) {
   return (whitelist.indexOf(domain) != -1); 
 };
 
+// Add a url's domain to the allowed apps
 function addToWhiteList(url) {
   var domain = getDomain(url);
   console.log("Adding " + domain + " to whitelist");
@@ -222,14 +216,13 @@ function addToWhiteList(url) {
   }
 };
 
+// Remove a url's domain from the allowed apps
 function removeFromWhiteList(url) {
   var domain = getDomain(url);
   console.log("Removing " + domain + " from whitelist");
   if (whitelist.indexOf(domain) != -1) {
     whitelist.splice(whitelist.indexOf(domain), 1);
     postToDisallowApp(domain);
-    console.log("new whitelist");
-    console.log("whitelist");
   }
 }
 
@@ -240,21 +233,19 @@ function removeFromWhiteList(url) {
 //=======================
 
 function postToClose(domain, appId, posixTime) {
+  // check for invalid app id
   if (!appId) {
     console.log("WARNING APPID IS NULL");
   }
+  // Remove this domain from list of active domains
   delete activeDomains[domain];
   var postData = {"appid": appId, "close_date": posixTime};
   $.post(apiUrlClose, postData);
-  //console.log("POST to close for domain " + domain + ": " + JSON.stringify(postData));
   console.log("POST to close for " + domain);
 };
 
+// Add a domain to the list of active domains, then POST it to /open
 function postToOpen(domain) {
-  // add entry for this domain if it doesn't exist
-  if (!(domain in activeDomains)) {
-    activeDomains[domain] = {}
-  }
   // add to list of active domains
   activeDomains[domain] = {"count": 1};
 
@@ -279,10 +270,7 @@ function postToOpen(domain) {
       activeDomains[domain]["appId"] = data["appid"];
       // save active domains to chrome storage
       storage.set({"activeDomains": activeDomains});
-
-      //console.log("new appId added for " + domain + ": " 
-        //+ activeDomains[domain]["appId"]);
-      console.log("POST to open for " + domain);
+      console.log("Successful POST to open for " + domain);
     },
     error: function(xhr, status, e) {
       console.log("Error in POST to open:\n" + e);
@@ -292,28 +280,31 @@ function postToOpen(domain) {
   });
 };
 
+// Make POST request to allow a domain to be tracked
 function postToAllowApp(domain) {
   if (!userid) {
     console.log("Null userid, cannot POST"); 
     return;
   }
   var postData = {"id": userid, "domain": domain};
-  $.post(baseUrl + "/users/allow", postData, function(data, status, xhr) {
-    console.log("POST to /users/allow; domain: " + domain);
+  var route = "/users/allow";
+  $.post(baseUrl + route, postData, function(data, status, xhr) {
+    console.log("Succesful POST to " + route + "; domain: " + domain);
     console.log("Response:");
     console.log(data);
   });
 };
 
+// Make POST request to disallow a domain from being tracked
 function postToDisallowApp(domain) {
   if (!userid) {
     console.log("Null userid, cannot POST"); 
     return;
   }
   var postData = {"id": userid, "domain": domain};
-  var route = "/users/disallow"
-  $.post(baseUrl + "/users/disallow", postData, function(data, status, xhr) {
-    console.log("POST to /users/disallow; domain: " + domain);
+  var route = "/users/disallow";
+  $.post(baseUrl + route, postData, function(data, status, xhr) {
+    console.log("Succesful POST to " + route + "; domain: " + domain);
     console.log("Response:");
     console.log(data);
   });
@@ -326,6 +317,7 @@ function postToDisallowApp(domain) {
 // Returns a domain of form domain.com from a url
 function getDomain(url) {
   var domain = $.url(url).attr("host");
+  // check for chrome://* domains
   if (domain.indexOf("chrome://") !== -1) {
     return "chrome";
   }
@@ -347,7 +339,7 @@ function getCurrentTime() {
   return Math.round(new Date().getTime() / 1000);
 }
 
-function printChromeStorage() {
+function printStoredActiveDomains() {
   storage.get({"activeDomains": null}, function(items) {
       console.log(items);
       console.log(items.activeDomains);
@@ -388,7 +380,7 @@ chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
     }
   }
 
-  // Handle add app
+  // Handle disallow app
   if ("disallowed_url" in message) {
     var url = message["disallowed_url"];
     if ("tabid" in message) {
@@ -399,6 +391,7 @@ chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
   }
 });
 
+// Turn tracking on or off
 function toggleRecording(message) {
     _recording = message["recording"];
     if (_recording) {
@@ -407,8 +400,8 @@ function toggleRecording(message) {
     console.log("recording: " + _recording);
 };
 
+// Sets userid locally and in chrome storage and calls init()
 function setUserId(message) {
-    console.log("setting userid");
     userid = message["userid"];
     storage.set({"userid": userid}, function() {
       console.log("Stored user id " + userid);
@@ -417,10 +410,11 @@ function setUserId(message) {
 };
 
 // Application on install listener
+// fires when application is installed or reloaded
 chrome.runtime.onInstalled.addListener(function(details) {
-  console.log("started app");
+  console.log("Installed app");
+  // Clear chrome storage variables that are left over
   storage.remove(["userid", "activeDomains"]);
-  printChromeStorage();
 });
 
 // Tab created listener
@@ -429,9 +423,6 @@ chrome.tabs.onCreated.addListener(function(tab) {
   if (!_recording) {
     return;
   }
-
-  //console.log("tab " + tab["id"] + " created with url " + tab["url"]);
-
   tabDomains[tab["id"]] = null;
 });
 
@@ -447,25 +438,16 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   if (!_recording) {
     return;
   }
-
   // If tab has no URL yet, return
   if (!("url" in changeInfo) || changeInfo["url"] == "chrome://newtab/") {
     return;
   }
-
-  //if (changeInfo.status == "complete") {
-    //console.log("Loaded tab with url " + tab.url);
-    //console.log("tab " + tabId + " url changed to " + changeInfo["url"]);
-    processUrl(tabId, tab["url"]);
-  //}
-
-  // Process the url
+  processUrl(tabId, tab["url"]);
 });
 
 chrome.tabs.onReplaced.addListener(function(addedTabId, removedTabId) {
   tabDomains[addedTabId] = tabDomains[removedTabId];
   delete tabDomains[removedTabId];
-  //console.log(removedTabId + " replaced by " + addedTabId);
 });
 
 // Tab close listener
@@ -474,9 +456,6 @@ chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
   if (!_recording) {
     return;
   }
-
-  //console.log("closed tab " + tabId);
-
   // Wait 1s - if this listener is triggered by application quit,
   // we want to register the close next time Chrome is opened
   // so decrementDomainCount() doesn't quit in the middle of execution

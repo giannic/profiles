@@ -1,5 +1,5 @@
-//var baseUrl = "http://davidxu.me:3000";
-var baseUrl = "http://localhost:3000";
+var baseUrl = "http://davidxu.me:3000";
+//var baseUrl = "http://localhost:3000";
 var url = baseUrl + "/login";
 var _recording = true;
 
@@ -9,37 +9,44 @@ $(document).ready(function() {
 	bindToggleEventListener();
 });
 
-// Bind click listener for add site button
+// Bind click listener for allow site button
 $("#add-button").click(function () {
 	var url = null;
+	// Send message with the current tab url to background.js
 	chrome.tabs.getSelected(null, function(tab) {
-		console.log(tab);
 		url = tab.url;
 		var msg = {"tabid": tab.id, "allowed_url": url};
-		console.log("msg data " + msg);
 		chrome.extension.sendMessage(msg);
 	});
 });
 
-// Bind click listener for del site button
+// Bind click listener for disallow site button
 $("#del-button").click(function () {
 	var url = null;
+	// Send message with the current tab url to background.js
 	chrome.tabs.getSelected(null, function(tab) {
-		console.log(tab);
 		url = tab.url;
 		var msg = {"tabid": tab.id, "disallowed_url": url};
-		console.log("msg data " + msg);
 		chrome.extension.sendMessage(msg);
 	});
 });
 
 // Bind click listener for submit button
-$("#submit-button").click(function () {
+$("#submit-button").click(login);
+
+$(document).keypress(function(e) {
+	// If enter pressed, submit the form
+	if (e.which == 13) {
+		login();
+	}
+});
+
+// Send request to login and display success/failure message
+function login() {
 	var form = $("#loginform");
-	console.log("posting");
+	// Get form data
 	$.post(url, form.serialize())
 		.done(function(data) {
-			console.log("data callback");
 			// failure
 			if (!data || data["userid"] == undefined) {
 				console.log("Login failed")
@@ -53,15 +60,14 @@ $("#submit-button").click(function () {
 				$("body").append("<p>Login succeeded</p>");
 			}
 		});
+	// Clear forms
     form.find("input[type=text], textarea").val("");
     form.find("input[type=password], textarea").val("");
-});
+}
 
 // Funky workaround to make click listener persistent for toggle recording button
 function bindToggleEventListener() {
-	console.log("Bound toggle recording");
 	$("#toggle-recording").click(function () {
-		console.log("Clicked button");
 		if (_recording) {
 			$(this).html("Start logging");
 		}
@@ -85,5 +91,4 @@ function bindUnbindEventListener() {
 function toggleRecording() {
 	_recording = !_recording;
 	chrome.extension.sendMessage({"recording": _recording});
-	console.log("recording: " + _recording);
 };
