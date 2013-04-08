@@ -27,7 +27,8 @@ exports.open = (req, res) ->
   Application.findOneAndUpdate(
     { userid: req.body.userid, url: req.body.url },
     {
-      $push: {open: req.body.open_date},
+      $push: {open: req.body.open_date}, 
+      $inc: {open_count: 1},
       $set: {
               category: req.body.category,
               userid: req.body.userid,
@@ -55,20 +56,26 @@ exports.close = (req, res) ->
   # TODO: Refactor. Using a nested db call....
   Application.findById(req.body.appid, (err, data) ->
     if err then res.send(error: "Could not update database: App Close")
-
+    if (not data)
+      res.send(error: "Could not update database: Null value")
     if data.close.length == data.open.length
       res.send(error: "Could not update database: Close and Open times are already equal!")
     if data.close.length > data.open.length
       res.send(error: "Could not update database: More close times than open times.")
 
-    Application.findByIdAndUpdate(req.body.appid,
-    {$push: {close: req.body.close_date}}, {upsert: true},
-        (err, results) ->
-          console.log('close updated!')
-          console.log('results: ' + results)
-          console.log('error: ' + err)
-          if err then res.send(error: "Could not update database: App Close")
-          res.send(success: "Database updated: App close")
+    Application.findByIdAndUpdate(
+      req.body.appid, 
+      { 
+        $push: {close: req.body.close_date},
+        $inc: {close_count: 1}, 
+      }, 
+      { upsert: true },
+      (err, results) ->
+        console.log('close updated!')
+        console.log('results: ' + results)
+        console.log('error: ' + err)
+        if err then res.send(error: "Could not update database: App Close")
+        res.send(success: "Database updated: App close")
     )
 
   )
@@ -136,7 +143,7 @@ exports.update_category = (req, res) ->
 # if there is no userid, then don't return any data, redirect to login
 exports.get_by_user = (req, res) ->
   helpers.loadUser req, res, ->
-    Application.find userid: req.session.user_id, 'category img url open close',
+    Application.find userid: req.session.user_id, 'category img url open close open_count close_count',
       (err, result) ->
         if err
           res.send(error: err)

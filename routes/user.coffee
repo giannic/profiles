@@ -161,6 +161,7 @@ exports.view = (req, res) ->
 ###
 exports.whitelist = (req, res) ->
   user_id = req.params.id
+  console.log("user_id:" + user_id)
   User.findById(user_id, (err, result) ->
     if err
       res.send(error: err)
@@ -191,8 +192,7 @@ exports.reset_whitelist = (req, res) ->
                   "github.com",
                   "stackoverflow.com",
                   "ycombinator.com",
-                  "reddit.com",
-                  "mint.com"] }
+                  "reddit.com" ] }
     (err, result) ->
       if err
         res.send(error: err)
@@ -251,6 +251,8 @@ exports.delete_app = (req, res) ->
 
 ###
 # Helper Functions
+# args: user_id, domain, response
+# renders updated whitelist to response
 ###
 
 remove_from_whitelist = (user_id, domain, res) ->
@@ -259,5 +261,5 @@ remove_from_whitelist = (user_id, domain, res) ->
       if err
         res.send({error: err})
       else
-        res.send({success: result})
+        res.send({new_whitelist: result.whitelist})
   )
