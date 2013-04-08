@@ -10,7 +10,7 @@ exports.index = (req, res) ->
     console.log 'this is the home'
     console.log req.session.user_id
 
-    res.render "home",
+    res.render "index",
       title: "datapp"
       msg: req.session.messages.pop()
 
