@@ -12,7 +12,7 @@ var lines_init = function() {
   $(document).ready(function() {
       //get the JSON file
       $.ajax({
-          url: 'usage_data.json',
+          url: '/apps/user',
           dataType: 'json',
       error: function(err) {
           console.log(err)
@@ -23,6 +23,8 @@ var lines_init = function() {
       numberOfLines = 0;
       startTime = 0;
       endTime = 0;
+
+      console.log(data)
 
       //app container
       appArray = [];

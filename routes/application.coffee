@@ -27,7 +27,7 @@ exports.open = (req, res) ->
   Application.findOneAndUpdate(
     { userid: req.body.userid, url: req.body.url },
     {
-      $push: {open: req.body.open_date}, 
+      $push: {open: req.body.open_date},
       $inc: {open_count: 1},
       $set: {
               category: req.body.category,
@@ -58,17 +58,20 @@ exports.close = (req, res) ->
     if err then res.send(error: "Could not update database: App Close")
     if (not data)
       res.send(error: "Could not update database: Null value")
+      return
     if data.close.length == data.open.length
       res.send(error: "Could not update database: Close and Open times are already equal!")
+      return
     if data.close.length > data.open.length
       res.send(error: "Could not update database: More close times than open times.")
+      return
 
     Application.findByIdAndUpdate(
-      req.body.appid, 
-      { 
+      req.body.appid,
+      {
         $push: {close: req.body.close_date},
-        $inc: {close_count: 1}, 
-      }, 
+        $inc: {close_count: 1},
+      },
       { upsert: true },
       (err, results) ->
         console.log('close updated!')

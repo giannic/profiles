@@ -1,5 +1,5 @@
-var baseUrl = "http://davidxu.me:3000";
-//var baseUrl = "http://127.0.0.1:3000";
+//var baseUrl = "http://davidxu.me:3000";
+var baseUrl = "http://127.0.0.1:3000";
 var apiUrlOpen = baseUrl + "/apps/open";
 var apiUrlClose = baseUrl + "/apps/close";
 var userid = null;
