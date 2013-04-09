@@ -1,4 +1,7 @@
-app.templates.application = '<a class="url" href="http://<%= application.url %>"> <%= application.url %> </a>';
+app.templates.application = '<div class="application-inner"> \
+                              <a class="url" href="http://<%= application.url %>"> <%= application.url %> </a> \
+                              <img class="grid-img" src="<%= img %>"/>\
+                            </div>';
 
 app.templates.grid = '<!-- <div id="grid"> -->\
                           <!-- <tr> --> \

@@ -3,6 +3,8 @@ grid_init = function(){
   // GENERATES GRID
 
   $(function(){
+    // global event bus
+    grid_vent = _.extend({}, Backbone.Events);
 
     app.applications = new app.collections.Applications(APP_DATA);
     // append the grid to body
