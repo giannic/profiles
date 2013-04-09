@@ -1,6 +1,12 @@
 /**
  * Customized development theme for jQRangeSlider
  */
+ .frequency-line {
+    stroke: steelblue;
+    stroke-width: 1;
+    fill: none;
+ }
+
 .ui-rangeSlider {
     height: 3px;
 }
@@ -8,7 +14,8 @@
 .ui-rangeSlider .ui-rangeSlider-innerBar {
     height: 2px;
     margin: 13px 6px;
-    background: #c0c1c1;
+    //background: #c0c1c1;
+    background: white;
 }
 
 .ui-rangeSlider .ui-rangeSlider-handle {
@@ -21,8 +28,9 @@
 
 .ui-rangeSlider .ui-rangeSlider-bar {
     margin: 13px 0;
-    background: #808181;
-    background: rgba(128, 129, 129, 0.7);
+    //background: #808181;
+    //background: rgba(128, 129, 129, 0.7);
+    background: none;
     height: 2px;
     cursor: move;
     cursor: grab;

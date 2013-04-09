@@ -1,4 +1,5 @@
 Application = require('../models/application')
+helpers = require('./route_helpers')
 
 # App = new mongoose.Schema
   # category: String,
@@ -26,14 +27,15 @@ exports.open = (req, res) ->
   Application.findOneAndUpdate(
     { userid: req.body.userid, url: req.body.url },
     {
-      $push: {open: req.body.open_date}, 
+      $push: {open: req.body.open_date},
+      $inc: {open_count: 1},
       $set: {
-              category: req.body.category, 
-              userid: req.body.userid, 
-              url: req.body.url, 
+              category: req.body.category,
+              userid: req.body.userid,
+              url: req.body.url,
               img: req.body.img_url
             }
-    }, 
+    },
     {upsert: true},
     (err, results) ->
       console.log('open updated')
@@ -54,32 +56,41 @@ exports.close = (req, res) ->
   # TODO: Refactor. Using a nested db call....
   Application.findById(req.body.appid, (err, data) ->
     if err then res.send(error: "Could not update database: App Close")
-
+    if (not data)
+      res.send(error: "Could not update database: Null value")
+      return
     if data.close.length == data.open.length
       res.send(error: "Could not update database: Close and Open times are already equal!")
+      return
     if data.close.length > data.open.length
       res.send(error: "Could not update database: More close times than open times.")
+      return
 
-    Application.findByIdAndUpdate(req.body.appid,
-    {$push: {close: req.body.close_date}}, {upsert: true},
-        (err, results) ->
-          console.log('close updated!')
-          console.log('results: ' + results)
-          console.log('error: ' + err)
-          if err then res.send(error: "Could not update database: App Close")
-          res.send(success: "Database updated: App close")
+    Application.findByIdAndUpdate(
+      req.body.appid,
+      {
+        $push: {close: req.body.close_date},
+        $inc: {close_count: 1},
+      },
+      { upsert: true },
+      (err, results) ->
+        console.log('close updated!')
+        console.log('results: ' + results)
+        console.log('error: ' + err)
+        if err then res.send(error: "Could not update database: App Close")
+        res.send(success: "Database updated: App close")
     )
 
   )
 
 ###
 # /apps/delete
-# appid 
+# appid
 ###
 exports.delete = (req, res) ->
   app_id = req.body.appid
   Application.remove({_id: app_id}, (err, result) ->
-    console.log result 
+    console.log result
     if err
       res.send(error: err)
     else if not result
@@ -102,13 +113,43 @@ exports.new_test = (req, res) ->
 exports.view = (req, res) ->
   # res.render "hi"
   app_id = req.params.id
-  Application.findOne({_id: app_id}, (err, result) ->
+  Application.findOne {_id: app_id}, (err, result) ->
     if err
       res.send(error: err)
     if not result
       res.send(error: "Could not find any application with id: " + app_id)
 
     res.json result
-  )
 
+
+###
+# POST /apps/category
+###
+exports.update_category = (req, res) ->
+  console.log req.body.category
+  category = req.body.category
+  app_id = req.body.appid
+  console.log app_id
+  Application.findByIdAndUpdate app_id, $set: { category: category }, {upsert: true}, (err, result) ->
+    if err
+      console.log "ERROR: Category unable to be updated."
+      res.send error: err
+      return
+    else
+      console.log "Category updated."
+      res.send success: "Category updated."
+
+
+
+
+
+# if there is no userid, then don't return any data, redirect to login
+exports.get_by_user = (req, res) ->
+  helpers.loadUser req, res, ->
+    Application.find userid: req.session.user_id, 'category img url open close open_count close_count',
+      (err, result) ->
+        if err
+          res.send(error: err)
+        else
+          res.json result
 

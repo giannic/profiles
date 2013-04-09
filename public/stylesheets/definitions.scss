@@ -1,9 +1,84 @@
+// NOTE: the transitions are repeated in a lot of places, need to combine
+
+/***************
+ * DIRECTORIES *
+ ***************/
+$FONT_DIR: '../fonts/';
+
+/*********
+ * FONTS *
+ *********/
+@font-face {
+    font-family: Intro;
+    src: url($FONT_DIR + 'Intro.otf');
+    font-weight: 100;
+}
+
+@font-face {
+    font-family: Novecento-Bold;
+    src: url($FONT_DIR + 'Novecentowide-Bold.otf');
+}
+
+@font-face {
+    font-family: Novecento-Normal;
+    src: url($FONT_DIR + 'Novecentowide-Normal.otf');
+}
+
+@font-face {
+    font-family: Nexa-Light;
+    src: url($FONT_DIR + 'Nexa-Light.otf');
+}
+
+@font-face {
+    font-family: Nexa-Bold;
+    src: url($FONT_DIR + 'Nexa-Bold.otf');
+}
+
+@font-face {
+    font-family: Arvo-Regular;
+    src: url($FONT_DIR + 'Arvo-Regular.ttf');
+}
+
 /***************
  * GLOBAL VARS *
  ***************/
-$LIGHT_GREY: #DDD;
-$SHADOW: rgba(0,0,0,0.8);
-$FONT_STACK: Helvetica, Arial, sans-serif; // please change
+// fonts
+$TITLE_STACK: Nexa-Bold, Novecento-Normal, Helvetica, Arial, sans-serif;
+$BODY_STACK: Arvo-Regular, Georgia, Times, serif;
+$BODY_TEXT_SIZE: 16px;
+
+// colors
+$LIGHT_GREY: #666;
+$PRIMARY: #549DD1;
+$ACCENT: #CF5300;
+
+// header
+$HEADER_HEIGHT: 64px;
+$HEADER_BACKGROUND: #FFFFFF;
+$HEADER_SHADOW: #666666;
+
+// background
+$BACKGROUND: #FFF;
+
+// d3 shapes
+$SHAPE_STROKE: rgba(201, 219, 242, 1.0);
+$SHAPE_FILL: #000;
+
+// text
+$TEXT_FILL: #FFF;
+
+// spacing
+$BUTTON_PADDING_X: 20px;
+$BUTTON_PADDING_Y: 5px;
+$INPUT_PADDING_X: 7px;
+$INPUT_PADDING_Y: 8px;
+
+// animation
+$ANIM_TIME: 0.5s;
+
+$UNSATURATED: 50%;
+$SATURATED: 100%;
+$SHADOW: rgba(0, 0, 0, 0.8);
 
 /*****************
  * GLOBAL MIXINS *
@@ -25,6 +100,17 @@ $FONT_STACK: Helvetica, Arial, sans-serif; // please change
     background-image: -o-linear-gradient($from, $to);
 }
 
+@mixin shadow($x, $y, $blur, $spread, $color) {
+    -moz-box-shadow: $x $y $blur $spread $color;
+    -webkit-box-shadow: $x $y $blur $spread $color;
+    box-shadow: $x $y $blur $spread $color;
+
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+}
+
 // rounded corners on rectangles
 @mixin rounded($radius) {
     border-radius: $radius;
@@ -42,4 +128,83 @@ $FONT_STACK: Helvetica, Arial, sans-serif; // please change
     -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
     -o-transition: border linear 0.2s, box-shadow linear 0.2s;
     transition: border linear 0.2s, box-shadow linear 0.2s;
+}
+
+@mixin transition($attribute, $animation, $duration) {
+    -webkit-transition: $attribute $animation $duration;
+    -moz-transition: $attribute $animation $duration;
+    -o-transition: $attribute $animation $duration;
+    transition: $attribute $animation $duration;
+}
+
+@mixin saturate($percent) {
+    filter: saturate($percent);
+    -moz-filter: saturate($percent);
+    -webkit-filter: saturate($percent);
+    -o-filter: saturate($percent);
+    -ms-filter: saturate($percent);
+}
+
+@mixin saturate_animation($from, $to, $time) {
+    @keyframes saturate {
+        from {
+            filter: saturate($from);
+            -ms-filter: saturate($from);
+        }
+
+        to {
+            filter: saturate($to);
+            -ms-filter: saturate($to);
+        }
+    }
+
+    @-moz-keyframes saturate {
+        from {
+            -moz-filter: saturate($from);
+        }
+
+        to {
+            -moz-filter: saturate($to);
+        }
+    }
+
+    @-webkit-keyframes saturate {
+        from {
+            -webkit-filter: saturate($from);
+        }
+
+        to {
+            -webkit-filter: saturate($to);
+        }
+    }
+
+    @-o-keyframes saturate {
+        from {
+            -o-filter: saturate($from);
+        }
+
+        to {
+            -o-filter: saturate($to);
+        }
+    }
+
+    animation: saturate $time;
+}
+
+@mixin placeholder() {
+    ::-webkit-input-placeholder {
+        color: red;
+    }
+
+    :-moz-placeholder {
+        color: red;
+    }
+
+    ::-moz-placeholder {
+        color: red;
+    }
+
+    :ms-input-placeholder {
+        color: red;
+    }
 }

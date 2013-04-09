@@ -1,16 +1,15 @@
-
 (function(){
   $('document').ready(function() {
       var VIS_COUNT = 3; // $('.vis').length;
 
-      console.log(WINDOW_WIDTH);
+      //console.log(WINDOW_WIDTH);
 
       $('.vis').width(WINDOW_WIDTH);
-      console.log(WINDOW_WIDTH);
-      console.log($('.vis').width());
+      //console.log(WINDOW_WIDTH);
+      //console.log($('.vis').width());
       $('#visualizations').width(VIS_COUNT*WINDOW_WIDTH + 5 + 'px');
-      console.log($('#visualizations').width());
-      console.log($('#grid').width());
+      //console.log($('#visualizations').width());
+      //console.log($('#grid').width());
       // $('#lines').width(WINDOW_WIDTH + 'px');
 
       $('#grid-toggle').click(function() {
@@ -40,6 +39,10 @@
           $("#more-apps-box").toggle();
       });
 
+      $("#logout-button").click(function() {
+          window.location.replace("/logout");
+      });
+
     // MOUSE ENTER MOUSE LEAVE SUPPORT FROM https://gist.github.com/shawnbot/4166283
     // get a reference to the d3.selection prototype,
     // and keep a reference to the old d3.selection.on
@@ -65,17 +68,17 @@
           return d3_on.call(this, evt, callback, useCapture);
       } else {
           return d3_on.apply(this, arguments);
-      } 
+      }
       };
 
       function relatedTarget(callback) {
-      return function() {
-          var related = d3.event.relatedTarget;
-          if (this === related || childOf(this, related)) {
-              return undefined;
-          }
-          return callback.apply(this, arguments);
-      };
+          return function() {
+              var related = d3.event.relatedTarget;
+              if (this === related || childOf(this, related)) {
+                  return undefined;
+              }
+              return callback.apply(this, arguments);
+          };
       }
 
       function childOf(p, c) {

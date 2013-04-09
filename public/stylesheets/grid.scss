@@ -1,22 +1,67 @@
+@import "definitions";
+
 html, body {
-  width:100%;
-  height:100%;
-  margin: 0px;
+    width:100%;
+    height:100%;
+    margin: 0px;
 }
 
 #grid {
- width: 100%;
- height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 .row {
-  margin: auto;
-  font-size: 0;
-  text-align: center; // centering the row wrapper
-  .row-wrapper{
-    display: inline-block;
-  }
-  .application {
-    display: inline-block;
-  }
+    margin: auto;
+    text-align: center; // centering the row wrapper
+
+    .row-wrapper{
+        display: inline-block;
+    }
+
+    .application {
+        float: left;
+        position: relative;
+
+        .application-inner {
+          position: relative;
+          height: 100%;
+          width: 100%;
+          opacity: 0.6;
+
+          .url {
+              position: absolute;
+              bottom: 0;
+              left: 0;  // TODO: WHY DOESN'T THIS WORK???
+              color: white;
+          }
+
+          .grid-img {
+              opacity: inherit;
+              display: block;
+              position: absolute;
+              top: 0;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              margin: auto;
+              height: 100%;
+              width: 100%;
+              // @include saturate($UNSATURATED);
+
+              &:hover {
+                  //@include saturate_animation($UNSATURATED, $SATURATED, 1s);
+                  @include saturate($SATURATED);
+              }
+          }
+
+        }
+    }
 }
+
+.cf:after {
+    content:"";
+    display:table;
+    clear:both;
+}
+
