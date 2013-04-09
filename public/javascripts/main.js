@@ -39,6 +39,10 @@
           $("#more-apps-box").toggle();
       });
 
+      $("#logout-button").click(function() {
+          window.location.replace("/logout");
+      });
+
     // MOUSE ENTER MOUSE LEAVE SUPPORT FROM https://gist.github.com/shawnbot/4166283
     // get a reference to the d3.selection prototype,
     // and keep a reference to the old d3.selection.on
