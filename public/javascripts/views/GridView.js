@@ -9,6 +9,7 @@ app.views.GridView = Backbone.View.extend({
   width: 1024,
   apps: [],
   expanded_apps: [],
+  expanded_corners: [],
 
 
   template: _.template(app.templates.grid),
@@ -60,15 +61,11 @@ app.views.GridView = Backbone.View.extend({
                            });
         that.apps.push(new_app);
         current_row.find('.row-wrapper').append(new_app.render().el);
-        console.log(row_index);
         row_index++;
     });
-    // console.log(this.apps);
 
     // append the last row
     that.$el.append(current_row);
-    console.log('hihihi')
-    console.log($('.row-wrapper').width());
     // set the last row to the full width of other rows
     // TODO: HARDCODED WIDTH
     $(current_row).find('.row-wrapper').width(1020);  
@@ -77,12 +74,11 @@ app.views.GridView = Backbone.View.extend({
 
   expand_entities: function(data) {
     this.expanded_apps = [];  // reset expanded apps
+    this.expanded_corners = [];  // reset expanded apps
     var row = data.row;
     var column = data.column;
     var height = data.height;
     var width = data.width;
-
-
 
     var num_rows = Math.ceil(this.apps.length / this.COLUMNS);
 
@@ -92,24 +88,76 @@ app.views.GridView = Backbone.View.extend({
     var left_index = column - 1 < 0 ? 0 : column - 1;
     var top_index = row - 2 <= 0 ? 0 : row - 2;
     var below_index = row > num_rows ? num_rows : row;
-    
-    var right = this.apps[(row - 1) * this.COLUMNS + right_index];
-    var left = this.apps[(row - 1) * this.COLUMNS + left_index];
-    var top = this.apps[top_index * this.COLUMNS + column];
-    var bottom = this.apps[below_index * this.COLUMNS + column];
+ 
+    var row_above = top_index * this.COLUMNS;
+    var row_below = below_index * this.COLUMNS;   
+    var row_current = (row - 1) * this.COLUMNS;
+    var column_right = right_index;
+    var column_left = left_index;
+    var column_current = column;
 
-    this.expanded_apps.push(right);
-    this.expanded_apps.push(left);
-    this.expanded_apps.push(top);
-    this.expanded_apps.push(bottom);
+    var right = this.apps[row_current + column_right];
+    var left = this.apps[row_current + column_left];
+    var top = this.apps[row_above + column_current];
+    var bottom = this.apps[row_below + column_current];
+
+    var left_col = column - 1 >= 0;
+    var top_row = row - 2 >= 0;
+    var bottom_row = row <= num_rows;
+    var right_col = column + 1 < this.COLUMNS;
+
+    if(bottom_row && bottom)
+      this.expanded_apps.push(bottom);
+    if(right_col && right)
+      this.expanded_apps.push(right);
+    if(left_col && left)
+      this.expanded_apps.push(left);
+    if(top_row && top)
+      this.expanded_apps.push(top);
+
+    // expand corners
+    if(top_row) {
+      if(left_col)
+        var tl = this.apps[row_above + column_left];
+      var tr = this.apps[row_above + column_right];
+    }
+    if(left_col)
+      var bl = this.apps[row_below + column_left];
+    var br = this.apps[row_below + column_right];
+
+
+    this.expanded_corners.push(tl);
+    // if(!top_row)
+    this.expanded_corners.push(tr);
+    this.expanded_corners.push(bl);
+    // if(!bottom_row)
+    this.expanded_corners.push(br);
     
+    console.log(this.expanded_apps)
     _.each(this.expanded_apps, function(item){
       if(item)
         item.$el.find('.application-inner').stop().animate({
             width: width,
             height: height,
             left: data.left,
-            top: data.top
+            top: data.top,
+            opacity: 0.8
+          }, 200, function(){
+        });
+    });
+
+    var corner_width = data.corner_width;
+    var corner_height = data.corner_height;
+    var corner_left = data.corner_left;
+    var corner_top = data.corner_top;
+    _.each(this.expanded_corners, function(item){
+      if(item)
+        item.$el.find('.application-inner').stop().animate({
+            width: corner_width,
+            height: corner_height,
+            left: corner_left,
+            top: corner_top,
+            opacity: 0.8
           }, 200, function(){
         });
     });
@@ -122,19 +170,18 @@ app.views.GridView = Backbone.View.extend({
     // var left = column - 1 < 0 ? this.apps[0] : this.apps[(row-1) * COLUMNS + column - 1];
     // var above = row - 2 >= 0 ? this.apps[0] : this.apps[(row - 2) * COLUMNS = column]
     // var below = row
-    // console.log('HITS THISS YOOO');
-    // console.log(data);
   },
 
   contract_entities: function(data) {
     
-    _.each(this.expanded_apps, function(item){
+    _.each(_.union(this.expanded_apps, this.expanded_corners), function(item){
       if(item)
         item.$el.find('.application-inner').stop().animate({
             width: data.width,
             height: data.height,
             left: data.left,
-            top: data.top
+            top: data.top,
+            opacity: 0.6
           }, 200, function(){
         });
     });

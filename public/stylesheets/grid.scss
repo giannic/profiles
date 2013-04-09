@@ -24,10 +24,10 @@ html, body {
         position: relative;
 
         .application-inner {
-          background-color: red;
           position: relative;
           height: 100%;
           width: 100%;
+          opacity: 0.6;
 
           .url {
               position: absolute;
@@ -37,6 +37,7 @@ html, body {
           }
 
           .grid-img {
+              opacity: inherit;
               display: block;
               position: absolute;
               top: 0;
@@ -46,7 +47,7 @@ html, body {
               margin: auto;
               height: 100%;
               width: 100%;
-              @include saturate($UNSATURATED);
+              // @include saturate($UNSATURATED);
 
               &:hover {
                   //@include saturate_animation($UNSATURATED, $SATURATED, 1s);

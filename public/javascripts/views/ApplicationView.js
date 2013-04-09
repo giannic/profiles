@@ -49,7 +49,6 @@
 
       hover_expand: function() {
         var that = this;
-        console.log(this.$el.find('.application-inner'));
 
         var new_height = that.margin * 2 + that.height + that.height / 2;
         var new_width = that.margin * 2 + that.width + that.width / 2;
@@ -61,15 +60,19 @@
           height: new_height,
           width: new_width,
           left: new_left,
-          top: new_top
+          top: new_top, 
+          'z-index': 20000
         }, 200, function(){
-          console.log('expanded!');
         });
 
-        var snd_height = that.margin * 2 + that.height/2 + that.height / 4;
-        var snd_width = that.margin * 2 + that.width/2 + that.width / 4;
+        var snd_height = that.margin * 2 + that.height/2 + that.height / 2;
+        var snd_width = that.margin * 2 + that.width/2 + that.width / 2;
         var snd_top = -Math.abs((snd_height - that.height) / 2);
         var snd_left = -Math.abs((snd_width - that.width) / 2);
+        var corner_height = that.margin * 2 + that.height/2 + that.height / 4;
+        var corner_width =  that.margin * 2 + that.width/2 + that.width / 4;
+        var corner_top = -Math.abs((corner_height - that.height) / 2);
+        var corner_left = -Math.abs((corner_width - that.width) / 2);
         
         grid_vent.trigger('hover-expand', {
           row: this.row,
@@ -77,7 +80,11 @@
           height: snd_height,
           width: snd_width,
           left: snd_left,
-          top: snd_top
+          top: snd_top,
+          corner_height: corner_height,
+          corner_width: corner_width,
+          corner_left: corner_left,
+          corner_top: corner_top
         });
 
 
@@ -99,7 +106,6 @@
           left: 0,
           top: 0
         }, 200, function(){
-          //console.log('contracted!');
         });
 
       }
