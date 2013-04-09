@@ -63,13 +63,15 @@ app.views.GridView = Backbone.View.extend({
         console.log(row_index);
         row_index++;
     });
-    console.log(this.apps);
+    // console.log(this.apps);
 
     // append the last row
     that.$el.append(current_row);
-    current_row = $(app.templates.grid_row);
-    current_row.width(that.width);
-
+    console.log('hihihi')
+    console.log($('.row-wrapper').width());
+    // set the last row to the full width of other rows
+    // TODO: HARDCODED WIDTH
+    $(current_row).find('.row-wrapper').width(1020);  
     return this;
   },
 
@@ -84,27 +86,18 @@ app.views.GridView = Backbone.View.extend({
 
     var num_rows = Math.ceil(this.apps.length / this.COLUMNS);
 
+    // expand top, bottom, left, right
     // row and columns for each
     var right_index = column + 1 >= this.COLUMNS ? this.COLUMNS : column + 1;
     var left_index = column - 1 < 0 ? 0 : column - 1;
     var top_index = row - 2 <= 0 ? 0 : row - 2;
     var below_index = row > num_rows ? num_rows : row;
     
-    
-
     var right = this.apps[(row - 1) * this.COLUMNS + right_index];
     var left = this.apps[(row - 1) * this.COLUMNS + left_index];
     var top = this.apps[top_index * this.COLUMNS + column];
     var bottom = this.apps[below_index * this.COLUMNS + column];
-    console.log('hello my friend');
-    console.log(right);
-    console.log(row - 1);
-    console.log(this.COLUMNS);
-    console.log(right_index);
-    console.log(column);
-    console.log((row - 1) * this.COLUMNS + right_index)
-    console.log('(row - 1) * this.COLUMNS + right_index')
-    console.log(this.apps);
+
     this.expanded_apps.push(right);
     this.expanded_apps.push(left);
     this.expanded_apps.push(top);
@@ -129,8 +122,8 @@ app.views.GridView = Backbone.View.extend({
     // var left = column - 1 < 0 ? this.apps[0] : this.apps[(row-1) * COLUMNS + column - 1];
     // var above = row - 2 >= 0 ? this.apps[0] : this.apps[(row - 2) * COLUMNS = column]
     // var below = row
-    console.log('HITS THISS YOOO');
-    console.log(data);
+    // console.log('HITS THISS YOOO');
+    // console.log(data);
   },
 
   contract_entities: function(data) {
