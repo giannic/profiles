@@ -17,7 +17,8 @@ $(document).ready(function() {
         console.log('ERROR')
     },
     success: function(data) {
-        stats = data;
+    stats = data;
+    
     //app array stores the apps displayed
     appArray = [];
     var i = 0;
@@ -29,13 +30,10 @@ $(document).ready(function() {
     }
 
     //instantiate values
-    numberOfLines = 0;
-    startTime = 0;
-    endTime = 0;
-
+    numberOfLines = 0; startTime = 0; endTime = 0;
     //store colors for each app
-    colorArray = [];
-    activeArray = [];
+    colorArray = []; activeArray = [];
+    
     //initiate the variables
     for (var i = 0; i < appArray.length; i++) {
         var index = appArray[i];
@@ -82,7 +80,7 @@ $(document).ready(function() {
     $("#timeline").rangeSlider({
         arrows : false,
         defaultValues : {
-            min : maxRange * .45,
+            min : maxRange * .54,
             max : maxRange * .55
         },
         valueLabels : "hide",
@@ -151,7 +149,18 @@ function addAppBack(k){
       }
     }
         generateLines(k);
+        createAllTheHovers();
         activeArray[k] = true;
+}
+
+function createAllTheHovers(){
+            var hovers = d3.selectAll("line") // this should change
+            .on("mouseenter", function() {
+                show_stats();
+            })
+            .on("mouseleave", function() {
+                hide_stats();
+            });
 }
 
 //generates all the lines on each loop : OPTIMIZE
@@ -171,11 +180,13 @@ function generateLines(index) {
             var x = (closeArray[i] - openArray[i])/diff + .5;
             currentLine.style("stroke-opacity", x);
     }
+
 }
 
 //calculates the render array
 function calculateRender(startValIndex, endValIndex, first) {
         d3.selectAll("line").remove();
+
 
     leftBarTime = startTime + (difference*startValIndex)/(100);
     rightBarTime = startTime + (difference*endValIndex)/(100);
@@ -198,6 +209,9 @@ function calculateRender(startValIndex, endValIndex, first) {
         generateLines(k);
   }
 }
+
+createAllTheHovers();
+
 }
 
 function setUpAppSelection(){
@@ -211,10 +225,7 @@ function setUpAppSelection(){
       var layer = new Kinetic.Layer();
       var canvas = layer.getCanvas();
       canvas.element.style.position = "relative";
-    //canvas.setAttribute('style', 'position: relative;');
-
     boxes = [];
-
     for(var k = 0; k< appArray.length; k++){
         // anonymous function to induce scope
         (function() {
@@ -260,7 +271,7 @@ function setUpAppSelection(){
     }
       // add the layer to the stage
       stage.add(layer);    
-}
+    }
 
 function clearApp(){
   var fieldNameElement = document.getElementById("appname");
