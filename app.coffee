@@ -15,6 +15,7 @@ conf =
   db: {
     db: 'test',
     host: 'davidxu.me',
+    #host: 'localhost',
     port: 27017
     username: ''
     password: ''
@@ -73,12 +74,15 @@ app.get "/users/:id/reset_whitelist", user.reset_whitelist
 app.get "/users/:id/whitelist.json", user.whitelist
 app.post "/users/allow", user.allow
 app.post "/users/disallow", user.disallow
-app.post "/users/delete_app", user.delete_app
+app.post "/users/delete_app", user.delete_app #untested
+app.post "/users/whitelist_add", user.whitelist_add
+app.post "/users/whitelist_remove", user.whitelist_remove
 app.get "/register", user.register_get
 app.post "/register", user.register_post
 app.get "/login", user.login_get
 app.post "/login", user.login_post
 app.get "/logout", user.logout
+app.get "/modifyapplist", user.modify_app_list
 
 # Applications
 app.get "/apps.json", application.json_all
