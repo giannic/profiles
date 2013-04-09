@@ -27,6 +27,10 @@
       // passes in the window width/height
       initialize: function(data) {
           var that = this;
+          _.each(data, function(value, key){
+
+            that[key] = value;
+          });
           this.width = Math.floor(data.width * 3/4) - 2 * this.margin;
           this.height = Math.floor(data.height * 3/4) - 2 * this.margin;
           this.$el.css({
@@ -45,25 +49,63 @@
 
       hover_expand: function() {
         var that = this;
-        this.$el.stop().animate({
+
+        var new_height = that.margin * 2 + that.height + that.height / 2;
+        var new_width = that.margin * 2 + that.width + that.width / 2;
+        var new_top = -Math.abs((new_height - that.height) / 2);
+        var new_left = -Math.abs((new_width - that.width) / 2);
+
+        this.$el.find('.application-inner').stop().animate({
           opacity: 1.0,
-          height: that.margin * 2 + that.height + that.height / 2,
-          width: that.margin * 2 + that.width + that.width / 2,
-          margin: 0
+          height: new_height,
+          width: new_width,
+          left: new_left,
+          top: new_top, 
+          'z-index': 20000
         }, 200, function(){
-          //console.log('expanded!');
         });
+
+        var snd_height = that.margin * 2 + that.height/2 + that.height / 2;
+        var snd_width = that.margin * 2 + that.width/2 + that.width / 2;
+        var snd_top = -Math.abs((snd_height - that.height) / 2);
+        var snd_left = -Math.abs((snd_width - that.width) / 2);
+        var corner_height = that.margin * 2 + that.height/2 + that.height / 4;
+        var corner_width =  that.margin * 2 + that.width/2 + that.width / 4;
+        var corner_top = -Math.abs((corner_height - that.height) / 2);
+        var corner_left = -Math.abs((corner_width - that.width) / 2);
+        
+        grid_vent.trigger('hover-expand', {
+          row: this.row,
+          column: this.column,
+          height: snd_height,
+          width: snd_width,
+          left: snd_left,
+          top: snd_top,
+          corner_height: corner_height,
+          corner_width: corner_width,
+          corner_left: corner_left,
+          corner_top: corner_top
+        });
+
+
       },
+
 
       hover_contract: function() {
         var that = this;
-        this.$el.stop().animate({
+        grid_vent.trigger('hover-contract', {
+          height: that.height,
+          width: that.width,
+          left: 0,
+          top: 0
+        });
+        this.$el.find('.application-inner').stop().animate({
           opacity: 0.6,
           height: that.height,
           width: that.width,
-          margin: 15
+          left: 0,
+          top: 0
         }, 200, function(){
-          //console.log('contracted!');
         });
 
       }
@@ -92,10 +134,11 @@
   ];
 
   function render_html() {
-    this.$el.html(this.template({application: this.model.toJSON()}));
+    this.$el.html(this.template({application: this.model.toJSON(), 
+                                 img: images[Math.floor(Math.random() * (images.length))]}));
     // TEMPORAROY TODO: remove image
     //this.$el.append($(app.templates.grid_img));
-    this.$el.append(_.template(app.templates.grid_img, {img: images[Math.floor(Math.random() * (images.length))]}));
+    // this.$el.append(_.template(app.templates.grid_img, {img: images[Math.floor(Math.random() * (images.length))]}));
     //this.$el.css('background-image', 'url(' + images[Math.floor(Math.random() * (images.length))] + ')');
     //this.$el.css('background-size', '100% 100%');  // resize backgorund image
     this.$el.width(this.width);
