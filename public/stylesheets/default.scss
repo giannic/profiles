@@ -118,8 +118,6 @@ svg {
 }
 
 #search {
-    display: block;
-    outline: none;
     width: 150px;
     margin: {
         top: $HEADER_MARGIN_TOP;
@@ -127,8 +125,7 @@ svg {
         right: 0px;
         bottom: 0px;
     }
-    padding: $INPUT_PADDING_X $INPUT_PADDING_Y;
-    color: #555555;
+
     background-color: #ffffff;
 
     position: absolute;

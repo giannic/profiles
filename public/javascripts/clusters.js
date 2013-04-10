@@ -173,7 +173,6 @@ clusters_init = function(){
                 return "none";
             })
             .attr("dy", "14px")
-            .style('fill', "#666")
             .on("mousedown", function(d, i) {
                 more_apps(d, i);
             });
@@ -201,7 +200,6 @@ clusters_init = function(){
                 return "none";
             })
             .attr("dy", "14px")
-            .style('fill', "#666")
             .on("mousedown", function(d, i) {
                 less_apps(d, i);
             });
