@@ -103,7 +103,7 @@ svg {
 
         li {
             display: inline-block;
-            margin: 15px 20px 0px 0px;
+            margin: $HEADER_MARGIN_TOP $HEADER_MARGIN_SIDE 0px 0px;
         }
     }
 
@@ -119,26 +119,31 @@ svg {
 
 #search {
     display: block;
-    width: 320px;
-    margin: 10px auto 0px auto;
+    outline: none;
+    width: 150px;
+    margin: {
+        top: $HEADER_MARGIN_TOP;
+        left: $HEADER_MARGIN_SIDE;
+        right: 0px;
+        bottom: 0px;
+    }
+    padding: $INPUT_PADDING_X $INPUT_PADDING_Y;
+    color: #555555;
+    background-color: #ffffff;
 
-    .search-text {
-        width: 300px;
-        height: 28px;
-        padding: 2px 10px 2px 10px;
-        color: #888;
-        @include rounded(16px);
+    position: absolute;
+    top: 0;
+    left: 0;
 
-        border: {
-            style: solid;
-            width: 2px;
-            color: $LIGHT_GREY;
-        }
+    border: {
+        style: solid;
+        width: 1px;
+        color: #CCCCCC;
+    }
 
-        font: {
-            size: 18px;
-        }
-
+    font: {
+        family: $BODY_STACK;
+        size: $BODY_TEXT_SIZE;
     }
 }
 
