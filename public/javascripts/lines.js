@@ -14,16 +14,19 @@ var lines_init = function() {
       $.ajax({
           url: 'usage_data.json',
           dataType: 'json',
+
       error: function(err) {
           console.log(err)
           console.log('ERROR')
       },
+
       success: function(data) {
       stats = data;
       numberOfLines = 0;
       startTime = 0;
       endTime = 0;
 
+      console.log("data")
       console.log(data)
 
       //app container
@@ -63,10 +66,7 @@ var lines_init = function() {
 
       //line graph dimensions
       lineGraphWidth = 1000;
-      lineGraphHeight = 600;
-
-      //slight edit to the jQRange html
-      $(".ui-rangeSlider-container").prepend("<div class='frequency-container'></div>");
+      lineGraphHeight = 600;    
 
       lineGraph = d3.select("#D3line").append("svg:svg")
         .attr("width", lineGraphWidth)
@@ -82,12 +82,14 @@ var lines_init = function() {
 
   function initFreqLine() {
     
-    var w = lineGraphWidth, h = 50;
+    var w = lineGraphWidth, h = 25;
 
     for (var i=minRange; i < maxRange-1; i++) {
         frequencies[i] = 0;
         calcFreq(i);
     }
+    console.log("frequencies")
+    console.log(frequencies)
 
     var graph = d3.select(".frequency-container")
       .append("svg")
@@ -121,44 +123,47 @@ var lines_init = function() {
   }
 
   function initSlider() {
-      minRange = 0, maxRange = 100;
-      $("#timeline").rangeSlider({
-          arrows : false,
-          defaultValues : {
-              min : maxRange * .49,
-              max : maxRange * .51
-          },
-          valueLabels : "hide",
-          bounds : {
-              min : minRange,
-              max : maxRange
-          }
-      });
+    minRange = 0, maxRange = 100;
+    $("#timeline").rangeSlider({
+      arrows : false,
+      defaultValues : {
+        min : maxRange * .49,
+        max : maxRange * .51
+      },
+      valueLabels : "hide",
+      bounds : {
+        min : minRange,
+        max : maxRange
+      }
+    });
 
-      $("#timeline").on("valuesChanged", function(e, data) {
-          calculateRender(
-            Math.round(data.values.min), 
-            Math.round(data.values.max), 0);
-      });
+    $("#timeline").on("valuesChanged", function(e, data) {
+      calculateRender(
+        Math.round(data.values.min), 
+        Math.round(data.values.max), 0);
+    });
 
-      $("#timeline_play_pause").click(function() {
-          play(this);
-      });
+    $("#timeline_play_pause").click(function() {
+      play(this);
+    });
 
-      $("#timeline_step_back").click(function() {
-          stepBackward(10);
-      });
+    $("#timeline_step_back").click(function() {
+      stepBackward(10);
+    });
 
-      $("#timeline_step_forward").click(function() {
-          stepForward(10);
-      });
+    $("#timeline_step_forward").click(function() {
+      stepForward(10);
+    });
 
-      $("#timeline").on("valuesChanged", function(e, data) {
-          calculateRender(Math.round(data.values.min), Math.round(data.values.max));
-      });
+    $("#timeline").on("valuesChanged", function(e, data) {
+      calculateRender(Math.round(data.values.min), Math.round(data.values.max));
+    });
 
-      //initial loading of lines
-      calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+    //initial loading of lines
+    calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+
+    //slight edit to the jQRange html
+    $(".ui-rangeSlider-container").prepend("<div class='frequency-container'></div>");
   }
 
   function removeApp(index, k){
