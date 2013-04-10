@@ -13,6 +13,7 @@ grid_init = function(){
     $('#more-apps-box').prepend(new app.views.GridView({collection: app.applications}).render().el);
 
     $('body').on('keyup', function(e){
+//        e.preventDefault(();
       if(!e.ctrlKey && !e.altKey) {
         $('#grid-search').focus();
         // if it's the first letter

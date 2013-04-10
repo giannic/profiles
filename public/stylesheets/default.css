@@ -123,7 +123,7 @@ svg {
     .type-nav .menu-button:hover {
       cursor: pointer; }
 
-#search {
+#grid-search {
   width: 150px;
   margin-top: 15px;
   margin-left: 20px;
