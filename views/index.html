@@ -32,16 +32,37 @@
     <div id="header">
         <a class="title" href="#">{{{title}}}</a>
 
+        <input class="user-input-field" id="search" placeholder="search" />
+
         <nav class="type-nav">
             <ul>
-                <li><img class="menu-button" id="grid-toggle" src="img/grid.png"/></li>
-                <li><img class="menu-button" id="clusters-toggle" src="img/cluster.png"/></li>
-                <li><img class="menu-button" id="timelines-toggle" src="img/timelines.png"/></li>
-                <li><img class="menu-button" id="add-account-toggle" src="img/add.png"/></li>
-                <li><img class="menu-button" id="logout-button" src="img/logout.png"/></li>
+                <li>
+                    <img class="menu-button"
+                     id="grid-toggle"
+                     src="img/grid.png"/>
+                </li>
+                <li>
+                    <img class="menu-button"
+                         id="clusters-toggle"
+                         src="img/cluster.png"/>
+                </li>
+                <li>
+                    <img class="menu-button"
+                         id="timelines-toggle"
+                         src="img/timelines.png"/>
+                </li>
+                <li>
+                    <img class="menu-button"
+                         id="add-account-toggle"
+                         src="img/add.png"/>
+                </li>
+                <li>
+                    <img class="menu-button"
+                         id="logout-button"
+                         src="img/logout.png"/>
+                </li>
             </ul>
         </nav>
-        <input id="grid-search" placeholder="search" />
     </div>
 
     <div id="visualizations">
@@ -87,6 +108,7 @@
           </div>
         </div>
     </div>
+
     <div id="stats">
         Sample Service <br/>
         Username: Hello <br/>
@@ -97,15 +119,10 @@
     <div id="add-app-box">
         <!-- need to change action to route -->
         <form action="#" method="POST">
-          <label for="input-appname">App</label>
-          <input id="input-appname" type="text" name="app_name"/>
-
-          <label for="input-appurl">URL</label>
-          <input id="input-appurl" type="text" name="app_url"/>
-
-          <label for="input-appusername">Username</label>
-          <input id="input-appusername" type="text" name="app_username"/>
-          <input type="submit" value="Add Account" />
+          <input class="user-input-field" id="input-appname" type="text" name="app_name" placeholder="Service Name"/>
+          <input class="user-input-field" id="input-appurl" type="text" name="app_url" placeholder="URL"/>
+          <input class="user-input-field" id="input-appusername" type="text" name="app_username" placeholder="Username"/>
+          <input class="form-button" type="submit" value="Add" />
         </form>
     </div>
 

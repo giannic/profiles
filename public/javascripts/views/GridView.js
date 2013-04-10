@@ -71,7 +71,7 @@ app.views.GridView = Backbone.View.extend({
     that.$el.append(current_row);
     // set the last row to the full width of other rows
     // TODO: HARDCODED WIDTH
-    $(current_row).find('.row-wrapper').width(1020);  
+    $(current_row).find('.row-wrapper').width(1020);
     return this;
   },
 
@@ -91,9 +91,9 @@ app.views.GridView = Backbone.View.extend({
     var left_index = column - 1 < 0 ? 0 : column - 1;
     var top_index = row - 2 <= 0 ? 0 : row - 2;
     var below_index = row > num_rows ? num_rows : row;
- 
+
     var row_above = top_index * this.COLUMNS;
-    var row_below = below_index * this.COLUMNS;   
+    var row_below = below_index * this.COLUMNS;
     var row_current = (row - 1) * this.COLUMNS;
     var column_right = right_index;
     var column_left = left_index;
@@ -135,7 +135,7 @@ app.views.GridView = Backbone.View.extend({
     this.expanded_corners.push(bl);
     // if(!bottom_row)
     this.expanded_corners.push(br);
-    
+
     console.log(this.expanded_apps)
     _.each(this.expanded_apps, function(item){
       if(item)
@@ -165,7 +165,7 @@ app.views.GridView = Backbone.View.extend({
         });
     });
 
-    
+
 
     // var right = column + 1 >= COLUMN ? this.apps[this.apps.length - 1] : 
     //                                               this.apps[(row-1) * COLUMNS + column + 1];
@@ -176,7 +176,7 @@ app.views.GridView = Backbone.View.extend({
   },
 
   contract_entities: function(data) {
-    
+
     _.each(_.union(this.expanded_apps, this.expanded_corners), function(item){
       if(item)
         item.$el.find('.application-inner').stop().animate({
