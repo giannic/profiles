@@ -369,6 +369,10 @@ var lines_init = function() {
           var tMax = $("#timeline").rangeSlider("max");
           $("#timeline").rangeSlider("max", tMax - stepInterval);
       }
+
+      updateSliderDates(
+        getDate($("#timeline").rangeSlider("min")), 
+        getDate($("#timeline").rangeSlider("max")));
   }
 
   function stepForward(stepInterval) {
