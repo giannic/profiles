@@ -87,10 +87,12 @@
     }
 }
 
-#timeline_date {
-    color: #A51515;
+#timeline_dateLeft {
+    color: rgba(165, 21, 21, .6);
+    position: absolute;
+    left: 0;
 }
 
-#timeline_time {
-    color: #A51515;
+#timeline_dateRight {
+    color: rgba(165, 21, 21, .6);
 }

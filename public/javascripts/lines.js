@@ -21,12 +21,13 @@ var lines_init = function() {
       },
 
       success: function(data) {
-      console.log(data);
+
       stats = data;
       numberOfLines = 0;
       startTime = 1.7976931348623157E+10308;
       endTime = 0;
 
+      console.log("data")
       console.log(data)
 
       //app container
@@ -42,6 +43,7 @@ var lines_init = function() {
           }
       }
 
+      console.log("appArray")
       console.log(appArray);
 
       //store colors for each app
@@ -66,7 +68,6 @@ var lines_init = function() {
           colorArray[i] = i * (360 / appArray.length);
           activeArray[i] = true;
       }
-
       difference = endTime - startTime;
 
       //line graph dimensions
@@ -106,8 +107,8 @@ var lines_init = function() {
       .range([0, w]);
 
     var y = d3.scale.linear()
-      .domain([0, 300])
-      .range([-h/2, h/2]);
+      .domain([0, 5]) // this should be the max of the frequencies?
+      .range([h, 0]);
 
     var line = d3.svg.line()
         .x(function(d,i) {
@@ -142,10 +143,20 @@ var lines_init = function() {
       }
     });
 
+    //Set slider label dates to the min and max
+    updateSliderDates(
+      getDate($("#timeline").rangeSlider("min")), 
+      getDate($("#timeline").rangeSlider("max")));
+
+    $("#timeline").on("valuesChanging", function(e, data) {
+        updateSliderDates(getDate(data.values.min), getDate(data.values.max));
+    });
+
     $("#timeline").on("valuesChanged", function(e, data) {
       calculateRender(
         Math.round(data.values.min), 
         Math.round(data.values.max), 0);
+        //updateSliderDates(getDate(data.values.min), getDate(data.values.max));
     });
 
     $("#timeline_play_pause").click(function() {
@@ -160,15 +171,19 @@ var lines_init = function() {
       stepForward(10);
     });
 
-    $("#timeline").on("valuesChanged", function(e, data) {
-      calculateRender(Math.round(data.values.min), Math.round(data.values.max));
-    });
-
     //initial loading of lines
     calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
 
     //slight edit to the jQRange html
     $(".ui-rangeSlider-container").prepend("<div class='frequency-container'></div>");
+  }
+
+  function updateSliderDates(dateLeft, dateRight) {
+    var dl = dateLeft, dr = dateRight;
+    $("#timeline_dateLeft").text(
+      $.datepicker.formatDate('MM dd, yy', dl) + " -- " + dl.getMinutes() + ":" + dl.getSeconds());
+    $("#timeline_dateRight").text(
+      $.datepicker.formatDate('MM dd, yy', dr) + " -- " + dr.getMinutes() + ":" + dr.getSeconds());
   }
 
   function removeApp(index, k){
@@ -194,7 +209,6 @@ var lines_init = function() {
       string = string.replace(' ', '-');
       string = string.replace('.', '-'); 
       string = string.replace('.', '-');          
-      console.log(string);
 
       for (i = 0; i < renderArray.length; i++) {
           currentLine = lineGraph.append("svg:line")
@@ -216,7 +230,6 @@ var lines_init = function() {
     d3.selectAll("line").remove();
     leftBarTime = startTime + (difference*startValIndex)/(100);
     rightBarTime = startTime + (difference*endValIndex)/(100);
-    console.log("leftbartime: "+ leftBarTime);
     diff = rightBarTime - leftBarTime; 
 
       for(var k = 0; k < appArray.length; k++){
@@ -237,6 +250,12 @@ var lines_init = function() {
         }
       }
     }
+
+  //Gets the date of a certain index on the slider
+  function getDate(index) {
+    var date = startTime + (difference*index)/(100);
+    return new Date(date);
+  }
 
   //Given an index which is slider_min < index < slider_max
   //Calculates number of active apps at that index
@@ -362,6 +381,10 @@ var lines_init = function() {
       } else {
           $("#timeline").rangeSlider("min", tMin + stepInterval*.1);
       }
+
+      updateSliderDates(
+        getDate($("#timeline").rangeSlider("min")), 
+        getDate($("#timeline").rangeSlider("max")));
   }
 
   function play(obj) {
