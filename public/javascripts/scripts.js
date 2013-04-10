@@ -3,11 +3,31 @@ grid_init = function(){
   // GENERATES GRID
 
   $(function(){
+    // set focus on wrapper
+    // global event bus
+    grid_vent = _.extend({}, Backbone.Events);
 
     app.applications = new app.collections.Applications(APP_DATA);
     // append the grid to body
     $('#visualizations').prepend(new app.views.GridView({collection: app.applications}).render().el);
     $('#more-apps-box').prepend(new app.views.GridView({collection: app.applications}).render().el);
+
+    $('body').on('keyup', function(e){
+//        e.preventDefault(();
+      if(!e.ctrlKey && !e.altKey) {
+        $('#grid-search').focus();
+        // if it's the first letter
+        var chr = String.fromCharCode(e.which);
+        if(!$('#grid-search').val()) {
+          if(e.shiftKey)
+            $('#grid-search').val(chr);
+          else
+            $('#grid-search').val(chr.toLowerCase());
+        }
+        // if first character, append
+        grid_vent.trigger('grid-search');
+      }
+    });
 
     // sample socket
     // var socket = io.connect(window.location.hostname);

@@ -8,10 +8,11 @@ clusters_init = function(){
         cluster_apps = {},
         pad = 10, // padding for boundary circle + app circles
         max_apps = -1, // max number of apps that exists in user's categories
-        cap_apps = 4, // cap for the more button
+        cap_apps = 3, // cap for the more button // TODO: change to 9
         num_categories = 0,
         nodes = {},
         force = 0,
+        groups,
         foci = 0, // to keep track of focal pos for each node
         collision_padding = 15; // padding for collisions
 
@@ -23,18 +24,17 @@ clusters_init = function(){
 
     // use json data to create dataset and groups
     $.getJSON("usage_data.json", function(json) {
-        var dataset,
-            groups, circles, label;
+        var dataset, circles, label;
         dataset = parse_data(json);
         num_categories = dataset.length;
 
         nodes = dataset;
 
-        for (var i = 0; i < dataset.length; i++) {
+        nodes.forEach(function(d, i) {
             if (dataset[i].apps.length > max_apps) {
                 max_apps = dataset[i].apps.length;
             }
-        }
+        });
 
         force = d3.layout.force()
             .size([window_width, window_height])
@@ -134,6 +134,11 @@ clusters_init = function(){
             .text(function(x){
                 return x.name;
             })
+            .attr({
+                "alignment-baseline": "middle",
+                "text-anchor": "middle",
+                "font-family": "Helvetica"
+            })
             .attr("class", "vis-label")
             .attr("id", function(x){
                 return "text_" + x.id;
@@ -145,7 +150,7 @@ clusters_init = function(){
                 return 0.16*x.r;
             });
 
-        // append this only if there are more than x? apps!
+        // append this only if there are more than cap_apps apps!
         groups.append("text")
             .text("More")
             .attr("id", function(x){
@@ -168,9 +173,35 @@ clusters_init = function(){
                 return "none";
             })
             .attr("dy", "14px")
-            .style('fill', "#666")
-            .on("mousedown", function(d) {
-                more_apps(d);
+            .on("mousedown", function(d, i) {
+                more_apps(d, i);
+            });
+
+        // every group also has a less text
+        groups.append("text")
+            .text("Less")
+            .attr("id", function(x){
+                return "less_" + x.id;
+            })
+            .attr({
+                //"alignment-baseline": "middle",
+                "text-anchor": "middle",
+                "font-family": "Helvetica"
+            })
+            .attr("class", "vis-sublabel")
+            .attr("font-size", function(x) {
+                // reduce the font size based on the radius
+                if (0.16*x.r < 12)
+                    return 12;
+                return 0.1*x.r;
+            })
+            .attr("display", function(d) {
+                // change to visible when selecting category
+                return "none";
+            })
+            .attr("dy", "14px")
+            .on("mousedown", function(d, i) {
+                less_apps(d, i);
             });
     });
 
@@ -337,30 +368,18 @@ clusters_init = function(){
         // assign the created objects into the corresponding cluster_objects
         cluster_apps[selected_category] =
             category.selectAll()
-                .data(capped_apps)
+                .data(x.apps)
                 .enter()
                 .append("a")
                 .attr("data-category", x.name)
-                .attr("id", "link_" + x.id)
+                .attr("id", function(d, j) {
+                    // we need an id for every object to get the unfocus to work
+                    "link" + j + "_" + x.id;
+                })
                 .attr("xlink:href", function(d){
                     return d.url;
                 })
-
-        // append each app
-        // need circle for appending image, don't display it
-        cluster_apps[selected_category].append("circle")
-            .attr("display", "none")
-            .attr("id", "link_circle_" + x.id)
-            .attr("cx", function(d, j){
-                var dist = image_width[i]/2 + x.r + pad;
-                d.x = Math.cos(angle*j)*dist;
-                return d.x;
-            })
-            .attr("cy", function(d, j){
-                var dist = image_width[i]/2 + x.r + pad;
-                d.y = Math.sin(angle*j)*dist;
-                return d.y;
-            });
+                .classed(x.id, true);
 
         // append each image
         cluster_apps[selected_category]
@@ -368,12 +387,21 @@ clusters_init = function(){
             .attr('xlink:href', function(d) {
               return d.img;
             })
-            .attr("id", "link_img_" + x.id)
-            .attr("x", function(d){
-              return d.x - image_width[i]/2;
+            .attr("id", function(d, j){
+                return "link" + j + "_img_" + x.id;
             })
-            .attr("y", function(d){
-              return d.y - image_width[i]/2;
+            .classed("link_img_" + x.id, true)
+            .attr("x", function(d, j){
+                var dist = image_width[i]/2 + x.r + pad;
+                d.x = Math.cos(angle*j)*dist;
+                d.x = d.x - image_width[i]/2;
+                return d.x;
+            })
+            .attr("y", function(d, j){
+                var dist = image_width[i]/2 + x.r + pad;
+                d.y = Math.sin(angle*j)*dist;
+                d.y = d.y - image_height[i]/2;
+                return d.y;
             })
             .classed('image_' + selected_category, true)
             .transition()
@@ -384,6 +412,12 @@ clusters_init = function(){
             .attr("height", function(d){
                 return image_height[i];
             })
+            .attr("display", function(d, j){
+                // hide them if they're above the cap;
+                if (j >= cap_apps)
+                    return "none";
+                return "visible";
+            });
 
         var hovers = svg.selectAll("image") // this should change
             .on("mouseenter", function() {
@@ -427,7 +461,7 @@ clusters_init = function(){
         selected_obj = old_cluster.classed('selected', false)
             .transition()
             .attr('width', 0)
-            .attr('height', 0);
+            .attr('height', 0)
 
         // make the more button not visible
         svg.select("#more_" + old_category)
@@ -466,15 +500,84 @@ clusters_init = function(){
     }
 
     // displays the shadow box over apps for more apps
-    function more_apps(d) {
-        $("#more-apps-box").width(0)
-                           .height(0)
-                           .show()
-                           .animate({
-                                width: WINDOW_WIDTH,
-                                height: WINDOW_HEIGHT
-                           }, 500);
+    function more_apps(d, i) {
+        //force.stop(); // TODO: do force stop and fix the position
+        var circle = svg.select("#circle_" + d.id)
+            .transition()
+            .attr("r", window_width)
+            .transition()
+            .style("opacity", "0.7");
+
+        // hide the more link
+        svg.select("#more_" + d.id)
+            .attr("display", "none");
+        
+        // bring up a less link
+        svg.select("#less_" + d.id)
+            .attr("display", "visible");
+
+        // move the circle's group to the front
+        var circle_group = document.getElementById(d.id);
+        circle_group.parentNode.appendChild(circle_group);
+
+        var new_width = 80, // TODO: change so based on browser width/height
+            count = Math.floor((window_width - pad) / (new_width + pad)),
+            new_space,
+            start_pos = {x: -window_width/2 + pad, y: -window_height/2 + pad},
+            space = new_width + pad;
+ 
+        svg.selectAll(".link_img_" + d.id)
+            .transition()
+            .attr("x", function(x, j){
+                // check if x position is gerater than the window width
+                if (j < count)
+                    new_space = space*j;
+                else
+                    new_space = space*(j % count);
+                return start_pos.x + new_space;
+            })
+            .attr("y", function(x, j){
+                return start_pos.y + Math.floor(j/count)*space;
+            })
+            .attr("width", new_width)
+            .attr("height", new_width)
+            .attr("display", "visible");
     }
+
+    function less_apps(d, i) {
+        //force.resume();
+        svg.select("#circle_" + d.id)
+            .transition()
+            .attr("r", d.radius)
+            .transition()
+            .style("opacity", 1);
+
+        // bring up more link
+        svg.select("#more_" + d.id)
+            .attr("display", "visible");
+
+            // hide the less link
+        svg.select("#less_" + d.id)
+            .attr("display", "none");
+
+        // move all the apps back to where they are
+        svg.selectAll(".link_img_" + d.id)
+            .transition()
+            .attr("x", function(x){
+                return x.x;
+            })
+            .attr("y", function(x){
+                return x.y;
+            })
+            .attr("width", image_width[i])
+            .attr("height", image_height[i])
+            .attr("display", function(x, j){
+                if (j >= cap_apps)
+                    return "none";
+                return "visible";
+            });
+    }
+
 };
 
 

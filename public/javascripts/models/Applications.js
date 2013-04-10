@@ -41,6 +41,15 @@ app.collections.Applications = Backbone.Collection.extend({
     // number of times opened
 
     return -model.get(this.by).length;
+  },
+  search: function(key, value) {
+    if(key && value) {
+      return _(this.filter(function(app){
+        return app.get(key).indexOf(value) !== -1;
+      }));
+
+    }
+    else return this;
   }
 
 });

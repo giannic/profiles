@@ -32,13 +32,35 @@
     <div id="header">
         <a class="title" href="#">{{{title}}}</a>
 
+        <input class="user-input-field" id="grid-search" placeholder="search" />
+
         <nav class="type-nav">
             <ul>
-                <li><img class="menu-button" id="grid-toggle" src="img/grid.png"/></li>
-                <li><img class="menu-button" id="clusters-toggle" src="img/cluster.png"/></li>
-                <li><img class="menu-button" id="timelines-toggle" src="img/timelines.png"/></li>
-                <li><img class="menu-button" id="add-account-toggle" src="img/add.png"/></li>
-                <li><img class="menu-button" id="logout-button" src="img/logout.png"/></li>
+                <li>
+                    <img class="menu-button"
+                     id="grid-toggle"
+                     src="img/grid.png"/>
+                </li>
+                <li>
+                    <img class="menu-button"
+                         id="clusters-toggle"
+                         src="img/cluster.png"/>
+                </li>
+                <li>
+                    <img class="menu-button"
+                         id="timelines-toggle"
+                         src="img/timelines.png"/>
+                </li>
+                <li>
+                    <img class="menu-button"
+                         id="add-account-toggle"
+                         src="img/add.png"/>
+                </li>
+                <li>
+                    <img class="menu-button"
+                         id="logout-button"
+                         src="img/logout.png"/>
+                </li>
             </ul>
         </nav>
     </div>
@@ -47,20 +69,16 @@
         <div id="circles" class="vis"></div>
 
         <div id="lines" class="vis">
-            <p id="app_details" style="background-color: black;">
             <div id="container" style="position: relative; margin: 0px auto; width: 500px;">
-            <div id="layer" style="position: relative; display: inline-block; width: 475px; height: 25px;" class="kineticjs-content">
-            <canvas id="group" style="padding: 0px; margin: 0px; border: 0px; background-color: transparent; width: 475px; height: 25px; position: relative; background-position: initial initial; background-repeat: initial initial;" width="475" height="25"></canvas>
         </div>
-    </div>
-    <div id="appname" style="text-align: center; height: 45px;"></div>
+             <div id="appname" style="text-align: center; height: 35px;"></div>
             </p>
             <div id="D3line"></div>
             <div id="timeline_panel">
                 <div id="timeline"></div>
                 <p id="timeline_details">
-                    <span id="timeline_date">Jan 2, 2013 &bull;</span>
-                    <span id="timeline_time">4:00 pm</span>
+                    <span id="timeline_dateLeft"> </span>
+                    <span id="timeline_dateRight"> </span>
                     <input id="timeline_step_back"
                            class="timeline_controls"
                            type="image"
@@ -87,8 +105,10 @@
               </p>
               </div>
             </div>
+          </div>
         </div>
     </div>
+
     <div id="stats">
         Sample Service <br/>
         Username: Hello <br/>
@@ -99,15 +119,10 @@
     <div id="add-app-box">
         <!-- need to change action to route -->
         <form action="#" method="POST">
-          <label for="input-appname">App</label>
-          <input id="input-appname" type="text" name="app_name"/>
-
-          <label for="input-appurl">URL</label>
-          <input id="input-appurl" type="text" name="app_url"/>
-
-          <label for="input-appusername">Username</label>
-          <input id="input-appusername" type="text" name="app_username"/>
-          <input type="submit" value="Add Account" />
+          <input class="user-input-field" id="input-appname" type="text" name="app_name" placeholder="Service Name"/>
+          <input class="user-input-field" id="input-appurl" type="text" name="app_url" placeholder="URL"/>
+          <input class="user-input-field" id="input-appusername" type="text" name="app_username" placeholder="Username"/>
+          <input class="form-button" type="submit" value="Add" />
         </form>
     </div>
 

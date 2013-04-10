@@ -103,7 +103,7 @@ svg {
 
         li {
             display: inline-block;
-            margin: 15px 20px 0px 0px;
+            margin: $HEADER_MARGIN_TOP $HEADER_MARGIN_SIDE 0px 0px;
         }
     }
 
@@ -117,28 +117,30 @@ svg {
     }
 }
 
-#search {
-    display: block;
-    width: 320px;
-    margin: 10px auto 0px auto;
+#grid-search {
+    width: 150px;
+    margin: {
+        top: $HEADER_MARGIN_TOP;
+        left: $HEADER_MARGIN_SIDE;
+        right: 0px;
+        bottom: 0px;
+    }
 
-    .search-text {
-        width: 300px;
-        height: 28px;
-        padding: 2px 10px 2px 10px;
-        color: #888;
-        @include rounded(16px);
+    background-color: #ffffff;
 
-        border: {
-            style: solid;
-            width: 2px;
-            color: $LIGHT_GREY;
-        }
+    position: absolute;
+    top: 0;
+    left: 0;
 
-        font: {
-            size: 18px;
-        }
+    border: {
+        style: solid;
+        width: 1px;
+        color: #CCCCCC;
+    }
 
+    font: {
+        family: $BODY_STACK;
+        size: $BODY_TEXT_SIZE;
     }
 }
 
