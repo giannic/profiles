@@ -4,7 +4,7 @@ var lines_init = function() {
       openArray, renderArray, closeArray,
       startTime, endTime, difference, leftBarTime, rightBarTime,
       lineGraphWidth, lineGraphHeight, lineGraph,
-      allTheLines, hsl, colorArray, diff, appArray,
+      allTheLines, hsl, colorArray, diff, appArray, nameArray,
       minRange, maxRange, interval, boxes, activeArray,
       playTimeline = false,
       frequencies = [];
@@ -12,7 +12,7 @@ var lines_init = function() {
   $(document).ready(function() {
       //get the JSON file
       $.ajax({
-          url: 'usage_data.json',
+          url: '/apps/user',
           dataType: 'json',
 
       error: function(err) {
@@ -21,23 +21,28 @@ var lines_init = function() {
       },
 
       success: function(data) {
+      console.log(data);
       stats = data;
       numberOfLines = 0;
-      startTime = 0;
+      startTime = 1.7976931348623157E+10308;
       endTime = 0;
 
-      console.log("data")
       console.log(data)
 
       //app container
       appArray = [];
+      nameArray = [];
+
       var i = 0;
       for (var key in stats) {
           if (stats.hasOwnProperty(key)) {
               appArray[i] = key;
+              nameArray[i] = stats[i].url;
               i++;
           }
       }
+
+      console.log(appArray);
 
       //store colors for each app
       colorArray = [];
@@ -50,10 +55,9 @@ var lines_init = function() {
           var startTimeA = stats[index]['open'][0];
           var endTimeA = stats[index]['close'][stats[index]['close'].length - 1];
 
-          if (lengthA > numberOfLines) {
-              numberOfLines = lengthA;
-          }
-          if (startTimeA > startTime) {
+          numberOfLines = numberOfLines+lengthA;
+          
+          if (startTimeA < startTime) {
               startTime = startTimeA;
           }
           if (endTimeA > endTime) {
@@ -62,6 +66,7 @@ var lines_init = function() {
           colorArray[i] = i * (360 / appArray.length);
           activeArray[i] = true;
       }
+
       difference = endTime - startTime;
 
       //line graph dimensions
@@ -127,8 +132,8 @@ var lines_init = function() {
     $("#timeline").rangeSlider({
       arrows : false,
       defaultValues : {
-        min : maxRange * .49,
-        max : maxRange * .51
+        min : maxRange * .00,
+        max : maxRange * 1.00
       },
       valueLabels : "hide",
       bounds : {
@@ -168,41 +173,36 @@ var lines_init = function() {
 
   function removeApp(index, k){
       index = index.replace(' ', '-');
-      console.log(index);
-      d3.selectAll("#"+index).remove();
+      index = index.replace('.', '-');
+      index = index.replace('.', '-');
+      $("."+index).remove();
       activeArray[k] = false;
   }
 
   function addAppBack(k){
-      var index = appArray[k];
-      openArray = stats[index]['open'];
-      closeArray = stats[index]['close'];
-      var track = 0;
-
-      renderArray = [];
-      for (var i = 0; i < openArray.length; i++) {
-        if((openArray[i] > leftBarTime) && (closeArray[i] < rightBarTime)){
-          renderArray[track] = ((openArray[i]-leftBarTime)/(diff/lineGraphWidth));
-          track++;
-        }
-      }
-
-      generateLines(k);
-      activeArray[k] = true;
+    //initial loading of lines
+    activeArray[k] = true;
+    calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+  
   }
 
   //generates the lines for an app : OPTIMIZE
   function generateLines(index) {
       var currentLine, i;
+
+      var string = nameArray[index];
+      string = string.replace(' ', '-');
+      string = string.replace('.', '-'); 
+      string = string.replace('.', '-');          
+      console.log(string);
+
       for (i = 0; i < renderArray.length; i++) {
-          var string = appArray[index];
-          string = string.replace(' ', '-');
           currentLine = lineGraph.append("svg:line")
                                  .attr("x1", renderArray[i])
                                  .attr("y1", 0)
                                  .attr("x2", renderArray[i])
                                  .attr("y2", lineGraphHeight)
-                                 .attr("id", string)
+                                 .attr("class", string)
                                  .style("stroke-width", 2)
                                  .style("stroke", "hsl("+ colorArray[index] +",50%, 50%)");
           var x = (closeArray[i] - openArray[i])/diff + .5;
@@ -216,6 +216,7 @@ var lines_init = function() {
     d3.selectAll("line").remove();
     leftBarTime = startTime + (difference*startValIndex)/(100);
     rightBarTime = startTime + (difference*endValIndex)/(100);
+    console.log("leftbartime: "+ leftBarTime);
     diff = rightBarTime - leftBarTime; 
 
       for(var k = 0; k < appArray.length; k++){
@@ -286,8 +287,8 @@ var lines_init = function() {
                   y: 0,
                   width: 20,
                   height: 20,
-                  id: k,
-                  name: appArray[k],
+                  id: appArray[k],
+                  name: nameArray[k],
                   fill: colorset
               });
 
