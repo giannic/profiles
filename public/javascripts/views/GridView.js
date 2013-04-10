@@ -30,9 +30,12 @@ app.views.GridView = Backbone.View.extend({
     this.$el.height(this.height);
     this.listenTo(grid_vent, 'hover-expand', this.expand_entities);
     this.listenTo(grid_vent, 'hover-contract', this.contract_entities);
+    this.listenTo(grid_vent, 'grid-search', this.search);
   },
 
-  render: function() {
+  render: function(search_key, search_value) {
+    console.log(search_key)
+    console.log(search_value)
     this.apps = [];
     this.$el.width(this.width);
     this.$el.html(this.template(this.collection.toJSON()));
@@ -44,7 +47,7 @@ app.views.GridView = Backbone.View.extend({
     var current_column_width = that.width / that.COLUMNS;
     var row_index = 0;  // position in the row
     var row_num = 0;
-    this.collection.each(function(item, i) {
+    this.collection.search(search_key, search_value).each(function(item, i) {
         var current_column = row_index < that.COLUMNS ? row_index : row_index % that.COLUMNS;
         if (current_column === 0) {
             that.$el.append(current_row);
@@ -188,6 +191,14 @@ app.views.GridView = Backbone.View.extend({
 
 
   },
+
+  search: function() {
+    // this.model.toggle();
+    console.log($('#grid-search').val());
+    this.render('url', $('#grid-search').val());
+
+  },
+
 
   toggleDone: function() {
     // this.model.toggle();
