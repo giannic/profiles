@@ -86,14 +86,36 @@ var lines_init = function() {
       }});     
   });
 
+function myFunction(x){ 
+  console.log(x.x2.animVal.value);
+  printTheStats(x.attributes.name.value, "username", x.x2.animVal.value);
+  show_stats();
+}
+
+function myFunction2(x){ 
+  console.log("mouseout");
+  hide_stats();
+}
+
   function createAllTheHovers(){
-            var hovers = d3.selectAll("line") // this should change
-            .on("mouseenter", function() {
+            var hovers = d3.selectAll("line"); // this should change
+            /*.on("mouseenter", function() {
                 show_stats();
             })
             .on("mouseleave", function() {
                 hide_stats();
             });
+            */
+
+
+            console.log("hovers = ");
+            console.log(hovers[0]);
+            for(var i = 0; i < hovers[0].length; i++){
+              currline = hovers[0][i];
+              currline.addEventListener("mouseover",function(evt) { myFunction(this); }, false);
+              currline.addEventListener("mouseout",function(evt) { myFunction2(this); }, false);
+              }
+
 }
 
   function initFreqLine() {
@@ -252,8 +274,9 @@ var lines_init = function() {
                                  .attr("y1", 0)
                                  .attr("x2", renderArray[i])
                                  .attr("y2", lineGraphHeight)
+                                 .attr("name", nameArray[index])
                                  .attr("class", string)
-                                 .style("stroke-width", 2)
+                                 .style("stroke-width", 3)
                                  .style("stroke", "hsl("+ colorArray[index] +",50%, 50%)");
           var x = (closeArray[i] - openArray[i])/diff + .5;
           currentLine.style("stroke-opacity", x);
@@ -448,6 +471,36 @@ var lines_init = function() {
     fieldNameElement.appendChild(fieldNameElement.ownerDocument.createTextNode(d));
     }
 
+  function printTheStats(s, u, l){
+    console.log(s);
+    printThatApp(s);
+    printUsername(u);
+    printLastVisit(l);  
+  }
+
+  function printThatApp(d){
+    var f = document.getElementById("thatapp");
+    while(f.childNodes.length >= 1) {
+      f.removeChild(f.firstChild);
+    }
+    f.appendChild(f.ownerDocument.createTextNode(d));
+    }
+
+    function printUsername(d){
+    var f = document.getElementById("username");
+    while(f.childNodes.length >= 1) {
+      f.removeChild(f.firstChild);
+    }
+    f.appendChild(f.ownerDocument.createTextNode(d));
+    }
+
+    function printLastVisit(d){
+    var f = document.getElementById("lastvisit");
+    while(f.childNodes.length >= 1) {
+      f.removeChild(f.firstChild);
+    }
+    f.appendChild(f.ownerDocument.createTextNode(d));
+    }
 
   /*
    * ANIMATION CONTROLS
