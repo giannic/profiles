@@ -123,22 +123,21 @@ svg {
     .type-nav .menu-button:hover {
       cursor: pointer; }
 
-#search {
-  display: block;
-  width: 320px;
-  margin: 10px auto 0px auto; }
-  #search .search-text {
-    width: 300px;
-    height: 28px;
-    padding: 2px 10px 2px 10px;
-    color: #888;
-    border-radius: 16px;
-    -moz-border-radius: 16px;
-    -webkit-border-radius: 16px;
-    border-style: solid;
-    border-width: 2px;
-    border-color: #666666;
-    font-size: 18px; }
+#grid-search {
+  width: 150px;
+  margin-top: 15px;
+  margin-left: 20px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  background-color: #ffffff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #CCCCCC;
+  font-family: Arvo-Regular, Georgia, Times, serif;
+  font-size: 16px; }
 
 #stats {
   display: none;

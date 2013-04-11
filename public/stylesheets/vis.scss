@@ -11,7 +11,7 @@
 }
 
 .vis-shape {
-    // stroke: $SHAPE_STROKE;
+    stroke: $SHAPE_STROKE;
     // stroke-width: 2px;
     fill: $SHAPE_FILL;
 }
@@ -26,7 +26,7 @@
 .vis-sublabel {
     font-family: $BODY_STACK;
     text-anchor: middle;
-    fill: $LIGHT_GREY;
+    fill: $SUBTEXT_FILL;
 }
 
 #circles {
