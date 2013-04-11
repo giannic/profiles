@@ -435,10 +435,12 @@ clusters_init = function(){
 
         var hovers = svg.selectAll("image") // this should change
             .on("mouseenter", function() {
+                hoverFunction();
                 show_stats();
                 d3.event.stopPropagation();
             })
             .on("mouseleave", function() {
+                hoveroffFunction();
                 hide_stats();
             })
             .on("mousedown", function() {
@@ -461,7 +463,7 @@ clusters_init = function(){
     function hoverFunction(x){
         console.log("a");
     //console.log(x);
-    //printTheStats(x.attributes.href, "username");
+        printClusterStats("hiya", "username", "somethingelse");
     //show_stats();
     }
 
@@ -608,6 +610,41 @@ clusters_init = function(){
             });
     }
 
+  function printClusterStats(s, u, l){
+    console.log(s);
+    printThatApp(s);
+    //printUsername(u);
+    printLastVisit(l);  
+  }
+
+      function printThatApp(d){
+    var f = document.getElementById("thatapp");
+    while(f.childNodes.length >= 1) {
+      f.removeChild(f.firstChild);
+    }
+    f.appendChild(f.ownerDocument.createTextNode(d));
+    }
+
+    function printUsername(d){
+    var f = document.getElementById("username");
+    while(f.childNodes.length >= 1) {
+      f.removeChild(f.firstChild);
+    }
+    f.appendChild(f.ownerDocument.createTextNode(d));
+    }
+
+    function printLastVisit(d){
+    var f = document.getElementById("lastvisit");
+    while(f.childNodes.length >= 1) {
+      f.removeChild(f.firstChild);
+    }
+    f.appendChild(f.ownerDocument.createTextNode(d));
+    }
+
+
+
 };
+
+
 
 
