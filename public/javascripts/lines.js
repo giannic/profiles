@@ -6,7 +6,7 @@ var lines_init = function() {
       lineGraphWidth, lineGraphHeight, lineGraph,
       allTheLines, hsl, colorArray, diff, appArray, nameArray,
       minRange, maxRange, interval, boxes, activeArray,
-      playTimeline = false,
+      playTimeline = false, layer,
       frequencies = [];
 
   $(document).ready(function() {
@@ -201,6 +201,30 @@ var lines_init = function() {
   
   }
 
+ function toggleApps(toggle){
+    //initial loading of lines
+    if(toggle == true){
+      for(var k = 0; k < activeArray.length; k++){
+        activeArray[k] = true;
+        boxes[k].setOpacity(1.0);
+        addAppBack(boxes[k].getId());
+        layer.draw();
+      }
+      calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+      toggle = false;
+    }
+    else{
+      for(var k = 0; k < activeArray.length; k++){
+        activeArray[k] = false;
+        boxes[k].setOpacity(0.3);
+        removeApp(boxes[k].getName(), boxes[k].getId());
+        layer.draw();
+      }
+      calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+      toggle = true;
+    }
+  }
+
   //generates the lines for an app : OPTIMIZE
   function generateLines(index) {
       var currentLine, i;
@@ -285,11 +309,11 @@ var lines_init = function() {
 
       var stage = new Kinetic.Stage({
           container: 'container',
-          width: 25*appArray.length,
+          width: 25*(appArray.length+2),
           height: 25
       });
 
-      var layer = new Kinetic.Layer();
+      layer = new Kinetic.Layer();
       var canvas = layer.getCanvas();
       canvas.element.style.position = "relative";
       //canvas.setAttribute('style', 'position: relative;');
@@ -338,6 +362,60 @@ var lines_init = function() {
               layer.add(box);
           })();
       }
+              var circleON = new Kinetic.Circle({
+                  x: k * 25 + 10,
+                  y: 10,
+                  radius: 10,
+                  fill: 'white',
+                  stroke: 'gray',
+                  name: "Toggle All On",
+                  strokeWidth: 1
+              });
+
+              circleON.on('mousedown', function() {
+                      toggleApps(true);
+                  printApp(this.getName());
+                  layer.draw();
+              });
+
+              circleON.on('mouseover', function() {
+                  printApp(this.getName());
+                  layer.draw();
+              });
+
+              circleON.on('mouseout', function() {
+                  clearApp();
+                  layer.draw();
+              });
+
+              var circleOFF = new Kinetic.Circle({
+                  x: (k + 1) * 25 + 10,
+                  y: 10,
+                  radius: 10,
+                  fill: 'gray',
+                  stroke: 'black',
+                  name: "Toggle All Off",
+                  strokeWidth: 1
+              });
+
+              circleOFF.on('mousedown', function() {
+                  toggleApps(false);
+                  printApp(this.getName());
+                  layer.draw();
+              });
+
+              circleOFF.on('mouseover', function() {
+                  printApp(this.getName());
+                  layer.draw();
+              });
+
+              circleOFF.on('mouseout', function() {
+                  clearApp();
+                  layer.draw();
+              });
+
+              layer.add(circleON);
+              layer.add(circleOFF);
         // add the layer to the stage
         stage.add(layer);
   }
