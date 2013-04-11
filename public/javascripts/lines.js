@@ -89,7 +89,7 @@ var lines_init = function() {
 
 function myFunction(x){ 
   console.log(x.x2.animVal.value);
-  printTheStats(x.attributes.name.value, "username", new Date((startTime + (difference*x.x2.animVal.value)/100)*1000);
+  printTheStats(x.attributes.name.value, "username", x.x2.animVal.value);
   show_stats();
 }
 
