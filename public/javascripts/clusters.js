@@ -614,7 +614,8 @@ clusters_init = function(){
     console.log(s);
     printThatApp(s);
     //printUsername(u);
-    printLastVisit(l);  
+    printLastVisit(l);
+    clearLastTime();  
   }
 
       function printThatApp(d){
@@ -639,6 +640,13 @@ clusters_init = function(){
       f.removeChild(f.firstChild);
     }
     f.appendChild(f.ownerDocument.createTextNode(d));
+    }
+     
+    function clearLastTime(){
+    var f = document.getElementById("lasttime");
+    while(f.childNodes.length >= 1) {
+      f.removeChild(f.firstChild);
+    }
     }
 
 
