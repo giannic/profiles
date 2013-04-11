@@ -56,6 +56,7 @@
         $.post(base_url + "/apps/create", params, function(data, status, xhr) {
           name.val("");
           app_url.val("");
+          console.log(window);
           $("#add-app-box").toggle();
         });
       });

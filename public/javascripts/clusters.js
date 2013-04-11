@@ -459,14 +459,14 @@ clusters_init = function(){
     }
 
     function hoverFunction(x){
-        console.log("a");
+        // console.log("a");
     //console.log(x);
     //printTheStats(x.attributes.href, "username");
     //show_stats();
     }
 
     function hoveroffFunction(x){
-        console.log("b");
+        // console.log("b");
     //console.log("mouseout");
     //hide_stats();
     }
