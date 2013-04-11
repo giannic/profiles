@@ -49,8 +49,7 @@ html {
 body {
   height: 100%;
   width: 100%;
-  overflow-x: hidden;
-  overflow-y: hidden; }
+  overflow-x: hidden; }
 
 a {
   text-decoration: none;
@@ -174,3 +173,7 @@ nav {
     bottom: 0;
     right: 0;
     color: #FFF; }
+
+.info-message {
+  color: #666666;
+  margin-top: 100px; }

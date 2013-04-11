@@ -27,8 +27,8 @@ var lines_init = function() {
       startTime = 1.7976931348623157E+10308;
       endTime = 0;
 
-      console.log("data")
-      console.log(data)
+      // console.log("data")
+      // console.log(data)
 
       //app container
       appArray = [];
@@ -43,8 +43,8 @@ var lines_init = function() {
           }
       }
 
-      console.log("appArray")
-      console.log(appArray);
+      // console.log("appArray")
+      // console.log(appArray);
 
       //store colors for each app
       colorArray = [];
@@ -90,7 +90,7 @@ var lines_init = function() {
 function myFunction(x){ 
   var date = x.attributes.number.value;
   var val = new Date(date*1000);
-  console.log(val.format("dd-m-yy"));
+  //console.log(val.format("dd-m-yy"));
   printTheStats(x.attributes.name.value, "username", val);
   show_stats();
 }
@@ -101,6 +101,8 @@ function myFunction2(x){
 
   function createAllTheHovers(){
             var hovers = d3.selectAll("line"); // this should change
+            // console.log("hovers = ");
+            // console.log(hovers[0]);
             for(var i = 0; i < hovers[0].length; i++){
               currline = hovers[0][i];
               currline.addEventListener("mouseover",function(evt) { myFunction(this); }, false);
@@ -306,7 +308,7 @@ function myFunction2(x){
   }
 
   function printTheStats(s, u, l){
-    console.log(s);
+    // console.log(s);
     printThatApp(s);
     //printUsername(u);
     printLastVisit(l);  
