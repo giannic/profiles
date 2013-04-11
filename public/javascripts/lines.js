@@ -69,22 +69,23 @@ var lines_init = function() {
           activeArray[i] = true;
       }
       difference = endTime - startTime;
-
       //line graph dimensions
-      lineGraphWidth = 1000;
-      lineGraphHeight = 600;    
+      lineGraphWidth = WINDOW_WIDTH - 250;
+      lineGraphHeight = WINDOW_HEIGHT - 250; // change this so it's based on timeline size
 
       lineGraph = d3.select("#D3line").append("svg:svg")
         .attr("width", lineGraphWidth)
         .attr("height", lineGraphHeight);
       
-      setUpAppSelection();
+      setUpAppSelection(appArray, colorArray, nameArray);
 
       initSlider();
-      
+
       initFreqLine();
-      }});     
+      }});
   });
+
+
 
 function myFunction(x){ 
   console.log(x.x2.animVal.value);
@@ -110,8 +111,11 @@ function myFunction2(x){
 }
 
   function initFreqLine() {
-    
-    var w = lineGraphWidth, h = 25;
+    var h = 25;
+    var graph = d3.select(".frequency-container")
+          .append("svg")
+          .attr("width", lineGraphWidth)
+          .attr("height", h);    
 
     for (var i=minRange; i < maxRange-1; i++) {
         frequencies[i] = 0;
@@ -120,18 +124,13 @@ function myFunction2(x){
     console.log("frequencies")
     console.log(frequencies)
 
-    var graph = d3.select(".frequency-container")
-      .append("svg")
-      .attr("width", w)
-      .attr("height", h);
-
     var x = d3.scale.linear()
       .domain([0, 100])
-      .range([0, w]);
+      .range([0, lineGraphWidth]);
 
     var y = d3.scale.linear()
       .domain([0, 5]) // this should be the max of the frequencies?
-      .range([h, 0]);
+      .range([h, 0]); // TODO: height is hardcoded here
 
     var line = d3.svg.line()
         .x(function(d,i) {
@@ -168,7 +167,7 @@ function myFunction2(x){
 
     //Set slider label dates to the min and max
     updateSliderDates(
-      getDate($("#timeline").rangeSlider("min")), 
+      getDate($("#timeline").rangeSlider("min")),
       getDate($("#timeline").rangeSlider("max")));
 
     $("#timeline").on("valuesChanging", function(e, data) {
@@ -177,7 +176,7 @@ function myFunction2(x){
 
     $("#timeline").on("valuesChanged", function(e, data) {
       calculateRender(
-        Math.round(data.values.min), 
+        Math.round(data.values.min),
         Math.round(data.values.max), 0);
         //updateSliderDates(getDate(data.values.min), getDate(data.values.max));
     });
@@ -224,38 +223,14 @@ function myFunction2(x){
   
   }
 
- function toggleApps(toggle){
-    //initial loading of lines
-    if(toggle == true){
-      for(var k = 0; k < activeArray.length; k++){
-        activeArray[k] = true;
-        boxes[k].setOpacity(1.0);
-        addAppBack(boxes[k].getId());
-        layer.draw();
-      }
-      calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
-      toggle = false;
-    }
-    else{
-      for(var k = 0; k < activeArray.length; k++){
-        activeArray[k] = false;
-        boxes[k].setOpacity(0.3);
-        removeApp(boxes[k].getName(), boxes[k].getId());
-        layer.draw();
-      }
-      calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
-      toggle = true;
-    }
-  }
-
   //generates the lines for an app : OPTIMIZE
   function generateLines(index) {
       var currentLine, i;
 
       var string = nameArray[index];
       string = string.replace(' ', '-');
-      string = string.replace('.', '-'); 
-      string = string.replace('.', '-');          
+      string = string.replace('.', '-');
+      string = string.replace('.', '-');
 
       for (i = 0; i < renderArray.length; i++) {
           currentLine = lineGraph.append("a")
@@ -332,7 +307,14 @@ function myFunction2(x){
     }
   }
 
-  function setUpAppSelection(){
+  function printTheStats(s, u, l){
+    console.log(s);
+    printThatApp(s);
+    //printUsername(u);
+    printLastVisit(l);  
+  }
+
+    function setUpAppSelection(appArray, colorArray, nameArray){
 
       var stage = new Kinetic.Stage({
           container: 'container',
@@ -447,7 +429,8 @@ function myFunction2(x){
         stage.add(layer);
   }
 
-  function clearApp(){
+
+    function clearApp(){
     var fieldNameElement = document.getElementById("appname");
     while(fieldNameElement.childNodes.length >= 1) {
       fieldNameElement.removeChild(fieldNameElement.firstChild);
@@ -462,14 +445,7 @@ function myFunction2(x){
     fieldNameElement.appendChild(fieldNameElement.ownerDocument.createTextNode(d));
     }
 
-  function printTheStats(s, u, l){
-    console.log(s);
-    printThatApp(s);
-    printUsername(u);
-    printLastVisit(l);  
-  }
-
-  function printThatApp(d){
+      function printThatApp(d){
     var f = document.getElementById("thatapp");
     while(f.childNodes.length >= 1) {
       f.removeChild(f.firstChild);
@@ -492,6 +468,30 @@ function myFunction2(x){
     }
     f.appendChild(f.ownerDocument.createTextNode(d));
     }
+
+ function toggleApps(toggle){
+    //initial loading of lines
+    if(toggle == true){
+      for(var k = 0; k < activeArray.length; k++){
+        activeArray[k] = true;
+        boxes[k].setOpacity(1.0);
+        addAppBack(boxes[k].getId());
+        layer.draw();
+      }
+      calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+      toggle = false;
+    }
+    else{
+      for(var k = 0; k < activeArray.length; k++){
+        activeArray[k] = false;
+        boxes[k].setOpacity(0.3);
+        removeApp(boxes[k].getName(), boxes[k].getId());
+        layer.draw();
+      }
+      calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+      toggle = true;
+    }
+  }
 
   /*
    * ANIMATION CONTROLS

@@ -10,7 +10,7 @@
       height: Math.floor(1000/6), // square for now
       margin: 15,
       r: 1000/12, // temporary
-      opacity: 0.6,
+      opacity: 1.0, // FUCKER HERE"S THE PROBLEM
 
       template: _.template(app.templates.application),
 
@@ -60,9 +60,9 @@
           height: new_height,
           width: new_width,
           left: new_left,
-          top: new_top, 
-          'z-index': 20000
-        }, 200, function(){
+          top: new_top,
+          'z-index': 9999
+        }, 100, function(){
         });
 
         var snd_height = that.margin * 2 + that.height/2 + that.height / 2;
@@ -73,7 +73,7 @@
         var corner_width =  that.margin * 2 + that.width/2 + that.width / 4;
         var corner_top = -Math.abs((corner_height - that.height) / 2);
         var corner_left = -Math.abs((corner_width - that.width) / 2);
-        
+
         grid_vent.trigger('hover-expand', {
           row: this.row,
           column: this.column,
@@ -86,8 +86,6 @@
           corner_left: corner_left,
           corner_top: corner_top
         });
-
-
       },
 
 
@@ -134,7 +132,7 @@
   ];
 
   function render_html() {
-    this.$el.html(this.template({application: this.model.toJSON(), 
+    this.$el.html(this.template({application: this.model.toJSON(),
                                  img: images[Math.floor(Math.random() * (images.length))]}));
     // TEMPORAROY TODO: remove image
     //this.$el.append($(app.templates.grid_img));

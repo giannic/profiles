@@ -23,11 +23,15 @@ html, body {
         float: left;
         position: relative;
 
+        &:hover {
+            cursor: pointer;
+        }
+
         .application-inner {
           position: relative;
           height: 100%;
           width: 100%;
-          opacity: 0.6;
+          //opacity: 0.6;
 
           .url {
               position: absolute;
@@ -37,7 +41,7 @@ html, body {
           }
 
           .grid-img {
-              opacity: inherit;
+              //opacity: inherit;
               display: block;
               position: absolute;
               top: 0;
@@ -51,7 +55,7 @@ html, body {
 
               &:hover {
                   //@include saturate_animation($UNSATURATED, $SATURATED, 1s);
-                  @include saturate($SATURATED);
+                  //@include saturate($SATURATED);
               }
           }
 
