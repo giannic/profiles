@@ -14,7 +14,6 @@ grid_init = function(){
 
     $('body').on('keyup', function(e){
       // check if it's not focused on an input
-      console.log(e)
       if(!$(e.target).is('input')) {
           
   //        e.preventDefault(();
@@ -39,7 +38,6 @@ grid_init = function(){
     // sample socket
     // var socket = io.connect(window.location.hostname);
     // socket.on('news', function (data) {
-    //   console.log(data);
     //   socket.emit('my other event', { my: 'data' });
     // });
   });
