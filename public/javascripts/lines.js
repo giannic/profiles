@@ -27,8 +27,8 @@ var lines_init = function() {
       startTime = 1.7976931348623157E+10308;
       endTime = 0;
 
-      // console.log("data")
-      // console.log(data)
+      console.log("data")
+      console.log(data)
 
       //app container
       appArray = [];
@@ -43,8 +43,8 @@ var lines_init = function() {
           }
       }
 
-      // console.log("appArray")
-      // console.log(appArray);
+      console.log("appArray")
+      console.log(appArray);
 
       //store colors for each app
       colorArray = [];
@@ -69,39 +69,47 @@ var lines_init = function() {
           activeArray[i] = true;
       }
       difference = endTime - startTime;
+
       //line graph dimensions
-      lineGraphWidth = WINDOW_WIDTH - 250;
-      lineGraphHeight = WINDOW_HEIGHT - 250; // change this so it's based on timeline size
+      lineGraphWidth = 1000;
+      lineGraphHeight = 600;    
 
       lineGraph = d3.select("#D3line").append("svg:svg")
         .attr("width", lineGraphWidth)
         .attr("height", lineGraphHeight);
       
-      setUpAppSelection(appArray, colorArray, nameArray);
+      setUpAppSelection();
 
       initSlider();
-
+      
       initFreqLine();
-      }});
+      }});     
   });
 
-
-
 function myFunction(x){ 
-  // console.log(x.x2.animVal.value);
+  console.log(x.x2.animVal.value);
   printTheStats(x.attributes.name.value, "username", x.x2.animVal.value);
   show_stats();
 }
 
 function myFunction2(x){ 
-  // console.log("mouseout");
+  console.log("mouseout");
   hide_stats();
 }
 
   function createAllTheHovers(){
             var hovers = d3.selectAll("line"); // this should change
-            // console.log("hovers = ");
-            // console.log(hovers[0]);
+            /*.on("mouseenter", function() {
+                show_stats();
+            })
+            .on("mouseleave", function() {
+                hide_stats();
+            });
+            */
+
+
+            console.log("hovers = ");
+            console.log(hovers[0]);
             for(var i = 0; i < hovers[0].length; i++){
               currline = hovers[0][i];
               currline.addEventListener("mouseover",function(evt) { myFunction(this); }, false);
@@ -111,26 +119,28 @@ function myFunction2(x){
 }
 
   function initFreqLine() {
-    var h = 25;
-    var graph = d3.select(".frequency-container")
-          .append("svg")
-          .attr("width", lineGraphWidth)
-          .attr("height", h);    
+    
+    var w = lineGraphWidth+24, h = 25;
 
     for (var i=minRange; i < maxRange-1; i++) {
         frequencies[i] = 0;
         calcFreq(i);
     }
-    // console.log("frequencies")
-    // console.log(frequencies)
+    console.log("frequencies")
+    console.log(frequencies)
+
+    var graph = d3.select(".frequency-container")
+      .append("svg")
+      .attr("width", w)
+      .attr("height", h);
 
     var x = d3.scale.linear()
       .domain([0, 100])
-      .range([0, lineGraphWidth]);
+      .range([0, w]);
 
     var y = d3.scale.linear()
       .domain([0, 5]) // this should be the max of the frequencies?
-      .range([h, 0]); // TODO: height is hardcoded here
+      .range([h, 0]);
 
     var line = d3.svg.line()
         .x(function(d,i) {
@@ -167,7 +177,7 @@ function myFunction2(x){
 
     //Set slider label dates to the min and max
     updateSliderDates(
-      getDate($("#timeline").rangeSlider("min")),
+      getDate($("#timeline").rangeSlider("min")), 
       getDate($("#timeline").rangeSlider("max")));
 
     $("#timeline").on("valuesChanging", function(e, data) {
@@ -176,7 +186,7 @@ function myFunction2(x){
 
     $("#timeline").on("valuesChanged", function(e, data) {
       calculateRender(
-        Math.round(data.values.min),
+        Math.round(data.values.min), 
         Math.round(data.values.max), 0);
         //updateSliderDates(getDate(data.values.min), getDate(data.values.max));
     });
@@ -223,14 +233,38 @@ function myFunction2(x){
   
   }
 
+ function toggleApps(toggle){
+    //initial loading of lines
+    if(toggle == true){
+      for(var k = 0; k < activeArray.length; k++){
+        activeArray[k] = true;
+        boxes[k].setOpacity(1.0);
+        addAppBack(boxes[k].getId());
+        layer.draw();
+      }
+      calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+      toggle = false;
+    }
+    else{
+      for(var k = 0; k < activeArray.length; k++){
+        activeArray[k] = false;
+        boxes[k].setOpacity(0.3);
+        removeApp(boxes[k].getName(), boxes[k].getId());
+        layer.draw();
+      }
+      calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+      toggle = true;
+    }
+  }
+
   //generates the lines for an app : OPTIMIZE
   function generateLines(index) {
       var currentLine, i;
 
       var string = nameArray[index];
       string = string.replace(' ', '-');
-      string = string.replace('.', '-');
-      string = string.replace('.', '-');
+      string = string.replace('.', '-'); 
+      string = string.replace('.', '-');          
 
       for (i = 0; i < renderArray.length; i++) {
           currentLine = lineGraph.append("a")
@@ -280,7 +314,7 @@ function myFunction2(x){
   //Gets the date of a certain index on the slider
   function getDate(index) {
     var date = startTime + (difference*index)/(100);
-    return new Date(date*1000);
+    return new Date(date * 1000);
   }
 
   //Given an index which is slider_min < index < slider_max
@@ -307,14 +341,7 @@ function myFunction2(x){
     }
   }
 
-  function printTheStats(s, u, l){
-    // console.log(s);
-    printThatApp(s);
-    //printUsername(u);
-    printLastVisit(l);  
-  }
-
-    function setUpAppSelection(appArray, colorArray, nameArray){
+  function setUpAppSelection(){
 
       var stage = new Kinetic.Stage({
           container: 'container',
@@ -333,7 +360,7 @@ function myFunction2(x){
           // anonymous function to induce scope
           (function() {
               colortrack = colorArray[k];
-              var colorset = "hsl(" + colortrack + ",50%,50%)";
+              var colorset = "hsl(" + colortrack + ",50%, 50%)";
               var box = new Kinetic.Rect({
                   x: k * 25,
                   y: 0,
@@ -429,8 +456,7 @@ function myFunction2(x){
         stage.add(layer);
   }
 
-
-    function clearApp(){
+  function clearApp(){
     var fieldNameElement = document.getElementById("appname");
     while(fieldNameElement.childNodes.length >= 1) {
       fieldNameElement.removeChild(fieldNameElement.firstChild);
@@ -445,7 +471,14 @@ function myFunction2(x){
     fieldNameElement.appendChild(fieldNameElement.ownerDocument.createTextNode(d));
     }
 
-      function printThatApp(d){
+  function printTheStats(s, u, l){
+    console.log(s);
+    printThatApp(s);
+    printUsername(u);
+    printLastVisit(l);  
+  }
+
+  function printThatApp(d){
     var f = document.getElementById("thatapp");
     while(f.childNodes.length >= 1) {
       f.removeChild(f.firstChild);
@@ -468,30 +501,6 @@ function myFunction2(x){
     }
     f.appendChild(f.ownerDocument.createTextNode(d));
     }
-
- function toggleApps(toggle){
-    //initial loading of lines
-    if(toggle == true){
-      for(var k = 0; k < activeArray.length; k++){
-        activeArray[k] = true;
-        boxes[k].setOpacity(1.0);
-        addAppBack(boxes[k].getId());
-        layer.draw();
-      }
-      calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
-      toggle = false;
-    }
-    else{
-      for(var k = 0; k < activeArray.length; k++){
-        activeArray[k] = false;
-        boxes[k].setOpacity(0.3);
-        removeApp(boxes[k].getName(), boxes[k].getId());
-        layer.draw();
-      }
-      calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
-      toggle = true;
-    }
-  }
 
   /*
    * ANIMATION CONTROLS
