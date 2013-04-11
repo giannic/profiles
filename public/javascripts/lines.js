@@ -99,15 +99,6 @@ function myFunction2(x){
 
   function createAllTheHovers(){
             var hovers = d3.selectAll("line"); // this should change
-            /*.on("mouseenter", function() {
-                show_stats();
-            })
-            .on("mouseleave", function() {
-                hide_stats();
-            });
-            */
-
-
             console.log("hovers = ");
             console.log(hovers[0]);
             for(var i = 0; i < hovers[0].length; i++){

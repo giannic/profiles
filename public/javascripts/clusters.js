@@ -379,7 +379,8 @@ clusters_init = function(){
                 .attr("xlink:href", function(d){
                     return d.url;
                 })
-                .classed(x.id, true);
+                .classed(x.id, true)
+                ;
 
         // append each image
         cluster_apps[selected_category]
@@ -419,14 +420,10 @@ clusters_init = function(){
                 return "visible";
             });
 
-        var hovers = svg.selectAll("image") // this should change
-            .on("mouseenter", function() {
-                show_stats();
-                d3.event.stopPropagation();
-            })
-            .on("mouseleave", function() {
-                hide_stats();
-            });
+ 
+              //currline.addEventListener("mouseover",function(evt) { myFunction(this); }, false);
+              //currline.addEventListener("mouseout",function(evt) { myFunction2(this); }, false);
+
 
         // make the more visible for those categories with too many apps
         svg.select("#more_" + x.id)
@@ -439,6 +436,19 @@ clusters_init = function(){
                 else
                     return "none";
             });
+    }
+
+    function hoverFunction(x){
+        console.log("a");
+    //console.log(x);
+    //printTheStats(x.attributes.href, "username");
+    //show_stats();
+    }
+
+    function hoveroffFunction(x){
+        console.log("b");
+    //console.log("mouseout");
+    //hide_stats();
     }
 
     function deselect_old_cluster(old_category) {
