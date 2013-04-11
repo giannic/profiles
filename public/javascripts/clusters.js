@@ -8,7 +8,7 @@ clusters_init = function(){
         cluster_apps = {},
         pad = 10, // padding for boundary circle + app circles
         max_apps = -1, // max number of apps that exists in user's categories
-        cap_apps = 3, // cap for the more button // TODO: change to 9
+        cap_apps = 9, // cap for the more button // TODO: change to 9
         num_categories = 0,
         nodes = {},
         force = 0,
@@ -22,188 +22,201 @@ clusters_init = function(){
                 .attr("height", window_height),
         defs = svg.append('defs');
 
-    // use json data to create dataset and groups
-    $.getJSON("usage_data.json", function(json) {
-        var dataset, circles, label;
-        dataset = parse_data(json);
-        num_categories = dataset.length;
+    var dataset, circles, label;
+    dataset = []
 
-        nodes = dataset;
+    // TEMPORARY WAY TO CREATE UNIQUE ID'S
+    var id_index = 0;
+    _.each(CAT_DATA, function(obj, key, list){
+        var new_cluster = new window.Cluster(key, obj);
+        new_cluster.id = 'category' + id_index;
+        dataset.push(new_cluster);
+        id_index += 1;
+    });
+    num_categories = dataset.length;
 
-        nodes.forEach(function(d, i) {
-            if (dataset[i].apps.length > max_apps) {
-                max_apps = dataset[i].apps.length;
+    nodes = dataset;
+
+    // TODO: not using for size anymore?
+    nodes.forEach(function(d, i) {
+        if (dataset[i].apps.length > max_apps) {
+            max_apps = dataset[i].apps.length;
+        }
+    });
+
+    force = d3.layout.force()
+        .size([window_width, window_height])
+        .nodes(nodes)
+        .alpha(0.1)
+        .charge(0) // charge is node-node attraction/repulsion
+        .gravity(0) // gravity -> move to center
+        .friction(0.3) // lower so doesn't bounce too much off boundary
+        .on("tick", tick)
+        .start();
+
+    // groups contain category information
+    groups = svg.selectAll("g")
+        .data(nodes)
+        .enter()
+        .append("g")
+        .attr("id", function(x){
+            return x.id;
+        })
+        .attr("transform", function(x, i) {
+            // scale the category circle and image size
+            // get the r of enlarged circle (rough calculation, assuming grid config)
+            var r = Math.floor(Math.sqrt((window_width*window_height)/(4*num_categories)));
+            // reduce it to r of the smaller circle
+            x.r = (r - (2*pad))/1.8;
+            // update the r for expansion
+            var length = x.apps.length;
+            if (length > cap_apps)
+                length = cap_apps;
+            x.r = (length/cap_apps)*x.r;
+            // cap it so it's not terribly small
+            if (x.r < 50) {
+                x.r = 50;
+            }
+
+            // x.r is unchanging radius
+            // x.radius changes upon mouseenter/leave
+            x.radius = x.r;
+            image_width[i] = image_height[i] = 0.8*x.r;
+
+            // force layout will automatically choose x/y
+            return "translate(" + [x.x, x.y] + ")";
+        })
+        .on("mouseenter", function(x, i) {
+            // category selected
+            if (!selected_category || selected_category != x.id) {
+                if (!clicked_category ||
+                    (clicked_category != x.id)) {
+                    // check if for some reason there's eome other selected category
+                    if (selected_category && (selected_category != clicked_category))
+                        deselect_old_cluster(selected_category);
+                    selected_category = x.id;
+                    select_new_cluster(x, i);
+                }
+            }
+        })
+        .on("mouseleave", function(x, i) {
+            if (clicked_category != selected_category) {
+                if (x.id == selected_category) {
+                    // add a radius check to reduce some of the instabilities
+                    // caused by mouseleave firing when a circle moves away from mouse
+                    // on hover and doesn't transition radius size on time
+                    // not perfect if you go in between circles
+                    var circle = d3.select("#circle_" + x.id);
+                    var check_x = d3.event.pageX - circle.attr("cx"),//x.x,
+                        check_y = d3.event.pageY - circle.attr("cy"),//x.y,
+                        dist = Math.sqrt(check_x*check_x + check_y*check_y);
+
+                    // check the radius of the circle
+                    var cr = circle.attr("r");
+                    if (dist > cr) {
+                        d3.transition().each("end", deselect_old_cluster(selected_category));
+                        selected_category = "";
+                    }
+                }
+            }
+        })
+        .on("mousedown", function(x){
+            // make sure double click doesn't contract
+            if (clicked_category != x.id) {
+                // deselect any previously clicked ones
+                // doesn't actually select otherwise
+                if (clicked_category)
+                    deselect_old_cluster(clicked_category);
+                clicked_category = x.id;
             }
         });
 
-        force = d3.layout.force()
-            .size([window_width, window_height])
-            .nodes(nodes)
-            .alpha(0.1)
-            .charge(0) // charge is node-node attraction/repulsion
-            .gravity(0) // gravity -> move to center
-            .friction(0.3) // lower so doesn't bounce too much off boundary
-            .on("tick", tick)
-            .start();
+    // category circles
+    circles = groups.append("circle")
+        .attr("class", "vis-shape")
+        .attr("r", function(x){
+            return x.r;
+        })
+        .attr("id", function(x){
+            return "circle_" + x.id;
+        });
 
-        // groups contain category information
-        groups = svg.selectAll("g")
-            .data(nodes)
-            .enter()
-            .append("g")
-            .attr("id", function(x){
-                return x.id;
-            })
-            .attr("transform", function(x, i) {
-                // scale the category circle and image size
-                // get the r of enlarged circle (rough calculation, assuming grid config)
-                var r = Math.floor(Math.sqrt((window_width*window_height)/(4*num_categories)));
-                // reduce it to r of the smaller circle
-                x.r = (r - (2*pad))/1.8;
-                // update the r for expansion
-                x.r = (x.apps.length/max_apps)*x.r;
-                // cap it so it's not terribly small
-                if (x.r < 50) {
-                    x.r = 50;
-                }
+    label = groups.append("text")
+        .text(function(x){
+            return x.name;
+        })
+        .attr({
+            "alignment-baseline": "middle",
+            "text-anchor": "middle",
+            "font-family": "Helvetica"
+        })
+        .attr("class", "vis-label")
+        .attr("id", function(x){
+            return "text_" + x.id;
+        })
+        .attr("font-size", function(x){
+            // reduce the font size based on the radius
+            if (0.16*x.r < 12)
+                return 12;
+            return 0.16*x.r;
+        });
 
-                // x.r is unchanging radius
-                // x.radius changes upon mouseenter/leave
-                x.radius = x.r;
-                image_width[i] = image_height[i] = 0.8*x.r;
+    // append this only if there are more than cap_apps apps!
+    groups.append("text")
+        .text("More")
+        .attr("id", function(x){
+            return "more_" + x.id;
+        })
+        .attr({
+            //"alignment-baseline": "middle",
+            "text-anchor": "middle",
+            "font-family": "Helvetica"
+        })
+        .attr("class", "vis-sublabel")
+        .attr("font-size", function(x) {
+            // reduce the font size based on the radius
+            if (0.16*x.r < 12)
+                return 12;
+            return 0.1*x.r;
+        })
+        .attr("display", function(d) {
+            // change to visible when selecting category
+            return "none";
+        })
+        .attr("dy", "14px")
+        .style('fill', "#ccc")
+        .on("mousedown", function(d, i) {
+            // TODO: change to a cursor
+            more_apps(d, i);
+        });
 
-                // force layout will automatically choose x/y
-                return "translate(" + [x.x, x.y] + ")";
-            })
-            .on("mouseenter", function(x, i) {
-                // category selected
-                if (!selected_category || selected_category != x.id) {
-                    if (!clicked_category ||
-                        (clicked_category != x.id)) {
-                        // check if for some reason there's eome other selected category
-                        if (selected_category && (selected_category != clicked_category))
-                            deselect_old_cluster(selected_category);
-                        selected_category = x.id;
-                        select_new_cluster(x, i);
-                    }
-                }
-            })
-            .on("mouseleave", function(x, i) {
-                if (clicked_category != selected_category) {
-                    if (x.id == selected_category) {
-                        // add a radius check to reduce some of the instabilities
-                        // caused by mouseleave firing when a circle moves away from mouse
-                        // on hover and doesn't transition radius size on time
-                        // not perfect if you go in between circles
-                        var circle = d3.select("#circle_" + x.id);
-                        var check_x = d3.event.pageX - circle.attr("cx"),//x.x,
-                            check_y = d3.event.pageY - circle.attr("cy"),//x.y,
-                            dist = Math.sqrt(check_x*check_x + check_y*check_y);
-
-                        // check the radius of the circle
-                        var cr = circle.attr("r");
-                        if (dist > cr) {
-                            d3.transition().each("end", deselect_old_cluster(selected_category));
-                            selected_category = "";
-                        }
-                    }
-                }
-            })
-            .on("mousedown", function(x){
-                // make sure double click doesn't contract
-                if (clicked_category != x.id) {
-                    // deselect any previously clicked ones
-                    // doesn't actually select otherwise
-                    if (clicked_category)
-                        deselect_old_cluster(clicked_category);
-                    clicked_category = x.id;
-                }
-            });
-
-        // category circles
-        circles = groups.append("circle")
-            .attr("class", "vis-shape")
-            .attr("r", function(x){
-                return x.r;
-            })
-            .attr("id", function(x){
-                return "circle_" + x.id;
-            });
-
-        label = groups.append("text")
-            .text(function(x){
-                return x.name;
-            })
-            .attr({
-                "alignment-baseline": "middle",
-                "text-anchor": "middle",
-                "font-family": "Helvetica"
-            })
-            .attr("class", "vis-label")
-            .attr("id", function(x){
-                return "text_" + x.id;
-            })
-            .attr("font-size", function(x){
-                // reduce the font size based on the radius
-                if (0.16*x.r < 12)
-                    return 12;
-                return 0.16*x.r;
-            });
-
-        // append this only if there are more than cap_apps apps!
-        groups.append("text")
-            .text("More")
-            .attr("id", function(x){
-                return "more_" + x.id;
-            })
-            .attr({
-                //"alignment-baseline": "middle",
-                "text-anchor": "middle",
-                "font-family": "Helvetica"
-            })
-            .attr("class", "vis-sublabel")
-            .attr("font-size", function(x) {
-                // reduce the font size based on the radius
-                if (0.16*x.r < 12)
-                    return 12;
-                return 0.1*x.r;
-            })
-            .attr("display", function(d) {
-                // change to visible when selecting category
-                return "none";
-            })
-            .attr("dy", "14px")
-            .on("mousedown", function(d, i) {
-                more_apps(d, i);
-            });
-
-        // every group also has a less text
-        groups.append("text")
-            .text("Less")
-            .attr("id", function(x){
-                return "less_" + x.id;
-            })
-            .attr({
-                //"alignment-baseline": "middle",
-                "text-anchor": "middle",
-                "font-family": "Helvetica"
-            })
-            .attr("class", "vis-sublabel")
-            .attr("font-size", function(x) {
-                // reduce the font size based on the radius
-                if (0.16*x.r < 12)
-                    return 12;
-                return 0.1*x.r;
-            })
-            .attr("display", function(d) {
-                // change to visible when selecting category
-                return "none";
-            })
-            .attr("dy", "14px")
-            .on("mousedown", function(d, i) {
-                less_apps(d, i);
-            });
-    });
+    // every group also has a less text
+    groups.append("text")
+        .text("Less")
+        .attr("id", function(x){
+            return "less_" + x.id;
+        })
+        .attr({
+            //"alignment-baseline": "middle",
+            "text-anchor": "middle",
+            "font-family": "Helvetica"
+        })
+        .attr("class", "vis-sublabel")
+        .attr("font-size", function(x) {
+            // reduce the font size based on the radius
+            if (0.16*x.r < 12)
+                return 12;
+            return 0.1*x.r;
+        })
+        .attr("display", function(d) {
+            // change to visible when selecting category
+            return "none";
+        })
+        .attr("dy", "14px")
+        .style('fill', "#ccc")
+        .on("mousedown", function(d, i) {
+            less_apps(d, i);
+        });
 
     $('#circles').click(function(e) {
         // make sure it's not within a cluster
@@ -377,7 +390,7 @@ clusters_init = function(){
                     "link" + j + "_" + x.id;
                 })
                 .attr("xlink:href", function(d){
-                    return d.url;
+                    return "http://" + d.url; // TODO: fix so it's not hardcoded
                 })
                 .classed(x.id, true);
 
@@ -426,6 +439,9 @@ clusters_init = function(){
             })
             .on("mouseleave", function() {
                 hide_stats();
+            })
+            .on("mousedown", function() {
+                d3.event.stopPropagation();
             });
 
         // make the more visible for those categories with too many apps
@@ -504,7 +520,7 @@ clusters_init = function(){
         //force.stop(); // TODO: do force stop and fix the position
         var circle = svg.select("#circle_" + d.id)
             .transition()
-            .attr("r", window_width)
+            .attr("r", WINDOW_WIDTH)
             .transition()
             .style("opacity", "0.7");
 
