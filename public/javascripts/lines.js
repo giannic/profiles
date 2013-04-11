@@ -86,6 +86,16 @@ var lines_init = function() {
       }});     
   });
 
+  function createAllTheHovers(){
+            var hovers = d3.selectAll("line") // this should change
+            .on("mouseenter", function() {
+                show_stats();
+            })
+            .on("mouseleave", function() {
+                hide_stats();
+            });
+}
+
   function initFreqLine() {
     
     var w = lineGraphWidth, h = 25;
@@ -235,7 +245,9 @@ var lines_init = function() {
       string = string.replace('.', '-');          
 
       for (i = 0; i < renderArray.length; i++) {
-          currentLine = lineGraph.append("svg:line")
+          currentLine = lineGraph.append("a")
+                                 .attr("xlink:href", "http://www."+nameArray[index])
+                                 .append("svg:line")
                                  .attr("x1", renderArray[i])
                                  .attr("y1", 0)
                                  .attr("x2", renderArray[i])
@@ -246,6 +258,7 @@ var lines_init = function() {
           var x = (closeArray[i] - openArray[i])/diff + .5;
           currentLine.style("stroke-opacity", x);
       }
+      createAllTheHovers();
   }
 
   //given the starting and ending slider indices (0<=i<=100)
@@ -373,7 +386,7 @@ var lines_init = function() {
               });
 
               circleON.on('mousedown', function() {
-                      toggleApps(true);
+                  toggleApps(true);
                   printApp(this.getName());
                   layer.draw();
               });
