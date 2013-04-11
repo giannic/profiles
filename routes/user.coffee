@@ -67,7 +67,9 @@ exports.register_post = (req, res) ->
 # The form for registration
 ###
 exports.register_get = (req, res) ->
-  res.render "register"
+  res.render "register",
+    title: "datapp"
+    msg: req.session.messages.pop()
 
 ###
 # /login
