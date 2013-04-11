@@ -203,9 +203,9 @@ function myFunction2(x){
   function updateSliderDates(dateLeft, dateRight) {
     var dl = dateLeft, dr = dateRight;
     $("#timeline_dateLeft").text(
-      $.datepicker.formatDate('MM dd, yy', dl) + " -- " + dl.getMinutes() + ":" + dl.getSeconds());
+      $.datepicker.formatDate('MM dd, yy', dl));
     $("#timeline_dateRight").text(
-      $.datepicker.formatDate('MM dd, yy', dr) + " -- " + dr.getMinutes() + ":" + dr.getSeconds());
+      $.datepicker.formatDate('MM dd, yy', dr));
   }
 
   function removeApp(index, k){
@@ -280,7 +280,7 @@ function myFunction2(x){
   //Gets the date of a certain index on the slider
   function getDate(index) {
     var date = startTime + (difference*index)/(100);
-    return new Date(date);
+    return new Date(date*1000);
   }
 
   //Given an index which is slider_min < index < slider_max
