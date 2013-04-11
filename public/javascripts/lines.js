@@ -27,9 +27,6 @@ var lines_init = function() {
       startTime = 1.7976931348623157E+10308;
       endTime = 0;
 
-      console.log("data")
-      console.log(data)
-
       //app container
       appArray = [];
       nameArray = [];
@@ -42,9 +39,6 @@ var lines_init = function() {
               i++;
           }
       }
-
-      console.log("appArray")
-      console.log(appArray);
 
       //store colors for each app
       colorArray = [];
@@ -462,7 +456,6 @@ function myFunction2(x){
     }
 
   function printTheStats(s, u, l){
-    console.log(s);
     printThatApp(s);
     printUsername(u);
     printLastVisit(l);  
