@@ -78,13 +78,15 @@ var lines_init = function() {
         .attr("width", lineGraphWidth)
         .attr("height", lineGraphHeight);
       
-      setUpAppSelection();
+      setUpAppSelection(appArray, colorArray, nameArray);
 
       initSlider();
       
       initFreqLine();
       }});     
   });
+
+
 
 function myFunction(x){ 
   console.log(x.x2.animVal.value);
@@ -224,30 +226,6 @@ function myFunction2(x){
   
   }
 
- function toggleApps(toggle){
-    //initial loading of lines
-    if(toggle == true){
-      for(var k = 0; k < activeArray.length; k++){
-        activeArray[k] = true;
-        boxes[k].setOpacity(1.0);
-        addAppBack(boxes[k].getId());
-        layer.draw();
-      }
-      calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
-      toggle = false;
-    }
-    else{
-      for(var k = 0; k < activeArray.length; k++){
-        activeArray[k] = false;
-        boxes[k].setOpacity(0.3);
-        removeApp(boxes[k].getName(), boxes[k].getId());
-        layer.draw();
-      }
-      calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
-      toggle = true;
-    }
-  }
-
   //generates the lines for an app : OPTIMIZE
   function generateLines(index) {
       var currentLine, i;
@@ -332,7 +310,14 @@ function myFunction2(x){
     }
   }
 
-  function setUpAppSelection(){
+  function printTheStats(s, u, l){
+    console.log(s);
+    printThatApp(s);
+    //printUsername(u);
+    printLastVisit(l);  
+  }
+
+    function setUpAppSelection(appArray, colorArray, nameArray){
 
       var stage = new Kinetic.Stage({
           container: 'container',
@@ -447,7 +432,8 @@ function myFunction2(x){
         stage.add(layer);
   }
 
-  function clearApp(){
+
+    function clearApp(){
     var fieldNameElement = document.getElementById("appname");
     while(fieldNameElement.childNodes.length >= 1) {
       fieldNameElement.removeChild(fieldNameElement.firstChild);
@@ -462,14 +448,7 @@ function myFunction2(x){
     fieldNameElement.appendChild(fieldNameElement.ownerDocument.createTextNode(d));
     }
 
-  function printTheStats(s, u, l){
-    console.log(s);
-    printThatApp(s);
-    printUsername(u);
-    printLastVisit(l);  
-  }
-
-  function printThatApp(d){
+      function printThatApp(d){
     var f = document.getElementById("thatapp");
     while(f.childNodes.length >= 1) {
       f.removeChild(f.firstChild);
@@ -492,6 +471,34 @@ function myFunction2(x){
     }
     f.appendChild(f.ownerDocument.createTextNode(d));
     }
+
+
+
+
+
+ function toggleApps(toggle){
+    //initial loading of lines
+    if(toggle == true){
+      for(var k = 0; k < activeArray.length; k++){
+        activeArray[k] = true;
+        boxes[k].setOpacity(1.0);
+        addAppBack(boxes[k].getId());
+        layer.draw();
+      }
+      calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+      toggle = false;
+    }
+    else{
+      for(var k = 0; k < activeArray.length; k++){
+        activeArray[k] = false;
+        boxes[k].setOpacity(0.3);
+        removeApp(boxes[k].getName(), boxes[k].getId());
+        layer.draw();
+      }
+      calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+      toggle = true;
+    }
+  }
 
   /*
    * ANIMATION CONTROLS
