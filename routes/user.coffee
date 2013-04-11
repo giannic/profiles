@@ -233,13 +233,7 @@ exports.allow = (req, res) ->
   user_id = req.body.id
   domain = req.body.domain
 
-  User.findByIdAndUpdate(user_id, {$addToSet: { whitelist: domain }},
-    (err, result) ->
-      if err
-        res.send(error: err)
-      else
-        res.send(success: "Added to allowed apps")
-  )
+  add_to_whitelist(user_id, domain, res)
 
 ###
 # /users/allow
@@ -277,13 +271,7 @@ exports.whitelist_add = (req, res) ->
 
   console.log("adding " + domain + " to whitelist");
 
-  User.findByIdAndUpdate(user_id, {$addToSet: { whitelist: domain }},
-    (err, result) ->
-      if err
-        res.send(error: err)
-      else
-        res.send({success: {new_whitelist: result.whitelist} })
-  )
+  add_to_whitelist(user_id, domain, res)
 
 ###
 # /users/whitelist_remove
@@ -330,3 +318,13 @@ remove_from_whitelist = (user_id, domain, res) ->
       else
         res.send({success: {new_whitelist: result.whitelist} })
   )
+
+add_to_whitelist = (user_id, domain, res) ->
+  User.findByIdAndUpdate(user_id, {$addToSet: { whitelist: domain }},
+    (err, result) ->
+      if err
+        res.send(error: err)
+      else
+        res.send({success: {new_whitelist: result.whitelist} })
+  )
+

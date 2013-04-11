@@ -3,15 +3,15 @@ crypto = require 'crypto'
 
 Application = new mongoose.Schema
   # TODO: refactor category into new model
-  category: String,
+  category: {type: String, default: 'social'},
   name: String,
-  user: String,  # user id
+  userid: String,  # user id
   open: [Number],
   close: [Number],
   open_count: {type: Number, required: true, default: 0 },
   close_count: {type: Number, required: true, default: 0 },
-  img: String,  # url
-  url: String  # DOMAIN url
+  img: {type: String, default: 'placeholder.png'},   # url
+  url: {type: String, required: true}  # DOMAIN url
   # email: {type: String, index: {unique: true}}
 
 # User.methods.makeSalt = ->
