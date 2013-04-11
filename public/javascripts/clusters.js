@@ -304,17 +304,17 @@ clusters_init = function(){
           k = .1 * Math.sqrt(d.radius);
         }
 
-            x = d.x - node.x;
-            y = d.y - node.y;
-            l = Math.sqrt(x * x + y * y);
-            r = d.radius + node.radius;
-            if (l != r) {
-                l = (l - r) / l * alpha * k;
-                d.x -= x *= l;
-                d.y -= y *= l;
-                node.x += x;
-                node.y += y;
-            }
+        x = d.x - node.x;
+        y = d.y - node.y;
+        l = Math.sqrt(x * x + y * y);
+        r = d.radius + node.radius;
+        if (l != r) {
+            l = (l - r) / l * alpha * k;
+            d.x -= x *= l;
+            d.y -= y *= l;
+            node.x += x;
+            node.y += y;
+        }
         };
     }
 
@@ -399,7 +399,6 @@ clusters_init = function(){
         cluster_apps[selected_category]
             .append('image')
             .attr('xlink:href', function(d) {
-                console.log(d);
                 return d.img;
             })
             .attr("id", function(d, j){
