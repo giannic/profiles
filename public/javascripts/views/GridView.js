@@ -71,11 +71,11 @@ app.views.GridView = Backbone.View.extend({
     // TODO: HARDCODED WIDTH
     var $curr_row = $(current_row);
     var last_row_width = this.COLUMNS * ($curr_row.find('.application').width() + 2 * parseInt($curr_row.find('.application').css('margin')));
-    console.log('widthhh')
-    console.log(last_row_width)
-    console.log(this.COLUMNS)
-    console.log($curr_row.find('.application').length *  $curr_row.find('.application').width())
-    console.log($curr_row.find('.application').css('margin'))
+    // console.log('widthhh')
+    // console.log(last_row_width)
+    // console.log(this.COLUMNS)
+    // console.log($curr_row.find('.application').length *  $curr_row.find('.application').width())
+    // console.log($curr_row.find('.application').css('margin'))
     $(current_row).find('.row-wrapper').width(last_row_width);
     return this;
   },

@@ -27,8 +27,8 @@ var lines_init = function() {
       startTime = 1.7976931348623157E+10308;
       endTime = 0;
 
-      console.log("data")
-      console.log(data)
+      // console.log("data")
+      // console.log(data)
 
       //app container
       appArray = [];
@@ -43,8 +43,8 @@ var lines_init = function() {
           }
       }
 
-      console.log("appArray")
-      console.log(appArray);
+      // console.log("appArray")
+      // console.log(appArray);
 
       //store colors for each app
       colorArray = [];
@@ -88,20 +88,20 @@ var lines_init = function() {
 
 
 function myFunction(x){ 
-  console.log(x.x2.animVal.value);
+  // console.log(x.x2.animVal.value);
   printTheStats(x.attributes.name.value, "username", x.x2.animVal.value);
   show_stats();
 }
 
 function myFunction2(x){ 
-  console.log("mouseout");
+  // console.log("mouseout");
   hide_stats();
 }
 
   function createAllTheHovers(){
             var hovers = d3.selectAll("line"); // this should change
-            console.log("hovers = ");
-            console.log(hovers[0]);
+            // console.log("hovers = ");
+            // console.log(hovers[0]);
             for(var i = 0; i < hovers[0].length; i++){
               currline = hovers[0][i];
               currline.addEventListener("mouseover",function(evt) { myFunction(this); }, false);
@@ -121,8 +121,8 @@ function myFunction2(x){
         frequencies[i] = 0;
         calcFreq(i);
     }
-    console.log("frequencies")
-    console.log(frequencies)
+    // console.log("frequencies")
+    // console.log(frequencies)
 
     var x = d3.scale.linear()
       .domain([0, 100])
@@ -203,9 +203,9 @@ function myFunction2(x){
   function updateSliderDates(dateLeft, dateRight) {
     var dl = dateLeft, dr = dateRight;
     $("#timeline_dateLeft").text(
-      $.datepicker.formatDate('MM dd, yy', dl) + " -- " + dl.getMinutes() + ":" + dl.getSeconds());
+      $.datepicker.formatDate('MM dd, yy', dl));
     $("#timeline_dateRight").text(
-      $.datepicker.formatDate('MM dd, yy', dr) + " -- " + dr.getMinutes() + ":" + dr.getSeconds());
+      $.datepicker.formatDate('MM dd, yy', dr));
   }
 
   function removeApp(index, k){
@@ -280,7 +280,7 @@ function myFunction2(x){
   //Gets the date of a certain index on the slider
   function getDate(index) {
     var date = startTime + (difference*index)/(100);
-    return new Date(date);
+    return new Date(date*1000);
   }
 
   //Given an index which is slider_min < index < slider_max
@@ -308,7 +308,7 @@ function myFunction2(x){
   }
 
   function printTheStats(s, u, l){
-    console.log(s);
+    // console.log(s);
     printThatApp(s);
     //printUsername(u);
     printLastVisit(l);  
