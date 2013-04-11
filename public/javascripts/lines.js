@@ -76,7 +76,7 @@ var lines_init = function() {
       lineGraph = d3.select("#D3line").append("svg:svg")
         .attr("width", lineGraphWidth)
         .attr("height", lineGraphHeight);
-      
+
       setUpAppSelection(appArray, colorArray, nameArray);
 
       initSlider();
