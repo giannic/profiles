@@ -69,19 +69,18 @@ var lines_init = function() {
           activeArray[i] = true;
       }
       difference = endTime - startTime;
-
       //line graph dimensions
-      lineGraphWidth = 1000;
-      lineGraphHeight = 600;    
+      lineGraphWidth = WINDOW_WIDTH - 250;
+      lineGraphHeight = WINDOW_HEIGHT - 250; // change this so it's based on timeline size
 
       lineGraph = d3.select("#D3line").append("svg:svg")
         .attr("width", lineGraphWidth)
         .attr("height", lineGraphHeight);
-      
-      setUpAppSelection();
 
       initSlider();
-      
+
+      setUpAppSelection();
+
       initFreqLine();
       }});     
   });
@@ -110,8 +109,11 @@ function myFunction2(x){
 }
 
   function initFreqLine() {
-    
-    var w = lineGraphWidth, h = 25;
+    var h = 25;
+    var graph = d3.select(".frequency-container")
+          .append("svg")
+          .attr("width", lineGraphWidth)
+          .attr("height", h);    
 
     for (var i=minRange; i < maxRange-1; i++) {
         frequencies[i] = 0;
@@ -120,18 +122,13 @@ function myFunction2(x){
     console.log("frequencies")
     console.log(frequencies)
 
-    var graph = d3.select(".frequency-container")
-      .append("svg")
-      .attr("width", w)
-      .attr("height", h);
-
     var x = d3.scale.linear()
       .domain([0, 100])
-      .range([0, w]);
+      .range([0, lineGraphWidth]);
 
     var y = d3.scale.linear()
       .domain([0, 5]) // this should be the max of the frequencies?
-      .range([h, 0]);
+      .range([h, 0]); // TODO: height is hardcoded here
 
     var line = d3.svg.line()
         .x(function(d,i) {
