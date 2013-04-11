@@ -472,10 +472,6 @@ function myFunction2(x){
     f.appendChild(f.ownerDocument.createTextNode(d));
     }
 
-
-
-
-
  function toggleApps(toggle){
     //initial loading of lines
     if(toggle == true){
