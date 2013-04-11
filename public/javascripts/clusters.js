@@ -304,17 +304,17 @@ clusters_init = function(){
           k = .1 * Math.sqrt(d.radius);
         }
 
-            x = d.x - node.x;
-            y = d.y - node.y;
-            l = Math.sqrt(x * x + y * y);
-            r = d.radius + node.radius;
-            if (l != r) {
-                l = (l - r) / l * alpha * k;
-                d.x -= x *= l;
-                d.y -= y *= l;
-                node.x += x;
-                node.y += y;
-            }
+        x = d.x - node.x;
+        y = d.y - node.y;
+        l = Math.sqrt(x * x + y * y);
+        r = d.radius + node.radius;
+        if (l != r) {
+            l = (l - r) / l * alpha * k;
+            d.x -= x *= l;
+            d.y -= y *= l;
+            node.x += x;
+            node.y += y;
+        }
         };
     }
 
@@ -399,7 +399,6 @@ clusters_init = function(){
         cluster_apps[selected_category]
             .append('image')
             .attr('xlink:href', function(d) {
-                console.log(d);
                 return d.img;
             })
             .attr("id", function(d, j){
@@ -436,10 +435,12 @@ clusters_init = function(){
 
         var hovers = svg.selectAll("image") // this should change
             .on("mouseenter", function() {
+                hoverFunction();
                 show_stats();
                 d3.event.stopPropagation();
             })
             .on("mouseleave", function() {
+                hoveroffFunction();
                 hide_stats();
             })
             .on("mousedown", function() {
@@ -462,7 +463,7 @@ clusters_init = function(){
     function hoverFunction(x){
         console.log("a");
     //console.log(x);
-    //printTheStats(x.attributes.href, "username");
+        printClusterStats("hiya", "username", "somethingelse");
     //show_stats();
     }
 
@@ -609,6 +610,41 @@ clusters_init = function(){
             });
     }
 
+  function printClusterStats(s, u, l){
+    console.log(s);
+    printThatApp(s);
+    //printUsername(u);
+    printLastVisit(l);  
+  }
+
+      function printThatApp(d){
+    var f = document.getElementById("thatapp");
+    while(f.childNodes.length >= 1) {
+      f.removeChild(f.firstChild);
+    }
+    f.appendChild(f.ownerDocument.createTextNode(d));
+    }
+
+    function printUsername(d){
+    var f = document.getElementById("username");
+    while(f.childNodes.length >= 1) {
+      f.removeChild(f.firstChild);
+    }
+    f.appendChild(f.ownerDocument.createTextNode(d));
+    }
+
+    function printLastVisit(d){
+    var f = document.getElementById("lastvisit");
+    while(f.childNodes.length >= 1) {
+      f.removeChild(f.firstChild);
+    }
+    f.appendChild(f.ownerDocument.createTextNode(d));
+    }
+
+
+
 };
+
+
 
 
