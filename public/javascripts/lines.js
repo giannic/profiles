@@ -170,7 +170,7 @@ function myFunction2(x){
 
     //Set slider label dates to the min and max
     updateSliderDates(
-      getDate($("#timeline").rangeSlider("min")), 
+      getDate($("#timeline").rangeSlider("min")),
       getDate($("#timeline").rangeSlider("max")));
 
     $("#timeline").on("valuesChanging", function(e, data) {
@@ -179,7 +179,7 @@ function myFunction2(x){
 
     $("#timeline").on("valuesChanged", function(e, data) {
       calculateRender(
-        Math.round(data.values.min), 
+        Math.round(data.values.min),
         Math.round(data.values.max), 0);
         //updateSliderDates(getDate(data.values.min), getDate(data.values.max));
     });
@@ -232,8 +232,8 @@ function myFunction2(x){
 
       var string = nameArray[index];
       string = string.replace(' ', '-');
-      string = string.replace('.', '-'); 
-      string = string.replace('.', '-');          
+      string = string.replace('.', '-');
+      string = string.replace('.', '-');
 
       for (i = 0; i < renderArray.length; i++) {
           currentLine = lineGraph.append("a")

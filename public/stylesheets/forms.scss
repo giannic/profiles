@@ -7,7 +7,7 @@
     width: 60%;
 
     outline: none;
-    color: #555555;
+    color: $LIGHT_GREY;
     padding: $INPUT_PADDING_X $INPUT_PADDING_Y;
     background-color: #ffffff;
 
@@ -64,7 +64,6 @@
     }
 
     letter-spacing: 1px;
-
     border: {
         width: 1px;
         style: solid;
@@ -74,6 +73,7 @@
     &:hover {
         @include transition(background-color, linear, $ANIM_TIME);
         background-color: #FFFFFF;
+        cursor: pointer;
     }
 }
 
@@ -115,6 +115,7 @@
     top: $HEADER_HEIGHT;
     right: 0px;
     width: 250px;
+    z-index: 9000;
 
     border: {
         style: solid;
