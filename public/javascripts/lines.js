@@ -83,8 +83,8 @@ var lines_init = function() {
 function myFunction(x){ 
   var date = x.attributes.number.value;
   var val = new Date(date*1000);
-  //console.log(val.format("dd-m-yy"));
-  printTheStats(x.attributes.name.value, "username", val);
+  
+  printTheStats(x.attributes.name.value, "username", $.datepicker.formatDate('MM dd, yy', val));
   show_stats();
 }
 
