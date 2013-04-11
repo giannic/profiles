@@ -8,11 +8,15 @@
 
 #visualizations {
     position: absolute;
+    background: {
+        image: url('../img/textures/cream_dust.png');
+        repeat: repeat;
+    }
 }
 
 .vis-shape {
-    stroke: $SHAPE_STROKE;
-    // stroke-width: 2px;
+    //stroke: $SHAPE_STROKE;
+    //stroke-width: 2px;
     fill: $SHAPE_FILL;
 }
 
