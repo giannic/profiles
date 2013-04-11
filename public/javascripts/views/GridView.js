@@ -34,8 +34,6 @@ app.views.GridView = Backbone.View.extend({
   },
 
   render: function(search_key, search_value) {
-    console.log(search_key)
-    console.log(search_value)
     this.apps = [];
     this.$el.width(this.width);
     this.$el.html(this.template(this.collection.toJSON()));
@@ -71,7 +69,14 @@ app.views.GridView = Backbone.View.extend({
     that.$el.append(current_row);
     // set the last row to the full width of other rows
     // TODO: HARDCODED WIDTH
-    $(current_row).find('.row-wrapper').width(1020);
+    var $curr_row = $(current_row);
+    var last_row_width = this.COLUMNS * ($curr_row.find('.application').width() + 2 * parseInt($curr_row.find('.application').css('margin')));
+    console.log('widthhh')
+    console.log(last_row_width)
+    console.log(this.COLUMNS)
+    console.log($curr_row.find('.application').length *  $curr_row.find('.application').width())
+    console.log($curr_row.find('.application').css('margin'))
+    $(current_row).find('.row-wrapper').width(last_row_width);
     return this;
   },
 
@@ -136,7 +141,6 @@ app.views.GridView = Backbone.View.extend({
     // if(!bottom_row)
     this.expanded_corners.push(br);
 
-    console.log(this.expanded_apps)
     _.each(this.expanded_apps, function(item){
       if(item)
         item.$el.find('.application-inner').stop().animate({
@@ -194,7 +198,6 @@ app.views.GridView = Backbone.View.extend({
 
   search: function() {
     // this.model.toggle();
-    console.log($('#grid-search').val());
     this.render('url', $('#grid-search').val());
 
   },
