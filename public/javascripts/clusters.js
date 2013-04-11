@@ -18,8 +18,8 @@ clusters_init = function(){
 
     var svg = d3.select("#circles")
                 .append("svg")
-                .attr("width", window_width)
-                .attr("height", window_height),
+                .attr("width", WINDOW_WIDTH)
+                .attr("height", WINDOW_HEIGHT),
         defs = svg.append('defs');
 
     var dataset, circles, label;
@@ -399,7 +399,8 @@ clusters_init = function(){
         cluster_apps[selected_category]
             .append('image')
             .attr('xlink:href', function(d) {
-              return d.img;
+                console.log(d);
+                return d.img;
             })
             .attr("id", function(d, j){
                 return "link" + j + "_img_" + x.id;
