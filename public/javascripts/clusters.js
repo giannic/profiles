@@ -448,7 +448,7 @@ clusters_init = function(){
         // make the more visible for those categories with too many apps
         svg.select("#more_" + x.id)
             .attr("display", function(x){
-                if (x.apps.length > cap_apps && 
+                if (x.apps.length > cap_apps &&
                     (x.id == selected_category) || (x.id == clicked_category)) {
                     // check if it's selected
                     return "visible";
@@ -541,7 +541,7 @@ clusters_init = function(){
         // hide the more link
         svg.select("#more_" + d.id)
             .attr("display", "none");
-        
+
         // bring up a less link
         svg.select("#less_" + d.id)
             .attr("display", "visible");
@@ -555,7 +555,7 @@ clusters_init = function(){
             new_space,
             start_pos = {x: -window_width/2 + pad, y: -window_height/2 + pad},
             space = new_width + pad;
- 
+
         svg.selectAll(".link_img_" + d.id)
             .transition()
             .attr("x", function(x, j){
