@@ -94,9 +94,8 @@ svg {
     z-index: 9001;
 }
 
-.type-nav {
+nav {
     position: absolute;
-    right: 0;
     top: 0;
 
     ul {
@@ -118,20 +117,29 @@ svg {
     }
 }
 
+.type-nav {
+    left: 0;
+    li {
+            margin: $HEADER_MARGIN_TOP 0px 0px $HEADER_MARGIN_SIDE;
+    }
+}
+
+.utility-nav {
+    right: 0;
+    li {
+            margin: $HEADER_MARGIN_TOP $HEADER_MARGIN_SIDE 0px 0px;
+    }
+}
+
 #grid-search {
     width: 150px;
     margin: {
-        top: $HEADER_MARGIN_TOP;
-        left: $HEADER_MARGIN_SIDE;
+        top: -2px; // compensate for border
         right: 0px;
         bottom: 0px;
     }
 
     background-color: #ffffff;
-
-    position: absolute;
-    top: 0;
-    left: 0;
 
     border: {
         style: solid;

@@ -109,31 +109,36 @@ svg {
     -o-transition: border linear 0.2s, box-shadow linear 0.2s;
     transition: border linear 0.2s, box-shadow linear 0.2s; }
 
-.type-nav {
+nav {
   position: absolute;
-  right: 0;
   top: 0; }
-  .type-nav ul {
+  nav ul {
     list-style: none; }
-    .type-nav ul li {
+    nav ul li {
       display: inline-block;
       margin: 15px 20px 0px 0px; }
-  .type-nav .menu-button {
+  nav .menu-button {
     width: 32px;
     height: 32px; }
-    .type-nav .menu-button:hover {
+    nav .menu-button:hover {
       cursor: pointer; }
+
+.type-nav {
+  left: 0; }
+  .type-nav li {
+    margin: 15px 0px 0px 20px; }
+
+.utility-nav {
+  right: 0; }
+  .utility-nav li {
+    margin: 15px 20px 0px 0px; }
 
 #grid-search {
   width: 150px;
-  margin-top: 15px;
-  margin-left: 20px;
+  margin-top: -2px;
   margin-right: 0px;
   margin-bottom: 0px;
   background-color: #ffffff;
-  position: absolute;
-  top: 0;
-  left: 0;
   border-style: solid;
   border-width: 1px;
   border-color: #CCCCCC;
