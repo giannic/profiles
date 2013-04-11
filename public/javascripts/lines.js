@@ -88,20 +88,19 @@ var lines_init = function() {
 
 
 function myFunction(x){ 
-  console.log(x.x2.animVal.value);
-  printTheStats(x.attributes.name.value, "username", x.x2.animVal.value);
+  var date = x.attributes.number.value;
+  var val = new Date(date*1000);
+  console.log(val.format("dd-m-yy"));
+  printTheStats(x.attributes.name.value, "username", val);
   show_stats();
 }
 
 function myFunction2(x){ 
-  console.log("mouseout");
   hide_stats();
 }
 
   function createAllTheHovers(){
             var hovers = d3.selectAll("line"); // this should change
-            console.log("hovers = ");
-            console.log(hovers[0]);
             for(var i = 0; i < hovers[0].length; i++){
               currline = hovers[0][i];
               currline.addEventListener("mouseover",function(evt) { myFunction(this); }, false);
@@ -121,8 +120,6 @@ function myFunction2(x){
         frequencies[i] = 0;
         calcFreq(i);
     }
-    console.log("frequencies")
-    console.log(frequencies)
 
     var x = d3.scale.linear()
       .domain([0, 100])
@@ -242,6 +239,7 @@ function myFunction2(x){
                                  .attr("y2", lineGraphHeight)
                                  .attr("name", nameArray[index])
                                  .attr("class", string)
+                                 .attr("number", openArray[i])
                                  .style("stroke-width", 3)
                                  .style("stroke", "hsl("+ colorArray[index] +",50%, 50%)");
           var x = (closeArray[i] - openArray[i])/diff + .5;
