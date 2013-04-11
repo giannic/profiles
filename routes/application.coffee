@@ -33,7 +33,8 @@ exports.open = (req, res) ->
               category: req.body.category,
               userid: req.body.userid,
               url: req.body.url,
-              img: req.body.img_url
+              img: req.body.img_url,
+              name: req.body.app_name
             }
     },
     {upsert: true},
@@ -43,6 +44,26 @@ exports.open = (req, res) ->
       console.log(err)
       if err then res.send(error: "Could not update database: App Open")
       res.send({appid: results.id})
+  )
+
+###
+# /apps/create
+# userid, url, category, img_url, name
+###
+exports.create = (req, res) ->
+  console.log('creating app')
+  properties = [{
+    category: req.body.category, 
+    name: req.body.app_name,
+    userid: req.session.user_id,
+    img: req.body.image_url, # url
+    url: req.body.app_url }]
+  Application.create(properties, (err, data) ->
+    if err
+      console.log(err)
+      res.send(error: "Could not create app")
+    else
+      res.send(success: data)
   )
 
 ###
@@ -149,7 +170,10 @@ exports.get_by_user = (req, res) ->
     Application.find userid: req.session.user_id, 'category img url open close open_count close_count',
       (err, result) ->
         if err
+          console.log 'error' + err
           res.send(error: err)
         else
+          console.log 'userid ' + req.session.user_id
+          console.log 'success ' + result
           res.json result
 

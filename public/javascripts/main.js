@@ -1,6 +1,7 @@
 (function(){
   $('document').ready(function() {
       var VIS_COUNT = 3; // $('.vis').length;
+      var base_url = "http://localhost:3000";
 
       //console.log(WINDOW_WIDTH);
 
@@ -41,6 +42,22 @@
 
       $("#logout-button").click(function() {
           window.location.replace("/logout");
+      });
+
+      // click listener for submit button on "new app" pop up
+      $("#newapp-button").click(function(event) {
+        // cache form input fields
+        var name = $("#input-appname")
+        var app_url = $("#input-appurl")
+        var params = {
+          "app_name": name.val(),
+          "app_url": app_url.val()
+        }
+        $.post(base_url + "/apps/create", params, function(data, status, xhr) {
+          name.val("");
+          app_url.val("");
+          $("#add-app-box").toggle();
+        });
       });
 
     // MOUSE ENTER MOUSE LEAVE SUPPORT FROM https://gist.github.com/shawnbot/4166283
