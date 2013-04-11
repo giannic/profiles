@@ -392,7 +392,8 @@ clusters_init = function(){
                 .attr("xlink:href", function(d){
                     return "http://" + d.url; // TODO: fix so it's not hardcoded
                 })
-                .classed(x.id, true);
+                .classed(x.id, true)
+                ;
 
         // append each image
         cluster_apps[selected_category]
@@ -455,6 +456,19 @@ clusters_init = function(){
                 else
                     return "none";
             });
+    }
+
+    function hoverFunction(x){
+        console.log("a");
+    //console.log(x);
+    //printTheStats(x.attributes.href, "username");
+    //show_stats();
+    }
+
+    function hoveroffFunction(x){
+        console.log("b");
+    //console.log("mouseout");
+    //hide_stats();
     }
 
     function deselect_old_cluster(old_category) {
