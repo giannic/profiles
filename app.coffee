@@ -14,11 +14,11 @@ hbs = require('hbs')
 conf =
   db: {
     db: 'test',
-    host: 'davidxu.me',
-    #host: 'localhost',
-    port: 27017
-    username: ''
-    password: ''
+    #host: 'davidxu.me',
+    host: 'localhost',
+    port: 27017,
+    username: '',
+    password: '',
     collection: 'sessions'
   },
   secret: 'this is a secret yo'

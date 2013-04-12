@@ -24,6 +24,13 @@ exports.json_all = (req, res) ->
 exports.open = (req, res) ->
   # res.render "hi"
   console.log req.body
+  name = req.body.app_name
+  url = req.body.url
+  if not name
+    i = url.indexOf(".")
+    name = url.substring(0, i)
+
+  console.log(name)
   Application.findOneAndUpdate(
     { userid: req.body.userid, url: req.body.url },
     {
@@ -32,9 +39,9 @@ exports.open = (req, res) ->
       $set: {
               category: req.body.category,
               userid: req.body.userid,
-              url: req.body.url,
-              img: req.body.img_url,
-              name: req.body.app_name
+              url: url,
+              img: req.body.img_url
+              #name: req.body.app_name
             }
     },
     {upsert: true},
@@ -52,6 +59,7 @@ exports.open = (req, res) ->
 ###
 exports.create = (req, res) ->
   console.log('creating app')
+
   properties = [{
     category: req.body.category, 
     name: req.body.app_name,
@@ -145,24 +153,27 @@ exports.view = (req, res) ->
 
 ###
 # POST /apps/category
+# category, app name
 ###
 exports.update_category = (req, res) ->
-  console.log req.body.category
   category = req.body.category
-  app_id = req.body.appid
-  console.log app_id
-  Application.findByIdAndUpdate app_id, $set: { category: category }, {upsert: true}, (err, result) ->
-    if err
-      console.log "ERROR: Category unable to be updated."
-      res.send error: err
-      return
-    else
-      console.log "Category updated."
-      res.send success: "Category updated."
+  url = req.body.url
+  user_id = req.session.user_id
+  #app_id = req.body.appid
 
-
-
-
+  Application.findOneAndUpdate(
+    {url: url, userid: user_id}, 
+    {$set: { category: category } },
+    {upsert: true}, 
+    (err, result) ->
+      if err
+        console.log "ERROR: Category unable to be updated."
+        res.send error: err
+        return
+      else
+        console.log "Category updated."
+        res.send success: "Category updated."
+  )
 
 # if there is no userid, then don't return any data, redirect to login
 exports.get_by_user = (req, res) ->
@@ -176,4 +187,5 @@ exports.get_by_user = (req, res) ->
           console.log 'userid ' + req.session.user_id
           console.log 'success ' + result
           res.json result
+
 
