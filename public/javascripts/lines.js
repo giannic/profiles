@@ -610,10 +610,7 @@ function createAllTheHovers() {
           var img = images[src];
           img.src = sources[src];
 
-          //img.onerror = function (evt) {this.onerror=null;}
           img.onerror = function (evt){this.onerror=null; this.src='/img/app_icons/favicon-default.gif';};
-        // console.log('hihihi');
-          
         }
-    } 
+    }
 };
