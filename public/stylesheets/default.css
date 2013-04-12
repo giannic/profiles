@@ -84,7 +84,7 @@ svg {
   -o-transition: border linear 0.2s, box-shadow linear 0.2s;
   transition: border linear 0.2s, box-shadow linear 0.2s;
   background-color: white;
-  z-index: 9001; }
+  z-index: 100; }
   #header .title {
     display: inline-block;
     margin: 20px auto;

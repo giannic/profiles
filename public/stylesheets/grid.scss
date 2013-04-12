@@ -30,7 +30,7 @@ html, body {
             top: 5px;
             right: 5px;
             opacity: 0.3;
-            z-index: 30000;
+            z-index: $VIS_Z + 1;
 
             &:hover {
                 cursor: pointer;
@@ -42,7 +42,7 @@ html, body {
           position: relative;
           height: 100%;
           width: 100%;
-          //opacity: 0.6;
+          opacity: 0.6;
 
           .url {
               display: none;
@@ -50,7 +50,7 @@ html, body {
               position: absolute;
               bottom: 0;
               color: white;
-              z-index: 29999; // just less than delete for now
+              z-index: $VIS_Z + 1; // just less than delete for now
               text-align: center;
 
               &:hover {
@@ -69,7 +69,6 @@ html, body {
               margin: auto;
               height: 100%;
               width: 100%;
-              opacity: 0.6;
               // @include saturate($UNSATURATED);
 
               &:hover {

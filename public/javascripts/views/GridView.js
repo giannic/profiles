@@ -144,7 +144,9 @@ app.views.GridView = Backbone.View.extend({
     this.expanded_corners.push(br);
 
     _.each(this.expanded_apps, function(item){
-      if(item)
+      console.log("HIHIHIHIHI")
+      console.log(item);
+      if(item) {
         item.$el.find('.application-inner').stop().animate({
             width: width,
             height: height,
@@ -153,6 +155,11 @@ app.views.GridView = Backbone.View.extend({
             opacity: 0.8
           }, 200, function(){
         });
+    
+        item.$el.css('z-index',10);
+        console.log('HEREEEE');
+      }
+     
     });
 
     var corner_width = data.corner_width;
@@ -160,7 +167,7 @@ app.views.GridView = Backbone.View.extend({
     var corner_left = data.corner_left;
     var corner_top = data.corner_top;
     _.each(this.expanded_corners, function(item){
-      if(item)
+      if(item) {
         item.$el.find('.application-inner').stop().animate({
             width: corner_width,
             height: corner_height,
@@ -169,6 +176,11 @@ app.views.GridView = Backbone.View.extend({
             opacity: 0.8
           }, 200, function(){
         });
+    
+        item.$el.css('z-index',10);
+        console.log('HEREEEE');
+      }
+     
     });
 
 
@@ -184,7 +196,7 @@ app.views.GridView = Backbone.View.extend({
   contract_entities: function(data) {
 
     _.each(_.union(this.expanded_apps, this.expanded_corners), function(item){
-      if(item)
+      if(item) {
         item.$el.find('.application-inner').stop().animate({
             width: data.width,
             height: data.height,
@@ -193,6 +205,11 @@ app.views.GridView = Backbone.View.extend({
             opacity: 0.6
           }, 200, function(){
         });
+        
+        item.$el.css('z-index',10);
+        console.log('HEREEEE');
+      }
+        
     });
 
 
