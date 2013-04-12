@@ -503,6 +503,7 @@ function createAllTheHovers() {
     while(f.childNodes.length >= 1) {
       f.removeChild(f.firstChild);
     }
+    f.appendChild(f.ownerDocument.createTextNode("URL: "));
     f.appendChild(f.ownerDocument.createTextNode(d));
     }
 
@@ -511,6 +512,7 @@ function createAllTheHovers() {
     while(f.childNodes.length >= 1) {
       f.removeChild(f.firstChild);
     }
+    f.appendChild(f.ownerDocument.createTextNode("Username: "));
     f.appendChild(f.ownerDocument.createTextNode(d));
     }
 
@@ -519,6 +521,7 @@ function createAllTheHovers() {
     while(f.childNodes.length >= 1) {
       f.removeChild(f.firstChild);
     }
+    f.appendChild(f.ownerDocument.createTextNode("Date: "));
     f.appendChild(f.ownerDocument.createTextNode(d));
     }
     function printLastTime(d){
@@ -526,6 +529,7 @@ function createAllTheHovers() {
     while(f.childNodes.length >= 1) {
       f.removeChild(f.firstChild);
     }
+    f.appendChild(f.ownerDocument.createTextNode("Time: "));
     f.appendChild(f.ownerDocument.createTextNode(d));
     }
 
