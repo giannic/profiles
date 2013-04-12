@@ -17,7 +17,7 @@ grid_init = function(){
 
     $('body').on('keyup', function(e){
       // check if it's cmd, alt, shift, ctrl
-      if (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey) {
+      if (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey || e.keyCode == 91) {
         return;
       }
       // check if it's not focused on an input
