@@ -16,15 +16,13 @@
 
     <div id="form-wrapper">
         <form>
-            <label for="input-appname">App url (e.g. facebook.com)</label>
             <input class="user-input-field" id="input-appname"
-                   type="text" name="domain"
+                   type="text" name="domain" placeholder="App url (e.g. facebook.com)"
                 {{#if msg}}
                     class="error"
                 {{/if}}
             />
             <input class="form-button" id="allow-button" type="button" value="Allow"/>
-            <input class="form-button" id="disallow-button" type="button" value="Disallow"/>
         </form>
         <ul id="whitelist">
         </ul>
@@ -33,6 +31,49 @@
             <li>Bar</li>
             <li>Fee</li>
             <li>Fuck</li>
+        </ul>
+    </div>
+    <div id="appmanagement-wrapper">
+        <ul> 
+            <li>
+                <div class="app-name">Name</div>
+                <div>
+                    <select>
+                        <option>Social</option>
+                        <option>Professional</option>
+                        <option selected>Music</option>
+                        <option>Image Sharing</option>
+                        <option>Entertainment</option>
+                    </select>
+                </div>
+                <div>
+                    <input class="manangement-delete"
+                           src="img/ui_icons/delete.png"
+                           name="image" type="image"
+                           width="20" height="20">
+                </div>
+            </li>
+
+            <li>
+                <div class="app-name">Name</div>
+                <div>
+                    <select>
+                        <option>Social</option>
+                        <option>Professional</option>
+                        <option selected>Music</option>
+                        <option>Image Sharing</option>
+                        <option>Entertainment</option>
+                    </select>
+                </div>
+                <div>
+                <input id="manangement-delete"
+                       type="image"
+                       src="img/ui_icons/delete.png"
+                       name="image"
+                       width="20"
+                       height="20">
+                </div>
+            </li>
         </ul>
     </div>
 </div>
