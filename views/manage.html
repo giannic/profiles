@@ -16,7 +16,7 @@
 
     <div id="management-form-wrapper">
         <form>
-            <input class="user-input-field" id="input-appname"
+            <input class="user-input-field" id="input-domain"
                    type="text" name="domain" placeholder="App url (e.g. facebook.com)"
                 {{#if msg}}
                     class="error"
@@ -28,8 +28,10 @@
         </ul>
     </div>
     <div id="app-management-wrapper">
-
-        <ul> 
+        <ul id="app-list"> <div class="alert">Changes saved.</div>
+            <h2>Your Apps</h2>
+            <!--
+            <div class="alert">Changes saved.</div>
             <h2>Your Apps</h2>
             <li>
                 <div class="app-name">Name</div>
@@ -50,26 +52,8 @@
                            height="20">
                 </div>
             </li>
-
-            <li>
-                <div class="app-name">Name</div>
-                <div>
-                    <select>
-                        <option>Social</option>
-                        <option>Professional</option>
-                        <option selected>Music</option>
-                        <option>Image Sharing</option>
-                        <option>Entertainment</option>
-                    </select>
-                </div>
-                <div class="management-delete">
-                    <input type="image"
-                           src="img/ui_icons/delete.png"
-                           name="image"
-                           width="20"
-                           height="20">
-                </div>
-            </li>
+        -->
         </ul>
     </div>
+
 </div>
