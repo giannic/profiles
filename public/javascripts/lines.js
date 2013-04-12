@@ -11,17 +11,8 @@ var lines_init = function() {
       frequencies = [];
 
   $(document).ready(function() {
-      //get the JSON file
-      $.ajax({
-          url: '/apps/user',
-          dataType: 'json',
-
-      error: function(err) {
-          console.log(err)
-          console.log('ERROR')
-      },
-
-      success: function(data) {
+      
+      var data = APP_DATA.apps;
 
       stats = data;
       numberOfLines = 0;
@@ -87,7 +78,6 @@ var lines_init = function() {
       initSlider();
 
       initFreqLine();
-      }});
   });
 
 function myFunction(x){
