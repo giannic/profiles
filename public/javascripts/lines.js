@@ -84,7 +84,7 @@ function myFunction(x){
   var date = x.attributes.number.value;
   var val = new Date(date*1000);
   
-  printTheStats(x.attributes.name.value, "username", $.datepicker.formatDate('MM dd, yy', val));
+  printTheStats(x.attributes.name.value, "username", $.datepicker.formatDate('MM dd, yy', val), val.toLocaleTimeString());
   show_stats();
 }
 
@@ -454,10 +454,11 @@ function initFreqLine() {
     fieldNameElement.appendChild(fieldNameElement.ownerDocument.createTextNode(d));
     }
 
-  function printTheStats(s, u, l){
+  function printTheStats(s, u, l, t){
     printThatApp(s);
-    printUsername(u);
-    printLastVisit(l);  
+    //printUsername(u);
+    printLastVisit(l);
+    printLastTime(t);  
   }
 
   function printThatApp(d){
@@ -483,6 +484,14 @@ function initFreqLine() {
     }
     f.appendChild(f.ownerDocument.createTextNode(d));
     }
+
+    function printLastTime(d){
+    var f = document.getElementById("lasttime");
+    while(f.childNodes.length >= 1) {
+      f.removeChild(f.firstChild);
+    }
+    f.appendChild(f.ownerDocument.createTextNode(d));
+    }    
 
   /*
    * ANIMATION CONTROLS
