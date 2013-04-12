@@ -75,7 +75,7 @@ exports.create = (req, res) ->
       return
     else
       console.log("app create success")
-      #res.send(success: data)
+      res.send(success: data)
   )
   # add to whitelist
   user_routes.add_to_whitelist(properties[0].userid, properties[0].url, res)
