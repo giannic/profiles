@@ -365,7 +365,7 @@ function createAllTheHovers() {
                 newx = k*box_size;
               else
                 newx = (k % width_count)*box_size;
-              console.log(newy);
+              //console.log(newy);
               var box = new Kinetic.Rect({
                   x: newx, // change this
                   y: newy, // make this dynamic

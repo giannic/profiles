@@ -11,6 +11,7 @@ clusters_init = function(){
         cap_apps = 9, // cap for the more button // TODO: change to 9
         num_categories = 0,
         nodes = {},
+        allImages = {},
         force = 0,
         groups,
         foci = 0, // to keep track of focal pos for each node
@@ -23,7 +24,7 @@ clusters_init = function(){
         defs = svg.append('defs');
 
     var dataset, circles, label;
-    dataset = []
+    dataset = [];
 
     // TEMPORARY WAY TO CREATE UNIQUE ID'S
     var id_index = 0;
@@ -33,10 +34,21 @@ clusters_init = function(){
         dataset.push(new_cluster);
         id_index += 1;
     });
+
     num_categories = dataset.length;
 
     nodes = dataset;
-    console.log(nodes);
+    var store = 0;
+    for(var count = 0; count < nodes.length; count++){
+        var imgs = nodes[count].apps;
+        for(var count2 = 0; count2 < imgs.length; count2++){
+            allImages[store] = imgs[count2];
+          //  console.log(allImages[store]);
+            store++;
+        }
+    }
+    //console.log(allImages);
+
     // TODO: not using for size anymore?
     nodes.forEach(function(d, i) {
         if (dataset[i].apps.length > max_apps) {
@@ -408,10 +420,24 @@ clusters_init = function(){
                 var j = d.url.indexOf("."),
                     name = d.url.substring(0, j);
                 return "/img/app_icons/" + name + ".png";
+
                 //return d.img;
             })
             .attr("id", function(d, j){
                 return "link" + j + "_img_" + x.id;
+            })
+            .attr("url_id", function(d){
+                return d.url;
+            })
+            .attr("close_id", function(d){
+                var date = d.close[d.close.length-1];
+                var val = new Date(date*1000);
+                return $.datepicker.formatDate('MM dd, yy', val);
+            })
+            .attr("timeStamp", function(d){
+                var date = d.close[d.close.length-1];
+                var val = new Date(date*1000);
+                return val.toLocaleTimeString();
             })
             .classed("link_img_" + x.id, true)
             .attr("x", function(d, j){
@@ -442,20 +468,6 @@ clusters_init = function(){
                 return "visible";
             });
 
-        var hovers = svg.selectAll("image") // this should change
-            .on("mouseenter", function() {
-                hoverFunction();
-                show_stats();
-                d3.event.stopPropagation();
-            })
-            .on("mouseleave", function() {
-                hoveroffFunction();
-                hide_stats();
-            })
-            .on("mousedown", function() {
-                d3.event.stopPropagation();
-            });
-
         // make the more visible for those categories with too many apps
         svg.select("#more_" + x.id)
             .attr("display", function(x){
@@ -467,19 +479,25 @@ clusters_init = function(){
                 else
                     return "none";
             });
+    
+    var c = svg.selectAll("image")[0];
+
+    for(var count = 0; count < c.length; count++){
+        currimg = c[count];
+        currimg.addEventListener("mouseover",function(evt) { hoverFunction(this);}, false);
+        currimg.addEventListener("mouseout",function(evt) { hoverOffFunction(this); }, false);
+     }
     }
 
     function hoverFunction(x){
-        // console.log("a");
-    //console.log(x);
-        printClusterStats("hiya", "username", "somethingelse");
-    //show_stats();
+        printClusterStats(x.attributes.url_id.value, "username", x.attributes.close_id.value, x.attributes.timeStamp.value);
+        show_stats();
     }
 
-    function hoveroffFunction(x){
-        // console.log("b");
+    function hoverOffFunction(x){
+      //  console.log("b");
     //console.log("mouseout");
-    //hide_stats();
+        hide_stats();
     }
 
     function deselect_old_cluster(old_category) {
@@ -634,12 +652,12 @@ clusters_init = function(){
             });
     }
 
-    function printClusterStats(s, u, l){
+    function printClusterStats(s, u, l, t){
         //console.log(s);
         printThatApp(s);
         //printUsername(u);
         printLastVisit(l);
-        clearLastTime();  
+        clearLastTime(t);  
     }
 
     function printThatApp(d){
@@ -647,6 +665,7 @@ clusters_init = function(){
         while(f.childNodes.length >= 1) {
             f.removeChild(f.firstChild);
         }
+        f.appendChild(f.ownerDocument.createTextNode("URL: "));
         f.appendChild(f.ownerDocument.createTextNode(d));
     }
 
@@ -655,6 +674,7 @@ clusters_init = function(){
         while(f.childNodes.length >= 1) {
             f.removeChild(f.firstChild);
         }
+        f.appendChild(f.ownerDocument.createTextNode("Username: "));
         f.appendChild(f.ownerDocument.createTextNode(d));
     }
 
@@ -663,14 +683,18 @@ clusters_init = function(){
         while(f.childNodes.length >= 1) {
             f.removeChild(f.firstChild);
         }
+        f.appendChild(f.ownerDocument.createTextNode("Last Visit: "));
+        var br = document.createElement("br");
+        f.appendChild(br);
         f.appendChild(f.ownerDocument.createTextNode(d));
     }
      
-    function clearLastTime(){
+    function clearLastTime(d){
         var f = document.getElementById("lasttime");
         while(f.childNodes.length >= 1) {
             f.removeChild(f.firstChild);
         }
+        f.appendChild(f.ownerDocument.createTextNode(d));
     }
 
 
