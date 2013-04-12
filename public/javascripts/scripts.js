@@ -8,9 +8,9 @@ grid_init = function(){
     grid_vent = _.extend({}, Backbone.Events);
 
     app.applications = new app.collections.Applications(APP_DATA.apps);
-    console.log('hihih')
-    console.log(app.applications)
-    console.log(APP_DATA)
+    // console.log('hihih')
+    // console.log(app.applications)
+    // console.log(APP_DATA)
     // append the grid to body
     $('#visualizations').prepend(new app.views.GridView({collection: app.applications}).render().el);
     $('#more-apps-box').prepend(new app.views.GridView({collection: app.applications}).render().el);
@@ -21,7 +21,7 @@ grid_init = function(){
         return;
       }
       // check if it's not focused on an input
-      console.log(e);
+      // console.log(e);
       if (!$(e.target).is('input')) {
         if (!e.ctrlKey && !e.altKey) {
           $('#grid-search').focus();

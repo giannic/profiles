@@ -17,6 +17,7 @@
     this.apps = [];
     var that = this;
 
+    console.log(json)
     _.each(json, function(app){
       that.apps.push(new window.App(app));
     });

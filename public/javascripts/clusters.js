@@ -1,4 +1,5 @@
 clusters_init = function(){
+
     var window_width = WINDOW_WIDTH - 30,
         window_height = WINDOW_HEIGHT - 50, // TODO: subtract size of menubar
         image_width = [], // image widths of the apps
@@ -36,6 +37,8 @@ clusters_init = function(){
         id_index += 1;
     });
 
+    console.log(CAT_DATA)
+    console.log(dataset)
     num_categories = dataset.length;
 
     nodes = dataset;
