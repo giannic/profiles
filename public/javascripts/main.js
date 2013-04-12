@@ -91,9 +91,10 @@
           // console.log(xhr);
           // app.views.GridView
           grid_vent.trigger('grid-add', {data: data.success});
-          $("#add-app-box").toggle();
           // $('#add-app-box').
-
+              $("#add-app-box").stop().animate({
+                  top: $("#header").height() - $("#add-app-box").height() - 18 // this also
+              }, 300);
             });
         });
 

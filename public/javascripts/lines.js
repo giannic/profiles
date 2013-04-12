@@ -136,7 +136,7 @@ function createAllTheHovers() {
       .range([0, w]);
 
     var y = d3.scale.linear()
-      .domain([0, freqMax])
+      .domain([-freqMax/10, freqMax])
       .range([h, 0]);
 
     var line = d3.svg.line()
