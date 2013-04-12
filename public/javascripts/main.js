@@ -46,18 +46,25 @@
 
       // click listener for submit button on "new app" pop up
       $("#newapp-button").click(function(event) {
-          console.log(window);
+        console.log(window);
         // cache form input fields
-        var name = $("#input-appname")
-        var app_url = $("#input-appurl")
+        var name = $("#input-appname");
+        var app_url = $("#input-appurl");
         var params = {
           "app_name": name.val(),
           "app_url": app_url.val()
-        }
+        };
         $.post(base_url + "/apps/create", params, function(data, status, xhr) {
           name.val("");
           app_url.val("");
+          console.log('§');
+          console.log(data.success);
+
+          console.log(xhr);
+          // app.views.GridView
+          grid_vent.trigger('grid-add', {data: data.success})
           $("#add-app-box").toggle();
+          // $('#add-app-box').
         });
       });
 

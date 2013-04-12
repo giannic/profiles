@@ -31,6 +31,8 @@ app.views.GridView = Backbone.View.extend({
     this.listenTo(grid_vent, 'hover-expand', this.expand_entities);
     this.listenTo(grid_vent, 'hover-contract', this.contract_entities);
     this.listenTo(grid_vent, 'grid-search', this.search);
+    this.listenTo(grid_vent, 'grid-add', this.add_application);
+    this.listenTo(grid_vent, 'grid-delete', this.delete_application);
   },
 
   render: function(search_key, search_value) {
@@ -194,6 +196,56 @@ app.views.GridView = Backbone.View.extend({
     });
 
 
+  },
+
+  add_application: function(data) {
+    var number_of_rows = this.$el.find('.row').length;
+    var number_of_apps = $(this.$el.find('.cf.row-wrapper')[number_of_rows - 1]).find('.application').length;
+    // TODO: REFACTOR
+    var current_column_width = this.width / this.COLUMNS;
+    var row_num = number_of_rows - 1;
+    var current_column = number_of_apps - 1;
+    var new_model = new app.models.Application(data.data);
+    var new_app = new app.views.ApplicationView({
+      model: new_model,
+      width: current_column_width,
+      height: current_column_width,
+      row: row_num,
+      column: current_column
+    });
+    this.apps.push(new_app);
+    // check the last row, make sure it isn't full and then append 
+    
+    var full = number_of_apps == this.COLUMNS;
+    // if full, append a new row, and an application-inner
+    if (full) {
+      // this.$el.append(
+      var new_row = $(this.$el.find('.row')[0]).clone().find('.cf.row-wrapper').empty();
+      new_row.append(new_app.el);
+      this.$el.append(new_row);
+
+    }
+    else {
+      $(this.$el.find('.cf.row-wrapper')[number_of_rows - 1]).append(new_app.el);
+    }
+
+  },
+
+
+  delete_application: function(data) {
+    // delete
+    $.post('/users/whitelist_remove', {
+      domain: data.model.get('url')
+    }, function(data, status, xhr){
+      console.log("FINISHED");
+      console.log(data);
+      console.log(status);
+      console.log(xhr);
+
+
+    });
+
+    console.log(data)
   },
 
   search: function() {

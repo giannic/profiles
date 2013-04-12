@@ -21,7 +21,8 @@
           // "keypress .edit"  : "updateOnEnter",
           // "blur .edit"      : "close"
           "mouseenter" : "hover_expand",
-          "mouseleave" : "hover_contract"
+          "mouseleave" : "hover_contract",
+          "click .delete" : "delete_app"
       },
 
       // passes in the window width/height
@@ -40,6 +41,7 @@
           this.r = (data.width) / 2 - this.margin - 1;  // subtract the border
           this.cx = this.r;
           this.cy = this.r;
+          this.render();
       },
 
       render: function() {
@@ -106,6 +108,11 @@
         }, 200, function(){
         });
 
+      },
+
+      delete_app: function() {
+        console.log('hello');
+        grid_vent.trigger('grid-delete', this);
       }
   });
 
