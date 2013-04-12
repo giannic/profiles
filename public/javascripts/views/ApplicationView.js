@@ -21,7 +21,8 @@
           // "keypress .edit"  : "updateOnEnter",
           // "blur .edit"      : "close"
           "mouseenter" : "hover_expand",
-          "mouseleave" : "hover_contract"
+          "mouseleave" : "hover_contract",
+          "click .delete" : "delete_app"
       },
 
       // passes in the window width/height
@@ -40,6 +41,7 @@
           this.r = (data.width) / 2 - this.margin - 1;  // subtract the border
           this.cx = this.r;
           this.cy = this.r;
+          this.render();
       },
 
       render: function() {
@@ -108,6 +110,11 @@
         }, 100);
 
         this.$el.find('.url').toggle();
+      },
+
+      delete_app: function() {
+        console.log('hello');
+        grid_vent.trigger('grid-delete', this);
       }
   });
 
@@ -135,7 +142,8 @@
 
   function render_html() {
     this.$el.html(this.template({application: this.model.toJSON(),
-                                 img: images[Math.floor(Math.random() * (images.length))]}));
+                                 img: this.model.get('url').substring(0, this.model.get('url').lastIndexOf("."))
+    }));
     // TEMPORAROY TODO: remove image
     //this.$el.append($(app.templates.grid_img));
     // this.$el.append(_.template(app.templates.grid_img, {img: images[Math.floor(Math.random() * (images.length))]}));
