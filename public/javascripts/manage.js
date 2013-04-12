@@ -11,6 +11,10 @@ $("#disallow-button").click(function() {
     makePost(disallowEndpoint);
 });
 
+$("#back-button").click(function() {
+    document.location.replace("/");
+});
+
 getWhitelist();
 
 function makePost(endpoint) {
