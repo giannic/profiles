@@ -16,7 +16,7 @@ html {
 body {
     height: 100%;
     width: 100%;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 a {
@@ -113,8 +113,8 @@ nav {
     .menu-button {
         width: 32px;
         height: 32px;
-        opacity: 0.3;
-        transition: opacity 0.5s ease-in;
+        opacity: $MENU_BUTTON_OPACITY;
+        transition: opacity $MENU_BUTTON_ANIM_TIME ease-in;
 
         &:hover {
             opacity: 1.0;
@@ -125,7 +125,7 @@ nav {
     .menu-button-active {
         opacity: 1.0 !important;
         &:hover {
-            opacity: 0.3;
+            opacity: $MENU_BUTTON_OPACITY;
             cursor: pointer;
         }
     }
@@ -145,18 +145,25 @@ nav {
 }
 
 .utility-nav {
-    right: 0;
+    right: $HEADER_MARGIN_SIDE;
     li {
       margin: 0px $HEADER_MARGIN_SIDE 0px 0px;
       height: 100%;
       min-width: 32px;
-      input {
-        @include center_vert_in_rel(32px, 32px);
-      }
       img {
         @include center_vert_in_rel(32px, 32px);
       }
+    }
 
+    #grid-search-wrapper {
+      margin-right: 150px;
+      padding: 0px;
+      position:relative;
+      input {
+        @include center_vert_in_rel(150px, 20px);
+        top: 50%;
+        margin-top: -18px;
+      }
     }
 }
 

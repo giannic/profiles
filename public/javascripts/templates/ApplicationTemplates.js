@@ -1,7 +1,7 @@
 app.templates.application = '<div class="application-inner"> \
                               <a href="#"> <img class = "delete" src="img/ui_icons/delete.png" /> </a>\
-                              <a class="url" href="http://<%= application.url %>"> <%= application.url %> </a> \
-                              <img class="grid-img" src="img/app_icons/<%= img %>-square.png"/>\
+                              <span class="url"> <%= application.url %> </span> \
+                              <a href="http://<%= application.url %>"> <img class="grid-img" src="img/app_icons/<%= img %>-square.png"/></a>\
                             </div>';
 
 app.templates.grid = '<!-- <div id="grid"> -->\

@@ -58,7 +58,11 @@
     border: {
         width: 1px;
         style: solid;
-        color: #000;
+        color: #666;
+    }
+
+    background: {
+        color: #E8E8E8;
     }
 
     &:hover {
@@ -69,13 +73,27 @@
 }
 
 #form-wrapper {
-    margin: 30px auto;
-    width: 100%;   
+    margin: auto;
+    width: 100%;
 
+    // center this
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    //margin: 30px auto;
+    //width: 100%;
     form {
         margin: auto;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
         width: 400px;
-        height: 36px;
+        height: 150px;
 
         .alert {
             position: absolute;
@@ -87,9 +105,39 @@
     }
 }
 
-#appmanagement-wrapper {
+#management-form-wrapper {
+    margin: 30px auto;
+    width: 100%;
+
+    form {
+        margin: auto;
+        width: 400px;
+        height: 36px;
+
+        input {
+            display: inline;
+        }
+
+        .alert {
+            position: absolute;
+            top: -30px;
+            left: 0px;
+            right: 0px;
+            line-height: 30px;
+        }
+    }
+}
+
+#app-management-wrapper {
     margin: auto;
     width: 100%;
+
+    h2 {
+        font-family: $TITLE_STACK;
+        text-align: left;
+        margin-bottom: 15px;
+        font-size: 20px;
+    }
 
     ul {
         margin: auto;
@@ -101,7 +149,7 @@
             list-style-type: none;
             padding-top: 10px;
             padding-bottom: 10px;
-            text-align: left;
+            position: relative;
 
             div {
                 display: inline;
@@ -109,8 +157,29 @@
 
             .app-name {
                 padding-right: 70px;
+                position: absolute;
+                left: 0;
+            }
+
+            .management-delete {
+                position: absolute;
+                right: 0;
             }
         }
+
+
+    }
+
+    select {
+        background: transparent;
+        width: 300px;
+        padding: 5px;
+        font-family: $BODY_STACK;
+        font-size: 16px;
+        color: #4D4D4D;
+        border: 1px solid #CCCCCC;
+        height: 29px;
+        -webkit-appearance: none;
     }
 }
 
@@ -149,7 +218,6 @@
 }
 
 #input-appname {
-    display: inline;    
 }
 
 #allow-button {
