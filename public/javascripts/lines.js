@@ -235,7 +235,7 @@ function createAllTheHovers() {
       //circ.setFill('white');
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = true;
-        boxes[k].setOpacity(1.0);
+        //boxes[k].setOpacity(1.0);
         addAppBack(boxes[k].getId());
         layer.draw();
       }
@@ -604,7 +604,10 @@ function createAllTheHovers() {
               callback(images);
             }
           };
-          images[src].src = sources[src];
+          var img = images[src];
+          img.src = sources[src];
+         
+          img.onerror = function (evt){this.onerror=null; this.src='/img/app_icons/favicondefault.png';};
         }
     } 
 };
