@@ -27,6 +27,10 @@
     font-family: $BODY_STACK;
     text-anchor: middle;
     fill: $SUBTEXT_FILL;
+
+    &:hover {
+        cursor: pointer;
+    }
 }
 
 #circles {
