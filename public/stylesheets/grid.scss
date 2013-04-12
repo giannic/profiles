@@ -60,7 +60,6 @@ html, body {
           }
 
           .grid-img {
-              //opacity: inherit;
               display: block;
               position: absolute;
               top: 0;
@@ -70,6 +69,7 @@ html, body {
               margin: auto;
               height: 100%;
               width: 100%;
+              opacity: 0.6;
               // @include saturate($UNSATURATED);
 
               &:hover {
