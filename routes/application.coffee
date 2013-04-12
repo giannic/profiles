@@ -72,8 +72,10 @@ exports.create = (req, res) ->
     if err
       console.log(err)
       res.send(error: "Could not create app")
+      return
     else
-      res.send(success: data)
+      # res.send(success: data)
+
   )
   # add to whitelist
   user_routes.add_to_whitelist(properties[0].userid, properties[0].url, res)
