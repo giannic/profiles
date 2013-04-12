@@ -621,8 +621,8 @@ function createAllTheHovers() {
           img.src = sources[src];
 
           //img.onerror = function (evt) {this.onerror=null;}
-          img.onerror = function (evt){console.log('in here');this.onerror=null; this.src='/img/app_icons/favicon-default.gif';};
-        console.log('hihihi');
+          img.onerror = function (evt){this.onerror=null; this.src='/img/app_icons/favicon-default.gif';};
+        // console.log('hihihi');
           
         }
     } 

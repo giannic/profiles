@@ -144,8 +144,8 @@ app.views.GridView = Backbone.View.extend({
     this.expanded_corners.push(br);
 
     _.each(this.expanded_apps, function(item){
-      console.log("HIHIHIHIHI")
-      console.log(item);
+      // console.log("HIHIHIHIHI")
+      // console.log(item);
       if(item) {
         item.$el.find('.application-inner').stop().animate({
             width: width,
@@ -157,7 +157,7 @@ app.views.GridView = Backbone.View.extend({
         });
     
         item.$el.css('z-index',10);
-        console.log('HEREEEE');
+        // console.log('HEREEEE');
       }
      
     });
@@ -178,7 +178,7 @@ app.views.GridView = Backbone.View.extend({
         });
     
         item.$el.css('z-index',10);
-        console.log('HEREEEE');
+        // console.log('HEREEEE');
       }
      
     });
@@ -207,7 +207,7 @@ app.views.GridView = Backbone.View.extend({
         });
         
         item.$el.css('z-index',10);
-        console.log('HEREEEE');
+        // console.log('HEREEEE');
       }
         
     });
@@ -276,17 +276,17 @@ app.views.GridView = Backbone.View.extend({
     $.post('/users/whitelist_remove', {
       domain: data.model.get('url')
     }, function(post_data, status, xhr){
-      console.log("FINISHED");
-      console.log(post_data);
-      console.log(status);
-      console.log(xhr);
+      // console.log("FINISHED");
+      // console.log(post_data);
+      // console.log(status);
+      // console.log(xhr);
       that.collection.remove(data.model);
       // removed from dom
       $(data.el).remove();
       that.apps = _.without(that.apps, data);
     });
 
-    console.log(data);
+    // console.log(data);
   },
 
   search: function() {

@@ -41,10 +41,14 @@ $(function() {
         // console.log('HIHIHIHIHIHIHWHHHHQYQUYERYQUROUIF');
         APP_DATA = data;
         // format the data for categories
-        var cats = _.uniq(_.pluck(data, 'category'));
-        // console.log(cats);
+        console.log('thisss')
+        console.log(data)
+        var cats = _.uniq(_.pluck(data.apps, 'category'));
+        // console.log(_.pluck(data.apps, 'category'))
+
+        console.log(cats);
         _.each(cats, function(cat) {
-         CAT_DATA[cat] = _.where(data, {category: cat});
+         CAT_DATA[cat] = _.where(data.apps, {category: cat});
         });
 
         init();
