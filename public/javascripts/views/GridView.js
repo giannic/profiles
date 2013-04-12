@@ -233,19 +233,26 @@ app.views.GridView = Backbone.View.extend({
 
 
   delete_application: function(data) {
+    var that = this;
     // delete
     $.post('/users/whitelist_remove', {
       domain: data.model.get('url')
-    }, function(data, status, xhr){
-      console.log("FINISHED");
-      console.log(data);
-      console.log(status);
-      console.log(xhr);
+    }, function(post_data, status, xhr){
+      // console.log("FINISHED");
+      // console.log(data);
+      // console.log(status);
+      // console.log(xhr);
+      that.collection.remove(data.model);
+      // removed from dom
+      $(data.el).remove();
+      that.apps = _.without(that.apps, data);
+
+
 
 
     });
 
-    console.log(data)
+    console.log(data);
   },
 
   search: function() {

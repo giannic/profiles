@@ -57,10 +57,10 @@
         $.post(base_url + "/apps/create", params, function(data, status, xhr) {
           name.val("");
           app_url.val("");
-          console.log('§');
-          console.log(data.success);
+          // console.log('§');
+          // console.log(data.success);
 
-          console.log(xhr);
+          // console.log(xhr);
           // app.views.GridView
           grid_vent.trigger('grid-add', {data: data.success})
           $("#add-app-box").toggle();
