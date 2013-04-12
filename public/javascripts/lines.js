@@ -232,7 +232,7 @@ function createAllTheHovers() {
  function toggleApps(circ){
     //initial loading of lines
     if(toggle == true){
-      //circ.setFill('white');
+      circ.setFillRadialGradientColorStops([0, 'gray', 1, 'white']);
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = true;
         boxes[k].setOpacity(1.0);
@@ -243,7 +243,7 @@ function createAllTheHovers() {
       toggle = false;
     }
     else{
-      //circ.setFill('gray');
+    circ.setFillRadialGradientColorStops([0, 'white', 1, 'gray']);
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = false;
         boxes[k].setOpacity(0.3);
@@ -366,6 +366,7 @@ function createAllTheHovers() {
     loadImages(sources, function(images) {
         var k = 0;
         for (var src in sources) {
+          console.log("yoyo");
         //for (var k = 0; k < appArray.length; k++) {
             // anonymous function to induce scope
             (function() {
@@ -379,9 +380,10 @@ function createAllTheHovers() {
                     newx = (k % width_count)*box_size;
 
                 var img = images[src];
+                console.log("img is " + img)
                 var box = new Kinetic.Rect({
-                    x: newx, // change this
-                    y: newy, // make this dynamic
+                    x: newx,
+                    y: newy, 
                     width: 20,
                     height: 20,
                     id: appArray[k],
@@ -437,49 +439,60 @@ function createAllTheHovers() {
                     calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
                     layer.draw();
                     document.body.style.cursor = 'default';
-                });
-
+                    });
                 layer.add(box);
-            })();
-            k++;
-        }
 
-        // this depends on where the row is
-        var onx, ony;
-        if (k < width_count)
-            onx = k*box_size + 10;
-        else
-            onx = (k % width_count)*box_size + 10;
-        ony = Math.floor(k/width_count)*box_size + 10;
-        var circle = new Kinetic.Circle({
-            x: onx,
-            y: ony,
-            radius: 10,
-            fill: 'white',
-            stroke: 'gray',
-            name: "Toggle All",
-            strokeWidth: 1
-        });
+              })();
+              k++;
+            }
+            console.log(layer);
+              // this depends on where the row is
+              var onx, ony;
+              if (k < width_count)
+                onx = k*box_size + 10;
+              else
+                onx = (k % width_count)*box_size + 10;
+              ony = Math.floor(k/width_count)*box_size + 10;
 
-        circle.on('mousedown', function() {
-            toggleApps(true);
-            printApp(this.getName());
-            layer.draw();
-        });
+              var circle = new Kinetic.Circle({
+                  x: onx,
+                  y: ony,
+                  radius: 10,
+                  fillRadialGradientStartPoint: 0,
+                  fillRadialGradientStartRadius: 0,
+                  fillRadialGradientEndPoint: 0,
+                  fillRadialGradientEndRadius: 10,
+                  fillRadialGradientColorStops: [0, 'gray', 1, 'white'],
+                  stroke: 'white',
+                  name: "Toggle",
+                  strokeWidth: 1
+              });
 
-        circle.on('mouseover', function() {
-            printApp(this.getName());
-            layer.draw();
-        });
+              circle.on('mousedown', function() {
+                  toggleApps(this);
+                  printApp(this.getName());
+                  layer.draw();
+              });
 
-        circle.on('mouseout', function() {
-            clearApp();
-            layer.draw();
-        });
+              circle.on('mouseover', function() {
+                  printApp(this.getName());
+                  layer.draw();
+              });
 
-        layer.add(circle);
+              circle.on('mouseout', function() {
+                  clearApp();
+                  layer.draw();
+              });
 
-        // add the layer to the stage
+              var offx, offy;
+              if (k+1 < width_count)
+                offx = (k+1)*box_size + 10;
+              else
+                offx = ((k+1) % width_count)*box_size + 10;
+              offy = Math.floor(k/width_count)*box_size + 10;
+
+              layer.add(circle);
+              //add layer to stage
         stage.add(layer);
     });
   }
