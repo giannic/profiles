@@ -14,8 +14,9 @@ grid_init = function(){
 
     $('body').on('keyup', function(e){
       // check if it's not focused on an input
-      if(!$(e.target).is('input')) {
-        if(!e.ctrlKey && !e.altKey) {
+      console.log(e);
+      if (!$(e.target).is('input')) {
+        if (!e.ctrlKey && !e.altKey) {
           $('#grid-search').focus();
           // if it's the first letter
           var chr = String.fromCharCode(e.which);
