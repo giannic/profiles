@@ -169,7 +169,7 @@ clusters_init = function(){
 
     // append this only if there are more than cap_apps apps!
     groups.append("text")
-        .text("More")
+        .text("MORE")
         .attr("id", function(x){
             return "more_" + x.id;
         })
@@ -189,8 +189,8 @@ clusters_init = function(){
             // change to visible when selecting category
             return "none";
         })
-        .attr("dy", "14px")
-        .style('fill', "#666")
+        .attr("dy", "18px")
+        .style('fill', "#eee")
         .on("mousedown", function(d, i) {
             // TODO: change to a cursor
             more_apps(d, i);
@@ -198,7 +198,7 @@ clusters_init = function(){
 
     // every group also has a less text
     groups.append("text")
-        .text("Less")
+        .text("LESS")
         .attr("id", function(x){
             return "less_" + x.id;
         })
@@ -218,8 +218,8 @@ clusters_init = function(){
             // change to visible when selecting category
             return "none";
         })
-        .attr("dy", "14px")
-        .style('fill', "#666")
+        .attr("dy", "18px")
+        .style('fill', "#eee")
         .on("mousedown", function(d, i) {
             less_apps(d, i);
         });
@@ -544,7 +544,7 @@ clusters_init = function(){
             .transition()
             .attr("r", WINDOW_WIDTH)
             .transition()
-            .style("opacity", "0.4");
+            .style("opacity", "0.7");
 
         // hide the more link
         svg.select("#more_" + d.id)
@@ -594,7 +594,7 @@ clusters_init = function(){
         svg.select("#more_" + d.id)
             .attr("display", "visible");
 
-            // hide the less link
+        // hide the less link
         svg.select("#less_" + d.id)
             .attr("display", "none");
 
