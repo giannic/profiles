@@ -82,7 +82,7 @@ app.post "/register", user.register_post
 app.get "/login", user.login_get
 app.post "/login", user.login_post
 app.get "/logout", user.logout
-app.get "/modifyapplist", user.modify_app_list
+app.get "/manage", user.manage
 
 # Applications
 app.get "/apps.json", application.json_all

@@ -212,7 +212,6 @@ exports.get_apps_on_whitelist = (req, res) ->
             output = (app for app in apps when app['url'] in whitelist)
             res.send(apps: output)
           )
-  )
-
+    )
 
 

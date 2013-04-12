@@ -171,10 +171,10 @@ exports.whitelist = (req, res) ->
   )
 
 ###
-# /modifyapplist
+# /manage
 # The view for the form to change allowed app list
 ###
-exports.modify_app_list = (req, res) ->
+exports.manage = (req, res) ->
   user_id = req.session.user_id
 
   # get the whitelist
@@ -188,7 +188,7 @@ exports.modify_app_list = (req, res) ->
 
   req.session.messages = req.session.messages or []
   user_id = req.session.user_id 
-  res.render "modifyapplist",
+  res.render "manage",
     title: "Management"
     msg: req.session.messages.pop()
 
