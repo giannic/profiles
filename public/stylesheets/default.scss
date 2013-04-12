@@ -45,7 +45,8 @@ svg {
     color: #4d4d4d;
 
     background: {
-        color: $BACKGROUND;
+        image: url("../img/textures/cream_dust.png");
+        repeat: repeat;
     }
 }
 
