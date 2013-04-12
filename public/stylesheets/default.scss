@@ -121,6 +121,14 @@ nav {
             cursor: pointer;
         }
     }
+
+    .menu-button-active {
+        opacity: 1.0 !important;
+        &:hover {
+            opacity: 0.3;
+            cursor: pointer;
+        }
+    }
 }
 
 .type-nav {

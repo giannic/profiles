@@ -1,51 +1,82 @@
 (function(){
-  $('document').ready(function() {
-      var VIS_COUNT = 3; // $('.vis').length;
-      var base_url = "http://localhost:3000";
+    $('document').ready(function() {
+        var VIS_COUNT = 3; // $('.vis').length;
+        var base_url = "http://localhost:3000";
 
-      //console.log(WINDOW_WIDTH);
+        $('.vis').width(WINDOW_WIDTH);
+        $('#visualizations').width(VIS_COUNT*WINDOW_WIDTH + 5 + 'px');
 
-      $('.vis').width(WINDOW_WIDTH);
-      //console.log(WINDOW_WIDTH);
-      //console.log($('.vis').width());
-      $('#visualizations').width(VIS_COUNT*WINDOW_WIDTH + 5 + 'px');
-      //console.log($('#visualizations').width());
-      //console.log($('#grid').width());
-      // $('#lines').width(WINDOW_WIDTH + 'px');
+        /*****************************
+         * NAV ELEMENTS CLICK EVENTS *
+         *****************************/
 
-      $('#grid-toggle').click(function() {
-          $('#visualizations').stop().animate({
-              // we should probably have -1 * vis_number * width (to scale)
-              left: 0
-          }, 300);
-      });
+        // default is grid
+        $('#grid-toggle').addClass("menu-button-active");
 
-      $('#clusters-toggle').click(function() {
-          $('#visualizations').stop().animate({
-              left: -1 * WINDOW_WIDTH + 'px'
-          }, 300);
-      });
+        // ALL menu buttons
+        $('.menu-button').click(function() {
+            if ($(this).hasClass("menu-button-active") !== true) {
+                $(this).addClass("menu-button-active");
+            } else {
+                $(this).removeClass("menu-button-active");
+            }
+        });
 
-      $('#timelines-toggle').click(function() {
-          $('#visualizations').stop().animate({
-              left: -2 * WINDOW_WIDTH + 'px'
-          }, 300);
-      });
+        // remove active classes from all menu buttons
+        $('.type-nav .menu-button').click(function() {
+            var id = $(this).attr('id');
+            $('.type-nav .menu-button').each(function() {
+                var that = $(this);
+                if (that.attr('id') != id) {
+                    that.removeClass("menu-button-active");
+                }
+            });
+        });
 
-      $('#add-account-toggle').click(function() {
-          $("#add-app-box").toggle();
-      });
+        /********************
+         * SLIDING OF VIZ-s *
+         ********************/
 
-      $('.close-more-apps').click(function() {
-          $("#more-apps-box").toggle();
-      });
+        $('#grid-toggle').click(function() {
+            $('#grid-toggle').addClass("menu-button-active");
+            $('#visualizations').stop().animate({
+                left: 0
+            }, 300);
+        });
 
-      $("#logout-button").click(function() {
-          window.location.replace("/logout");
-      });
+        $('#clusters-toggle').click(function() {
+            $('#clusters-toggle').addClass("menu-button-active");
+            $('#visualizations').stop().animate({
+                left: -1 * WINDOW_WIDTH + 'px'
+            }, 300);
+        });
 
-      // click listener for submit button on "new app" pop up
-      $("#newapp-button").click(function(event) {
+        $('#timelines-toggle').click(function() {
+            $('#timelines-toggle').addClass("menu-button-active");
+            $('#visualizations').stop().animate({
+                left: -2 * WINDOW_WIDTH + 'px'
+            }, 300);
+        });
+
+
+        // ADD App Box
+        $("#add-app-box").css("top", $('#header').height() - $('#add-app-box').height() - 18); // this needs to be fixed to take into account padding
+
+        $('#add-account-toggle').click(function() {
+            //$("#add-app-box").toggle();
+            if ($(this).hasClass("menu-button-active")) {
+                $("#add-app-box").css("top", $('#header').height() - $('#add-app-box').height());
+                $("#add-app-box").stop().animate({
+                    top: "+=" + $("#add-app-box").height() // this also
+                }, 300);
+            } else {
+                $("#add-app-box").stop().animate({
+                    top: "-=" +  $("#add-app-box").height()
+                }, 300);
+            }
+        });
+
+$("#newapp-button").click(function(event) {
         console.log(window);
         // cache form input fields
         var name = $("#input-appname");
@@ -62,54 +93,68 @@
 
           // console.log(xhr);
           // app.views.GridView
-          grid_vent.trigger('grid-add', {data: data.success})
+          grid_vent.trigger('grid-add', {data: data.success});
           $("#add-app-box").toggle();
           // $('#add-app-box').
+
+            });
         });
-      });
 
-    // MOUSE ENTER MOUSE LEAVE SUPPORT FROM https://gist.github.com/shawnbot/4166283
-    // get a reference to the d3.selection prototype,
-    // and keep a reference to the old d3.selection.on
-    var d3_selectionPrototype = d3.selection.prototype,
-        d3_on = d3_selectionPrototype.on;
+        $('.close-more-apps').click(function() {
+            $("#more-apps-box").toggle();
+        });
 
-      // our shims are organized by event:
-      // "desired-event": ["shimmed-event", wrapperFunction]
-      var shims = {
-      "mouseenter": ["mouseover", relatedTarget],
-      "mouseleave": ["mouseout", relatedTarget]
-      };
+        $("#logout-button").click(function() {
+            window.location.replace("/logout");
+        });
 
-      // rewrite the d3.selection.on function to shim the events with wrapped
-      // callbacks
-      d3_selectionPrototype.on = function(evt, callback, useCapture) {
-      var bits = evt.split("."),
-          type = bits.shift(),
-          shim = shims[type];
-      if (shim) {
-          evt = [shim[0], bits].join(".");
-          callback = shim[1].call(null, callback);
-          return d3_on.call(this, evt, callback, useCapture);
-      } else {
-          return d3_on.apply(this, arguments);
-      }
-      };
 
-      function relatedTarget(callback) {
-          return function() {
-              var related = d3.event.relatedTarget;
-              if (this === related || childOf(this, related)) {
-                  return undefined;
-              }
-              return callback.apply(this, arguments);
-          };
-      }
+        /**************
+         * D3 SUPPORT *
+         **************/
 
-      function childOf(p, c) {
-          if (p === c) return false;
-          while (c && c !== p) c = c.parentNode;
-          return c === p;
-      }
-  });
+        // MOUSE ENTER MOUSE LEAVE SUPPORT FROM https://gist.github.com/shawnbot/4166283
+        // get a reference to the d3.selection prototype,
+        // and keep a reference to the old d3.selection.on
+        var d3_selectionPrototype = d3.selection.prototype,
+            d3_on = d3_selectionPrototype.on;
+
+        // our shims are organized by event:
+        // "desired-event": ["shimmed-event", wrapperFunction]
+        var shims = {
+            "mouseenter": ["mouseover", relatedTarget],
+            "mouseleave": ["mouseout", relatedTarget]
+        };
+
+        // rewrite the d3.selection.on function to shim the events with wrapped
+        // callbacks
+        d3_selectionPrototype.on = function(evt, callback, useCapture) {
+            var bits = evt.split("."),
+                type = bits.shift(),
+                shim = shims[type];
+            if (shim) {
+                evt = [shim[0], bits].join(".");
+                callback = shim[1].call(null, callback);
+                return d3_on.call(this, evt, callback, useCapture);
+            } else {
+                return d3_on.apply(this, arguments);
+            }
+        };
+
+        function relatedTarget(callback) {
+            return function() {
+                var related = d3.event.relatedTarget;
+                if (this === related || childOf(this, related)) {
+                    return undefined;
+                }
+                return callback.apply(this, arguments);
+            };
+        }
+
+        function childOf(p, c) {
+            if (p === c) return false;
+            while (c && c !== p) c = c.parentNode;
+            return c === p;
+        }
+    });
 })()
