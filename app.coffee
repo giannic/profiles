@@ -15,7 +15,6 @@ conf =
   db: {
     db: 'test',
     host: 'davidxu.me',
-    # host: 'localhost',
     port: 27017,
     username: '',
     password: '',
