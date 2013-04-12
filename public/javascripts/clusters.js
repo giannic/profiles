@@ -9,6 +9,7 @@ clusters_init = function(){
         pad = 10, // padding for boundary circle + app circles
         max_apps = -1, // max number of apps that exists in user's categories
         cap_apps = 9, // cap for the more button // TODO: change to 9
+        compare_apps,
         num_categories = 0,
         nodes = {},
         allImages = {},
@@ -38,6 +39,7 @@ clusters_init = function(){
     num_categories = dataset.length;
 
     nodes = dataset;
+
     var store = 0;
     for(var count = 0; count < nodes.length; count++){
         var imgs = nodes[count].apps;
@@ -49,7 +51,6 @@ clusters_init = function(){
     }
     //console.log(allImages);
 
-    // TODO: not using for size anymore?
     nodes.forEach(function(d, i) {
         if (dataset[i].apps.length > max_apps) {
             max_apps = dataset[i].apps.length;
@@ -81,10 +82,13 @@ clusters_init = function(){
             // reduce it to r of the smaller circle
             x.r = (r - (2*pad))/1.8;
             // update the r for expansion
+            var compare_apps = cap_apps;
+            if (max_apps < cap_apps)
+                compare_apps = max_apps;
             var length = x.apps.length;
-            if (length > cap_apps)
-                length = cap_apps;
-            x.r = (length/cap_apps)*x.r;
+            if (length > compare_apps)
+                length = compare_apps;
+            x.r = (length/compare_apps)*x.r;
             // cap it so it's not terribly small
             if (x.r < 50) {
                 x.r = 50;

@@ -14,11 +14,11 @@ hbs = require('hbs')
 conf =
   db: {
     db: 'test',
-    host: 'davidxu.me',
-    #host: 'localhost',
-    port: 27017
-    username: ''
-    password: ''
+    #host: 'davidxu.me',
+    host: 'localhost',
+    port: 27017,
+    username: '',
+    password: '',
     collection: 'sessions'
   },
   secret: 'this is a secret yo'
@@ -82,7 +82,7 @@ app.post "/register", user.register_post
 app.get "/login", user.login_get
 app.post "/login", user.login_post
 app.get "/logout", user.logout
-app.get "/modifyapplist", user.modify_app_list
+app.get "/manage", user.manage
 
 # Applications
 app.get "/apps.json", application.json_all
@@ -94,6 +94,7 @@ app.get "/apps/new", application.new_test  # just for testing
 app.get "/apps/:id.json", application.view
 app.get "/apps/user", application.get_by_user  # apps specific to a user - should probably rename
 app.post "/apps/category", application.update_category
+app.post "/apps/userallowed", application.get_apps_on_whitelist
 
 # handlebars templates
 # hbs.registerPartial('home', 'home')

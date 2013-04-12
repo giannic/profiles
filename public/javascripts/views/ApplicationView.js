@@ -21,7 +21,8 @@
           // "keypress .edit"  : "updateOnEnter",
           // "blur .edit"      : "close"
           "mouseenter" : "hover_expand",
-          "mouseleave" : "hover_contract"
+          "mouseleave" : "hover_contract",
+          "click .delete" : "delete_app"
       },
 
       // passes in the window width/height
@@ -40,6 +41,7 @@
           this.r = (data.width) / 2 - this.margin - 1;  // subtract the border
           this.cx = this.r;
           this.cy = this.r;
+          this.render();
       },
 
       render: function() {
@@ -55,6 +57,7 @@
         var new_top = -Math.abs((new_height - that.height) / 2);
         var new_left = -Math.abs((new_width - that.width) / 2);
 
+
         this.$el.find('.application-inner').stop().animate({
           opacity: 1.0,
           height: new_height,
@@ -62,8 +65,8 @@
           left: new_left,
           top: new_top,
           'z-index': 9999
-        }, 100, function(){
-        });
+        }, 100);
+        this.$el.find('.url').toggle();
 
         var snd_height = that.margin * 2 + that.height/2 + that.height / 2;
         var snd_width = that.margin * 2 + that.width/2 + that.width / 2;
@@ -97,15 +100,21 @@
           left: 0,
           top: 0
         });
+
         this.$el.find('.application-inner').stop().animate({
           opacity: 0.6,
           height: that.height,
           width: that.width,
           left: 0,
           top: 0
-        }, 200, function(){
-        });
+        }, 100);
 
+        this.$el.find('.url').toggle();
+      },
+
+      delete_app: function() {
+        console.log('hello');
+        grid_vent.trigger('grid-delete', this);
       }
   });
 
@@ -133,7 +142,8 @@
 
   function render_html() {
     this.$el.html(this.template({application: this.model.toJSON(),
-                                 img: images[Math.floor(Math.random() * (images.length))]}));
+                                 img: this.model.get('url').substring(0, this.model.get('url').lastIndexOf("."))
+    }));
     // TEMPORAROY TODO: remove image
     //this.$el.append($(app.templates.grid_img));
     // this.$el.append(_.template(app.templates.grid_img, {img: images[Math.floor(Math.random() * (images.length))]}));

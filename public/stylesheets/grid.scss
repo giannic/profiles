@@ -23,6 +23,12 @@ html, body {
         float: left;
         position: relative;
 
+        .delete {
+          z-index: 30000;
+          position: absolute;
+          right: 0;
+        }
+
         &:hover {
             cursor: pointer;
         }
@@ -34,10 +40,18 @@ html, body {
           //opacity: 0.6;
 
           .url {
+              display: none;
               position: absolute;
+              left: 0;
+              right: 0;
               bottom: 0;
-              left: 0;  // TODO: WHY DOESN'T THIS WORK???
               color: white;
+              z-index: 90000000;
+              margin-bottom: 5px;
+
+              &:hover {
+                text-decoration: none;
+              }
           }
 
           .grid-img {

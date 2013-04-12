@@ -76,19 +76,27 @@
             }
         });
 
-        // SUBMIT button for add app box
-        $("#newapp-button").click(function(event) {
-            // cache form input fields
-            var name = $("#input-appname")
-            var app_url = $("#input-appurl")
-            var params = {
-                "app_name": name.val(),
-                "app_url": app_url.val()
-            }
-            $.post(base_url + "/apps/create", params, function(data, status, xhr) {
-                name.val("");
-                app_url.val("");
-                $("#add-app-box").toggle();
+$("#newapp-button").click(function(event) {
+        console.log(window);
+        // cache form input fields
+        var name = $("#input-appname");
+        var app_url = $("#input-appurl");
+        var params = {
+          "app_name": name.val(),
+          "app_url": app_url.val()
+        };
+        $.post(base_url + "/apps/create", params, function(data, status, xhr) {
+          name.val("");
+          app_url.val("");
+          // console.log('§');
+          // console.log(data.success);
+
+          // console.log(xhr);
+          // app.views.GridView
+          grid_vent.trigger('grid-add', {data: data.success});
+          $("#add-app-box").toggle();
+          // $('#add-app-box').
+
             });
         });
 
@@ -99,7 +107,6 @@
         $("#logout-button").click(function() {
             window.location.replace("/logout");
         });
-
 
         /**************
          * D3 SUPPORT *

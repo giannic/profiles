@@ -211,3 +211,14 @@ $SHADOW: rgba(0, 0, 0, 0.8);
         color: red;
     }
 }
+
+
+@mixin center_vert_in_rel($width, $height) {
+  width: $width;
+  height: $height;
+
+  position: absolute;
+  top:0;
+  bottom: 0;
+  margin: auto;
+}
