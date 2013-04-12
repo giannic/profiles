@@ -1,21 +1,30 @@
-var allowEndpoint = "/users/whitelist_add";
+var allowEndpoint = "/apps/create";
 var disallowEndpoint = "/users/whitelist_remove";
 
 $(document).ready(function() {
 
 $("#allow-button").click(function() {
     var domain = $("#input-domain").val();
-    $.post(allowEndpoint, {"domain": domain}, function(data) {
-    if ("error" in data) {
-        console.log("error in allow: " + data["error"]);
-    } 
-    else {
-        $("#app-list").prepend(getListElement(domain));   
-        setTypeImage();
-        $("#app-saved").toggle();
-    }
+    console.log(domain);
+    $.post(allowEndpoint,
+    {
+        "app_url": domain,
+        "name": domain.substring(0, domain.lastIndexOf("."))
+    }, 
+    function(data) {
+        console.log("callback");
+        if ("error" in data) {
+            console.log("error in allow: " + data["error"]);
+        } 
+        else {
+            console.log("success");
+            $("#app-list").prepend(getListElement(domain));
+            setTypeImage();
+            $("#app-saved").toggle();
+        }
     });
 });
+
 
 $("#disallow-button").click(function() {
     var domain = $(this).closest("li").attr("name");
@@ -72,6 +81,7 @@ function renderResponse(data, status, xhr) {
 
     setTypeImage();
     bindXButtonListener();
+    bindSelectionListener();
 };
 
 // assign type: image to all .management-delete elems
@@ -101,6 +111,30 @@ function bindXButtonListener() {
         })
     });
 };
+
+function bindSelectionListener() {
+    $("select").change(function () {
+        console.log("changed");
+        var category = "";
+        $(this).find("option:selected").each(function () {
+                category += $(this).text() + " ";
+        });
+        var domain = $(this).closest("li").attr("name");
+        $.post("/apps/category", {
+            "url": domain, 
+            "category": category
+        },
+        function(data) {
+            if ("error" in data) {
+                console.log("error in change category: " + data["error"]);
+            }
+            else {
+                console.log(data); 
+                $("#app-saved").toggle();
+            }
+        });
+    });
+}
 
 // Returns a DOM element for one list element to insert to page
 function getListElement(name) {
