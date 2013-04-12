@@ -100,7 +100,6 @@
             window.location.replace("/logout");
         });
 
-
         /**************
          * D3 SUPPORT *
          **************/
