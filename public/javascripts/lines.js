@@ -7,7 +7,7 @@ var lines_init = function() {
       width_count, height_count, box_size, pad, // this is for when there are tons of apps
       allTheLines, hsl, colorArray, diff, appArray, nameArray,
       minRange, maxRange, interval, boxes, activeArray,
-      playTimeline = false, layer,
+      playTimeline = false, layer, toggle = false,
       frequencies = [];
 
   $(document).ready(function() {
@@ -229,7 +229,7 @@ function createAllTheHovers() {
     calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
   }
 
- function toggleApps(toggle){
+ function toggleApps(){
     //initial loading of lines
     if(toggle == true){
       for(var k = 0; k < activeArray.length; k++){
@@ -391,13 +391,23 @@ function createAllTheHovers() {
               });
 
               box.on('mouseover', function() {
+                  if(activeArray[this.getId()] == false){
+                    this.setOpacity(1.0);
+                    activeArray[this.getId()] = true;
+                    calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+                    activeArray[this.getId()] = false;
+                  }
                   printApp(this.getName());
                   layer.draw();
                   document.body.style.cursor = 'pointer';
               });
 
               box.on('mouseout', function() {
+                  if(activeArray[this.getId()] == false){
+                    this.setOpacity(.3);
+                  }
                   clearApp();
+                  calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
                   layer.draw();
                   document.body.style.cursor = 'default';
               });
@@ -423,7 +433,7 @@ function createAllTheHovers() {
               });
 
               circleON.on('mousedown', function() {
-                  toggleApps(true);
+                  toggleApps();
                   printApp(this.getName());
                   layer.draw();
               });
@@ -455,7 +465,7 @@ function createAllTheHovers() {
               });
 
               circleOFF.on('mousedown', function() {
-                  toggleApps(false);
+                  toggleApps();
                   printApp(this.getName());
                   layer.draw();
               });
