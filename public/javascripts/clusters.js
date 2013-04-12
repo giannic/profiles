@@ -92,6 +92,10 @@ clusters_init = function(){
             if (length > compare_apps)
                 length = compare_apps;
             x.r = (length/compare_apps)*x.r;
+            // cap it so it's not terribly big
+            if ((x.r + x.r*0.8 + pad*2)*2 > window_height) {
+                x.r = .25*window_height; // TODO: randomly chose
+            }
             // cap it so it's not terribly small
             if (x.r < 50) {
                 x.r = 50;
