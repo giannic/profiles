@@ -87,6 +87,12 @@ $SHADOW: rgba(0, 0, 0, 0.8);
 $MENU_BUTTON_OPACITY: 0.3;
 $MENU_BUTTON_ANIM_TIME: 0.5s;
 
+
+// z-indices
+$UI_Z: 100;
+$VIS_Z: 10;
+
+
 /*****************
  * GLOBAL MIXINS *
  *****************/
@@ -226,3 +232,6 @@ $MENU_BUTTON_ANIM_TIME: 0.5s;
   bottom: 0;
   margin: auto;
 }
+
+
+

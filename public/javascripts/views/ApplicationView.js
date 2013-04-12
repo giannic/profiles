@@ -10,7 +10,6 @@
       height: Math.floor(1000/6), // square for now
       margin: 15,
       r: 1000/12, // temporary
-      opacity: 1.0, // FUCKER HERE"S THE PROBLEM
 
       template: _.template(app.templates.application),
 
@@ -36,7 +35,6 @@
           this.height = Math.floor(data.height * 3/4) - 2 * this.margin;
           this.$el.css({
             'margin': that.margin,
-            'opacity': that.opacity
           });
           this.r = (data.width) / 2 - this.margin - 1;  // subtract the border
           this.cx = this.r;
@@ -64,7 +62,7 @@
           width: new_width,
           left: new_left,
           top: new_top,
-          'z-index': 9999
+          'z-index': 11
         }, 100);
 
         this.$el.find('.url').css('display', 'block');
@@ -142,9 +140,12 @@
     'img/app_icons/tumblr-square.png'
   ];
 
+
   function render_html() {
+    var image_default = 'img/app_icons/behance-square.png';
     this.$el.html(this.template({application: this.model.toJSON(),
-                                 img: this.model.get('url').substring(0, this.model.get('url').lastIndexOf("."))
+                                 img: this.model.get('url').substring(0, this.model.get('url').lastIndexOf(".")),
+                                 img_default: image_default
     }));
     // TEMPORAROY TODO: remove image
     //this.$el.append($(app.templates.grid_img));

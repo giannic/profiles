@@ -84,7 +84,7 @@ svg {
   -o-transition: border linear 0.2s, box-shadow linear 0.2s;
   transition: border linear 0.2s, box-shadow linear 0.2s;
   background-color: white;
-  z-index: 9001; }
+  z-index: 100; }
   #header .title {
     display: inline-block;
     margin: 20px auto;
@@ -128,7 +128,7 @@ nav {
       opacity: 1.0;
       cursor: pointer; }
   nav .menu-button-active {
-    opacity: 1.0 !important; }
+    opacity: 1 !important; }
     nav .menu-button-active:hover {
       opacity: 0.3;
       cursor: pointer; }
