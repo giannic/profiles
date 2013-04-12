@@ -4,20 +4,26 @@ var disallowEndpoint = "/users/whitelist_remove";
 $(document).ready(function() {
 
 $("#allow-button").click(function() {
-    makePost(allowEndpoint);
+    var domain = $("#input-domain").val();
+    $.post(allowEndpoint, {"domain": domain}, function(data) {
+    if ("error" in data) {
+        console.log("error in allow: " + data["error"]);
+    } 
+    else {
+        $("#app-list").prepend(getListElement(domain));   
+        setTypeImage();
+        $("#app-saved").toggle();
+    }
+    });
 });
 
 $("#disallow-button").click(function() {
-    makePost(disallowEndpoint);
+    var domain = $(this).closest("li").attr("name");
+    console.log(domain);
+    //$.post(allowEndpoint, {"domain": domain}, renderResponse);
 });
 
 getWhitelist();
-
-function makePost(endpoint) {
-    var domain = $("#input-domain").val();
-    // console.log(domain);
-    $.post(endpoint, {"domain": domain}, renderResponse);
-};
 
 function getCategoryMarkup() {
     var s = $("<select>");
@@ -42,7 +48,7 @@ function getCategoryMarkup() {
 };
 
 function getWhitelist() {
-    $.get("/users/whitelist", renderResponse)
+    $.get("/users/whitelist", renderResponse);
 };
 
 function renderResponse(data, status, xhr) {
@@ -57,24 +63,15 @@ function renderResponse(data, status, xhr) {
 
     for (var i = 0; i < whitelist.length; i ++) {
         var name = whitelist[i];
-        var li = $("<li>");
-        li.append($("<div>").addClass("app-name").html(name));
-        var categoryMarkup = getCategoryMarkup();
-        li.append(categoryMarkup);
-        var div = $("<div>").append($("<input>")
-                                .addClass("management-delete")
-                                .attr({
-                                    "src": "img/ui_icons/delete.png",
-                                    "name": "image"
-                                })
-                                .css({
-                                   width: "20px",
-                                   height: "20px"
-                                })
-                            )
-        li.append(div);
-        list.append(li);
+        list.append(getListElement(name));
     }
+
+    setTypeImage();
+    bindXButtonListener();
+};
+
+// assign type: image to all .management-delete elems
+function setTypeImage() {
     var elems = document.getElementsByTagName('*'), i;
     for (i in elems) {
         if((' ' + elems[i].className + ' ').indexOf(' ' + 'management-delete' + ' ')
@@ -82,23 +79,48 @@ function renderResponse(data, status, xhr) {
             elems[i].setAttribute('type', 'image');
         }
     }
+};
 
-    /*
-    if ("success" in data) {
-        //$("#response").html("Success! " + data["success"]);
-        // console.log(data["success"]);
-        var newList = data["success"]["new_whitelist"];
-        var outputHtml = "";
-        for (var i = 0; i < newList.length; i ++) {
-            outputHtml += "<li>" + newList[i] + "</li>";
-        }
-        $("#whitelist").html(outputHtml);
-    }
-    else if ("error" in data) {
-        //$("#response").html("Could not add " + domain + " to apps list");
-        alert(data["error"]);
-    }
-    */
+function bindXButtonListener() {
+    $(".management-delete").click(function() {
+        var row = $(this).closest("li");
+        var domain = row.attr("name");
+        console.log(domain);
+        $.post("/users/whitelist_remove", {"domain": domain}, function(data) {
+            if ("error" in data) {
+                console.log("error in removing: " + data["error"]);
+            }
+            else {
+                console.log(data);
+                row.remove();
+            }
+        })
+    });
+};
+
+// Returns a DOM element for one list element to insert to page
+function getListElement(name) {
+    var li = $("<li>")
+        .attr("name", name);
+    li.append($("<div>")
+        .addClass("app-name")
+        .html(name));
+    var categoryMarkup = getCategoryMarkup();
+    li.append(categoryMarkup);
+    var div = $("<div>").append()
+    var input = $("<input>")
+                            .addClass("management-delete")
+                            .attr({
+                                "src": "img/ui_icons/delete.png",
+                                "name": "image"
+                            })
+                            .css({
+                               width: "20px",
+                               height: "20px"
+                            });
+    div.append(input);
+    li.append(div);
+    return li;
 };
 
 });
