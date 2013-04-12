@@ -113,8 +113,8 @@ nav {
     .menu-button {
         width: 32px;
         height: 32px;
-        opacity: 0.3;
-        transition: opacity 0.5s ease-in;
+        opacity: $MENU_BUTTON_OPACITY;
+        transition: opacity $MENU_BUTTON_ANIM_TIME ease-in;
 
         &:hover {
             opacity: 1.0;
@@ -125,7 +125,7 @@ nav {
     .menu-button-active {
         opacity: 1.0 !important;
         &:hover {
-            opacity: 0.3;
+            opacity: $MENU_BUTTON_OPACITY;
             cursor: pointer;
         }
     }
