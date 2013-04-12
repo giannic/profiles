@@ -611,7 +611,7 @@ clusters_init = function(){
     }
 
   function printClusterStats(s, u, l){
-    console.log(s);
+    //console.log(s);
     printThatApp(s);
     //printUsername(u);
     printLastVisit(l);
