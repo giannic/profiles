@@ -493,7 +493,7 @@ function createAllTheHovers() {
 
               layer.add(circle);
               //add layer to stage
-        stage.add(layer);
+            stage.add(layer);
     });
   }
 

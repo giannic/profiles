@@ -57,7 +57,7 @@ exports.open = (req, res) ->
 
 ###
 # /apps/create
-# userid, url, category, img_url, name
+# url, category, img_url, name
 ###
 exports.create = (req, res) ->
   console.log('creating app')
@@ -74,8 +74,8 @@ exports.create = (req, res) ->
       res.send(error: "Could not create app")
       return
     else
-      # res.send(success: data)
-
+      console.log("app create success")
+      #res.send(success: data)
   )
   # add to whitelist
   user_routes.add_to_whitelist(properties[0].userid, properties[0].url, res)
@@ -171,7 +171,7 @@ exports.update_category = (req, res) ->
 
   Application.findOneAndUpdate(
     {url: url, userid: user_id},
-    {$set: { category: category } },
+    {$set: {category: category} },
     {upsert: true},
     (err, result) ->
       if err
