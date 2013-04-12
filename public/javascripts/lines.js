@@ -366,7 +366,6 @@ function createAllTheHovers() {
     loadImages(sources, function(images) {
         var k = 0;
         for (var src in sources) {
-          console.log("yoyo");
         //for (var k = 0; k < appArray.length; k++) {
             // anonymous function to induce scope
             (function() {
@@ -380,7 +379,6 @@ function createAllTheHovers() {
                     newx = (k % width_count)*box_size;
 
                 var img = images[src];
-                console.log("img is " + img)
                 var box = new Kinetic.Rect({
                     x: newx,
                     y: newy, 
@@ -445,7 +443,6 @@ function createAllTheHovers() {
               })();
               k++;
             }
-            console.log(layer);
               // this depends on where the row is
               var onx, ony;
               if (k < width_count)
@@ -620,7 +617,7 @@ function createAllTheHovers() {
           var img = images[src];
           img.src = sources[src];
          
-          img.onerror = function (evt){this.onerror=null; this.src='/img/app_icons/favicondefault.png';};
+          img.onerror = function (evt){this.onerror=null; this.src='/img/app_icons/favicon-default.gif';};
         }
     } 
 };
