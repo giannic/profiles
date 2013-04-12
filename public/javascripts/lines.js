@@ -83,8 +83,8 @@ var lines_init = function() {
 function myFunction(x){ 
   var date = x.attributes.number.value;
   var val = new Date(date*1000);
-  
-  printTheStats(x.attributes.name.value, "username", $.datepicker.formatDate('MM dd, yy', val), val.toLocaleTimeString());
+  //console.log(val.format("dd-m-yy"));
+  printTheStats(x.attributes.name.value, "username", val);
   show_stats();
 }
 
@@ -92,52 +92,54 @@ function myFunction2(x){
   hide_stats();
 }
 
-function createAllTheHovers(){
-  var hovers = d3.selectAll("line"); // this should change
-  //console.log("hovers = ");
-  //console.log(hovers[0]);
-  for(var i = 0; i < hovers[0].length; i++){
-    currline = hovers[0][i];
-    currline.addEventListener("mouseover",function(evt) { myFunction(this); }, false);
-    currline.addEventListener("mouseout",function(evt) { myFunction2(this); }, false);
+  function createAllTheHovers(){
+            var hovers = d3.selectAll("line"); // this should change
+            //console.log("hovers = ");
+            //console.log(hovers[0]);
+            for(var i = 0; i < hovers[0].length; i++){
+              currline = hovers[0][i];
+              currline.addEventListener("mouseover",function(evt) { myFunction(this); }, false);
+              currline.addEventListener("mouseout",function(evt) { myFunction2(this); }, false);
+              }
+
+}
+
+  function initFreqLine() {
+    
+    var w = lineGraphWidth+24, h = 25;
+
+    for (var i=minRange; i < maxRange-1; i++) {
+        frequencies[i] = 0;
+        calcFreq(i);
     }
-}
+    var freqMax = Math.max.apply(null, frequencies);
+    console.log(freqMax)
+    var graph = d3.select(".frequency-container")
+      .append("svg")
+      .attr("width", w)
+      .attr("height", h);
 
-function initFreqLine() {
-  
-  var w = lineGraphWidth+24, h = 25;
+    var x = d3.scale.linear()
+      .domain([0, 100])
+      .range([0, w]);
 
-  for (var i=minRange; i < maxRange-1; i++) {
-      frequencies[i] = 0;
-      calcFreq(i);
+    var y = d3.scale.linear()
+      .domain([0, freqMax])
+      .range([h, 0]);
+
+    var line = d3.svg.line()
+        .x(function(d,i) {
+          return x(i);
+        })
+        .y(function(d) {
+          return y(d);
+        })
+
+    var data = frequencies;
+    graph.append("svg:path")
+        .attr("d", line(data))
+        .attr("class", "frequency-line");
   }
-
-  var graph = d3.select(".frequency-container")
-    .append("svg")
-    .attr("width", w)
-    .attr("height", h);
-
-  var x = d3.scale.linear()
-    .domain([0, 100])
-    .range([0, w]);
-
-  var y = d3.scale.linear()
-    .domain([0, 5]) // this should be the max of the frequencies?
-    .range([h, 0]);
-
-  var line = d3.svg.line()
-      .x(function(d,i) {
-        return x(i);
-      })
-      .y(function(d) {
-        return y(d);
-      })
-
-  var data = frequencies;
-  graph.append("svg:path")
-      .attr("d", line(data))
-      .attr("class", "frequency-line");
-}
 
   function updateFreqLine(data) {
     // TODO
@@ -454,11 +456,10 @@ function initFreqLine() {
     fieldNameElement.appendChild(fieldNameElement.ownerDocument.createTextNode(d));
     }
 
-  function printTheStats(s, u, l, t){
+  function printTheStats(s, u, l){
     printThatApp(s);
-    //printUsername(u);
-    printLastVisit(l);
-    printLastTime(t);  
+    printUsername(u);
+    printLastVisit(l);  
   }
 
   function printThatApp(d){
@@ -484,14 +485,6 @@ function initFreqLine() {
     }
     f.appendChild(f.ownerDocument.createTextNode(d));
     }
-
-    function printLastTime(d){
-    var f = document.getElementById("lasttime");
-    while(f.childNodes.length >= 1) {
-      f.removeChild(f.firstChild);
-    }
-    f.appendChild(f.ownerDocument.createTextNode(d));
-    }    
 
   /*
    * ANIMATION CONTROLS
