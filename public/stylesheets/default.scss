@@ -145,7 +145,7 @@ nav {
 }
 
 .utility-nav {
-    right: 0;
+    right: $HEADER_MARGIN_SIDE;
     li {
       margin: 0px $HEADER_MARGIN_SIDE 0px 0px;
       height: 100%;

@@ -58,7 +58,11 @@
     border: {
         width: 1px;
         style: solid;
-        color: #000;
+        color: #666;
+    }
+
+    background: {
+        color: #E8E8E8;
     }
 
     &:hover {
@@ -68,9 +72,42 @@
     }
 }
 
+#form-wrapper {
+    margin: auto;
+    width: 100%;
+
+    // center this
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    //margin: 30px auto;
+    //width: 100%;
+    form {
+        margin: auto;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 400px;
+        height: 150px;
+
+        .alert {
+            position: absolute;
+            top: -30px;
+            left: 0px;
+            right: 0px;
+            line-height: 30px;
+        }
+    }
+}
+
 #management-form-wrapper {
     margin: 30px auto;
-    width: 100%;   
+    width: 100%;
 
     form {
         margin: auto;
