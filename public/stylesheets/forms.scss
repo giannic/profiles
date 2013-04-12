@@ -77,6 +77,10 @@
         width: 400px;
         height: 36px;
 
+        input {
+            display: inline;
+        }
+
         .alert {
             position: absolute;
             top: -30px;
