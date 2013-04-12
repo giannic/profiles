@@ -63,21 +63,18 @@
         $("#add-app-box").css("top", $('#header').height() - $('#add-app-box').height() - 18); // this needs to be fixed to take into account padding
 
         $('#add-account-toggle').click(function() {
-            //$("#add-app-box").toggle();
-            if ($(this).hasClass("menu-button-active")) {
-                $("#add-app-box").css("top", $('#header').height() - $('#add-app-box').height());
+            if (!$(this).hasClass("menu-button-active")) { // NOT active
                 $("#add-app-box").stop().animate({
-                    top: "+=" + $("#add-app-box").height() // this also
+                    top: $("#header").height() - $("#add-app-box").height() - 18 // this also
                 }, 300);
-            } else {
+            } else { // active already
                 $("#add-app-box").stop().animate({
-                    top: "-=" +  $("#add-app-box").height()
+                    top: $("#header").height() // this also
                 }, 300);
             }
         });
 
 $("#newapp-button").click(function(event) {
-        console.log(window);
         // cache form input fields
         var name = $("#input-appname");
         var app_url = $("#input-appurl");

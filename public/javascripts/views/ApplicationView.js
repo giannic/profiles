@@ -66,7 +66,9 @@
           top: new_top,
           'z-index': 9999
         }, 100);
-        this.$el.find('.url').toggle();
+
+        this.$el.find('.url').css('display', 'block');
+        this.$el.find('.delete').toggle();
 
         var snd_height = that.margin * 2 + that.height/2 + that.height / 2;
         var snd_width = that.margin * 2 + that.width/2 + that.width / 2;
@@ -109,11 +111,11 @@
           top: 0
         }, 100);
 
-        this.$el.find('.url').toggle();
+        this.$el.find('.url').css('display', 'none');
+        this.$el.find('.delete').toggle();
       },
 
       delete_app: function() {
-        console.log('hello');
         grid_vent.trigger('grid-delete', this);
       }
   });
