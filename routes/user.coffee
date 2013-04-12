@@ -338,6 +338,7 @@ exports.add_to_whitelist = (user_id, domain, res) ->
       if err
         res.send(error: err)
       else
+        console.log("success add_to_whitelist")
         res.send({success: {new_whitelist: result.whitelist} })
   )
 
