@@ -339,141 +339,176 @@ function createAllTheHovers() {
   }
 
   function setUpAppSelection(){
-      if (width_count > appArray.length + 2)
+    if (width_count > appArray.length + 2)
         width_count = appArray.length + 2;
-      var stage = new Kinetic.Stage({
-          container: 'container',
-          width: box_size*width_count,
-          height: box_size*height_count
-      });
+    var stage = new Kinetic.Stage({
+        container: 'container',
+        width: box_size*width_count,
+        height: box_size*height_count
+    });
 
-      layer = new Kinetic.Layer();
-      var canvas = layer.getCanvas();
-      canvas.element.style.position = "relative";
-      //canvas.setAttribute('style', 'position: relative;');
+    layer = new Kinetic.Layer();
+    var canvas = layer.getCanvas();
+    canvas.element.style.position = "relative";
+    //canvas.setAttribute('style', 'position: relative;');
 
-      boxes = [];
+    boxes = [];
 
-      for (var k = 0; k < appArray.length; k++) {
-          // anonymous function to induce scope
-          (function() {
-              colortrack = colorArray[k];
-              var colorset = "hsl(" + colortrack + ",50%, 50%)";
-              var newy = Math.floor(k/width_count)*box_size,
-                  newx;
-              if (k < width_count)
-                newx = k*box_size;
-              else
-                newx = (k % width_count)*box_size;
-              console.log(newy);
-              var box = new Kinetic.Rect({
-                  x: newx, // change this
-                  y: newy, // make this dynamic
-                  width: 20,
-                  height: 20,
-                  id: appArray[k],
-                  name: nameArray[k],
-                  fill: colorset
-              });
+    var sources = {};
+    for (var j = 0; j < appArray.length; j++) {
+        sources[nameArray[j]] = "http://" + nameArray[j] + "/favicon.ico";
+    }
 
-              boxes[k] = box;
+    // create images
+    loadImages(sources, function(images) {
+        var k = 0;
+        for (var src in sources) {
+        //for (var k = 0; k < appArray.length; k++) {
+            // anonymous function to induce scope
+            (function() {
+                colortrack = colorArray[k];
+                var colorset = "hsl(" + colortrack + ",50%, 50%)";
+                var newy = Math.floor(k/width_count)*box_size,
+                    newx;
+                if (k < width_count)
+                    newx = k*box_size;
+                else
+                    newx = (k % width_count)*box_size;
 
-              box.on('mousedown', function() {
-                  if (this.getOpacity() == 1.0) {
-                      this.setOpacity(0.3);
-                      removeApp(this.getName(), this.getId());
-                  } else {
-                      this.setOpacity(1.0);
-                      addAppBack(this.getId());
-                  }
-                  printApp(this.getName());
-                  layer.draw();
-              });
+                var imageObj = new Image();
+                imageObj.src = "/img/app_icons/livejournal.png";
+                var yoda = new Kinetic.Image({
+                    x: 0,
+                    y: 0,
+                    image: imageObj,
+                    width: 20,
+                    height: 20,
+                });
 
-              box.on('mouseover', function() {
-                  printApp(this.getName());
-                  layer.draw();
-                  document.body.style.cursor = 'pointer';
-              });
+                var img = images[src];
+                var box = new Kinetic.Rect({
+                    x: newx, // change this
+                    y: newy, // make this dynamic
+                    width: 20,
+                    height: 20,
+                    id: appArray[k],
+                    name: nameArray[k],
+                    fillPatternImage: img,
+                    fillPatternScale: [20/img.width, 20/img.height]
+                });
 
-              box.on('mouseout', function() {
-                  clearApp();
-                  layer.draw();
-                  document.body.style.cursor = 'default';
-              });
+                // how to fill with an image?
 
-              layer.add(box);
-          })();
-      }
-              // this depends on where the row is
-              var onx, ony;
-              if (k < width_count)
-                onx = k*box_size + 10;
-              else
-                onx = (k % width_count)*box_size + 10;
-              ony = Math.floor(k/width_count)*box_size + 10;
-              var circleON = new Kinetic.Circle({
-                  x: onx,
-                  y: ony,
-                  radius: 10,
-                  fill: 'white',
-                  stroke: 'gray',
-                  name: "Toggle All On",
-                  strokeWidth: 1
-              });
+                boxes[k] = box;
 
-              circleON.on('mousedown', function() {
-                  toggleApps(true);
-                  printApp(this.getName());
-                  layer.draw();
-              });
+                box.on('mousedown', function() {
+                    if (this.getOpacity() == 1.0) {
+                        this.setOpacity(0.3);
+                        removeApp(this.getName(), this.getId());
+                    } else {
+                        this.setOpacity(1.0);
+                        addAppBack(this.getId());
+                    }
+                    printApp(this.getName());
+                    layer.draw();
+                });
 
-              circleON.on('mouseover', function() {
-                  printApp(this.getName());
-                  layer.draw();
-              });
+                box.on('mouseover', function() {
+                    var img = new Image();
+                    for (var src in sources) {
+                        console.log(images[src].width);
+                       
+                    }
+                    img.src = "/img/app_icons/livejournal.png"
+                    this.setFill(colorset);
+                    printApp(this.getName());
+                    layer.draw();
+                    document.body.style.cursor = 'pointer';
+                });
 
-              circleON.on('mouseout', function() {
-                  clearApp();
-                  layer.draw();
-              });
+                box.on('mouseout', function() {
+                    this.setFill(null);
+                    this.setFillPatternImage(img);
+                    clearApp();
+                    layer.draw();
+                    document.body.style.cursor = 'default';
+                });
 
-              var offx, offy;
-              if (k+1 < width_count)
-                offx = (k+1)*box_size + 10;
-              else
-                offx = ((k+1) % width_count)*box_size + 10;
-              offy = Math.floor(k/width_count)*box_size + 10;
-              var circleOFF = new Kinetic.Circle({
-                  x: offx,
-                  y: offy,
-                  radius: 10,
-                  fill: 'gray',
-                  stroke: 'black',
-                  name: "Toggle All Off",
-                  strokeWidth: 1
-              });
+                layer.add(box);
+            })();
+            k++;
+        }
 
-              circleOFF.on('mousedown', function() {
-                  toggleApps(false);
-                  printApp(this.getName());
-                  layer.draw();
-              });
+        // this depends on where the row is
+        var onx, ony;
+        if (k < width_count)
+            onx = k*box_size + 10;
+        else
+            onx = (k % width_count)*box_size + 10;
+        ony = Math.floor(k/width_count)*box_size + 10;
+        var circleON = new Kinetic.Circle({
+            x: onx,
+            y: ony,
+            radius: 10,
+            fill: 'white',
+            stroke: 'gray',
+            name: "Toggle All On",
+            strokeWidth: 1
+        });
 
-              circleOFF.on('mouseover', function() {
-                  printApp(this.getName());
-                  layer.draw();
-              });
+        circleON.on('mousedown', function() {
+            toggleApps(true);
+            printApp(this.getName());
+            layer.draw();
+        });
 
-              circleOFF.on('mouseout', function() {
-                  clearApp();
-                  layer.draw();
-              });
+        circleON.on('mouseover', function() {
+            printApp(this.getName());
+            layer.draw();
+        });
 
-              layer.add(circleON);
-              layer.add(circleOFF);
+        circleON.on('mouseout', function() {
+            clearApp();
+            layer.draw();
+        });
+
+        var offx, offy;
+        if (k+1 < width_count)
+            offx = (k+1)*box_size + 10;
+        else
+            offx = ((k+1) % width_count)*box_size + 10;
+        offy = Math.floor(k/width_count)*box_size + 10;
+        var circleOFF = new Kinetic.Circle({
+            x: offx,
+            y: offy,
+            radius: 10,
+            fill: 'gray',
+            stroke: 'black',
+            name: "Toggle All Off",
+            strokeWidth: 1
+        });
+
+        circleOFF.on('mousedown', function() {
+            toggleApps(false);
+            printApp(this.getName());
+            layer.draw();
+        });
+
+        circleOFF.on('mouseover', function() {
+            printApp(this.getName());
+            layer.draw();
+        });
+
+        circleOFF.on('mouseout', function() {
+            clearApp();
+            layer.draw();
+        });
+
+        layer.add(circleON);
+        layer.add(circleOFF);
         // add the layer to the stage
         stage.add(layer);
+    });
   }
 
   function clearApp(){
@@ -580,4 +615,23 @@ function createAllTheHovers() {
       clearInterval(interval);
       obj.src = "img/controls/controls_play.gif";
   }
+
+    function loadImages(sources, callback) {
+        var images = {};
+        var loadedImages = 0;
+        var numImages = 0;
+        // get num of sources
+        for(var src in sources) {
+          numImages++;
+        }
+        for(var src in sources) {
+          images[src] = new Image();
+          images[src].onload = function() {
+            if(++loadedImages >= numImages) {
+              callback(images);
+            }
+          };
+          images[src].src = sources[src];
+        }
+    } 
 };
