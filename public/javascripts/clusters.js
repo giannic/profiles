@@ -36,7 +36,7 @@ clusters_init = function(){
     num_categories = dataset.length;
 
     nodes = dataset;
-
+    console.log(nodes);
     // TODO: not using for size anymore?
     nodes.forEach(function(d, i) {
         if (dataset[i].apps.length > max_apps) {
@@ -137,6 +137,9 @@ clusters_init = function(){
         .attr("r", function(x){
             return x.r;
         })
+        .style("fill", function(x, i){
+            return "hsl(" + i*(255/num_categories) + ",70%,40%)";
+        })
         .attr("id", function(x){
             return "circle_" + x.id;
         });
@@ -153,6 +156,9 @@ clusters_init = function(){
         .attr("class", "vis-label")
         .attr("id", function(x){
             return "text_" + x.id;
+        })
+        .style('fill', function(x, i){
+            return "white";
         })
         .attr("font-size", function(x){
             // reduce the font size based on the radius
@@ -184,7 +190,7 @@ clusters_init = function(){
             return "none";
         })
         .attr("dy", "14px")
-        .style('fill', "#ccc")
+        .style('fill', "#666")
         .on("mousedown", function(d, i) {
             // TODO: change to a cursor
             more_apps(d, i);
@@ -213,7 +219,7 @@ clusters_init = function(){
             return "none";
         })
         .attr("dy", "14px")
-        .style('fill', "#ccc")
+        .style('fill', "#666")
         .on("mousedown", function(d, i) {
             less_apps(d, i);
         });
@@ -538,7 +544,7 @@ clusters_init = function(){
             .transition()
             .attr("r", WINDOW_WIDTH)
             .transition()
-            .style("opacity", "0.7");
+            .style("opacity", "0.4");
 
         // hide the more link
         svg.select("#more_" + d.id)

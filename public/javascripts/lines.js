@@ -65,8 +65,8 @@ var lines_init = function() {
       difference = endTime - startTime;
 
       //line graph dimensions
-      lineGraphWidth = 1000;
-      lineGraphHeight = 600;
+      lineGraphWidth = WINDOW_WIDTH - 250;
+      lineGraphHeight = WINDOW_HEIGHT - 250;
 
       lineGraph = d3.select("#D3line").append("svg:svg")
         .attr("width", lineGraphWidth)
@@ -83,7 +83,7 @@ var lines_init = function() {
 function myFunction(x){
   var date = x.attributes.number.value;
   var val = new Date(date*1000);
-
+  //console.log(val.format("dd-m-yy"));
   printTheStats(x.attributes.name.value, "username", $.datepicker.formatDate('MM dd, yy', val), val.toLocaleTimeString());
   show_stats();
 }
@@ -101,43 +101,47 @@ function createAllTheHovers() {
     currline.addEventListener("mouseover",function(evt) { myFunction(this); }, false);
     currline.addEventListener("mouseout",function(evt) { myFunction2(this); }, false);
     }
+
 }
 
-function initFreqLine() {
+  function initFreqLine() {
 
-  var w = lineGraphWidth+24, h = 25;
+    var w = lineGraphWidth+22, h = 25;
 
-  for (var i=minRange; i < maxRange-1; i++) {
-      frequencies[i] = 0;
-      calcFreq(i);
+    $("#timeline_panel").css("width", lineGraphWidth);
+
+    for (var i=minRange; i < maxRange-1; i++) {
+        frequencies[i] = 0;
+        calcFreq(i);
+    }
+    var freqMax = Math.max.apply(null, frequencies);
+
+    var graph = d3.select(".frequency-container")
+      .append("svg")
+      .attr("width", w)
+      .attr("height", h);
+
+    var x = d3.scale.linear()
+      .domain([0, 100])
+      .range([0, w]);
+
+    var y = d3.scale.linear()
+      .domain([0, freqMax])
+      .range([h, 0]);
+
+    var line = d3.svg.line()
+        .x(function(d,i) {
+          return x(i);
+        })
+        .y(function(d) {
+          return y(d);
+        })
+
+    var data = frequencies;
+    graph.append("svg:path")
+        .attr("d", line(data))
+        .attr("class", "frequency-line");
   }
-
-  var graph = d3.select(".frequency-container")
-    .append("svg")
-    .attr("width", w)
-    .attr("height", h);
-
-  var x = d3.scale.linear()
-    .domain([0, 100])
-    .range([0, w]);
-
-  var y = d3.scale.linear()
-    .domain([0, 5]) // this should be the max of the frequencies?
-    .range([h, 0]);
-
-  var line = d3.svg.line()
-      .x(function(d,i) {
-        return x(i);
-      })
-      .y(function(d) {
-        return y(d);
-      })
-
-  var data = frequencies;
-  graph.append("svg:path")
-      .attr("d", line(data))
-      .attr("class", "frequency-line");
-}
 
   function updateFreqLine(data) {
     // TODO
@@ -484,7 +488,6 @@ function initFreqLine() {
     }
     f.appendChild(f.ownerDocument.createTextNode(d));
     }
-
     function printLastTime(d){
     var f = document.getElementById("lasttime");
     while(f.childNodes.length >= 1) {
