@@ -145,7 +145,7 @@
 
 
   function render_html() {
-    var image_default = 'img/app_icons/behance-square.png';
+    var image_default = 'img/app_icons/social-networks-square.png';
     this.$el.html(this.template({application: this.model.toJSON(),
                                  img: this.model.get('url').substring(0, this.model.get('url').lastIndexOf(".")),
                                  img_default: image_default
