@@ -232,7 +232,7 @@ function createAllTheHovers() {
  function toggleApps(circ){
     //initial loading of lines
     if(toggle == true){
-      circ.setFillRadialGradientColorStops([0, 'gray', 1, 'white']);
+      circ.setFillRadialGradientColorStops([0, '#C6C9D0', 1, 'white']);
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = true;
         this.active = true;
@@ -244,7 +244,7 @@ function createAllTheHovers() {
       toggle = false;
     }
     else{
-    circ.setFillRadialGradientColorStops([0, 'white', 1, 'gray']);
+    circ.setFillRadialGradientColorStops([0, 'white', 1, '#C6C9D0']);
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = false;
         this.active = false;
@@ -461,7 +461,7 @@ function createAllTheHovers() {
                   fillRadialGradientStartRadius: 0,
                   fillRadialGradientEndPoint: 0,
                   fillRadialGradientEndRadius: 10,
-                  fillRadialGradientColorStops: [0, 'gray', 1, 'white'],
+                  fillRadialGradientColorStops: [0, '#C6C9D0', 1, 'white'],
                   stroke: 'white',
                   name: "Toggle",
                   strokeWidth: 1
