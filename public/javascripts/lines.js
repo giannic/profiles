@@ -235,7 +235,8 @@ function createAllTheHovers() {
       circ.setFillRadialGradientColorStops([0, 'gray', 1, 'white']);
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = true;
-        //boxes[k].setOpacity(1.0);
+        this.active = true;
+        boxes[k].setOpacity(1.0);
         addAppBack(boxes[k].getId());
         layer.draw();
       }
@@ -246,6 +247,7 @@ function createAllTheHovers() {
     circ.setFillRadialGradientColorStops([0, 'white', 1, 'gray']);
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = false;
+        this.active = false;
         boxes[k].setOpacity(0.3);
         removeApp(boxes[k].getName(), boxes[k].getId());
         layer.draw();
