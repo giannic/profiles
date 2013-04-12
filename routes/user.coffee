@@ -171,10 +171,10 @@ exports.whitelist = (req, res) ->
   )
 
 ###
-# /modifyapplist
+# /manage
 # The view for the form to change allowed app list
 ###
-exports.modify_app_list = (req, res) ->
+exports.manage = (req, res) ->
   user_id = req.session.user_id
 
   # get the whitelist
@@ -187,8 +187,8 @@ exports.modify_app_list = (req, res) ->
   ###
 
   req.session.messages = req.session.messages or []
-  user_id = req.session.user_id 
-  res.render "modifyapplist",
+  user_id = req.session.user_id
+  res.render "manage",
     title: "Management"
     msg: req.session.messages.pop()
 
@@ -266,7 +266,7 @@ exports.disallow = (req, res) ->
 # adds domain to user's list of tracked apps
 ###
 exports.whitelist_add = (req, res) ->
-  user_id = req.session.user_id 
+  user_id = req.session.user_id
   domain = req.body.domain
 
   console.log("adding " + domain + " to whitelist");
@@ -311,15 +311,19 @@ exports.delete_app = (req, res) ->
 ###
 
 remove_from_whitelist = (user_id, domain, res) ->
+  console.log(domain)
+  # console.log(result.whitelist)
   User.findByIdAndUpdate(user_id, {$pull: { whitelist: domain }},
     (err, result) ->
       if err
         res.send({error: err})
       else
+        console.log(domain)
+        console.log(result.whitelist)
         res.send({success: {new_whitelist: result.whitelist} })
   )
 
-add_to_whitelist = (user_id, domain, res) ->
+exports.add_to_whitelist = (user_id, domain, res) ->
   User.findByIdAndUpdate(user_id, {$addToSet: { whitelist: domain }},
     (err, result) ->
       if err

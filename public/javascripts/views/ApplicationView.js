@@ -57,6 +57,7 @@
         var new_top = -Math.abs((new_height - that.height) / 2);
         var new_left = -Math.abs((new_width - that.width) / 2);
 
+
         this.$el.find('.application-inner').stop().animate({
           opacity: 1.0,
           height: new_height,
@@ -64,8 +65,8 @@
           left: new_left,
           top: new_top,
           'z-index': 9999
-        }, 100, function(){
-        });
+        }, 100);
+        this.$el.find('.url').toggle();
 
         var snd_height = that.margin * 2 + that.height/2 + that.height / 2;
         var snd_width = that.margin * 2 + that.width/2 + that.width / 2;
@@ -99,15 +100,16 @@
           left: 0,
           top: 0
         });
+
         this.$el.find('.application-inner').stop().animate({
           opacity: 0.6,
           height: that.height,
           width: that.width,
           left: 0,
           top: 0
-        }, 200, function(){
-        });
+        }, 100);
 
+        this.$el.find('.url').toggle();
       },
 
       delete_app: function() {

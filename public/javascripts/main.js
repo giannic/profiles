@@ -108,7 +108,6 @@ $("#newapp-button").click(function(event) {
             window.location.replace("/logout");
         });
 
-
         /**************
          * D3 SUPPORT *
          **************/

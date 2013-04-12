@@ -1,0 +1,73 @@
+{{#extend "stylesheets"}}
+    <link rel="stylesheet" href="/stylesheets/default.css" />
+    <link rel="stylesheet" href="/stylesheets/forms.css">
+{{/extend}}
+
+{{#extend "javascripts"}}
+    <script type="text/javascript" src="javascripts/manage.js"></script>
+{{/extend}}
+
+
+<div id="wrapper">
+    <div id="header">
+        <a class="title" href="#">{{{title}}}</a>
+        <p>{{{whitelist}}}</p>
+    </div>
+
+    <div id="form-wrapper">
+        <form>
+            <input class="user-input-field" id="input-appname"
+                   type="text" name="domain" placeholder="App url (e.g. facebook.com)"
+                {{#if msg}}
+                    class="error"
+                {{/if}}
+            />
+            <input class="form-button" id="allow-button" type="button" value="Allow"/>
+        </form>
+        <ul id="whitelist">
+        </ul>
+    </div>
+    <div id="appmanagement-wrapper">
+        <ul> 
+            <li>
+                <div class="app-name">Name</div>
+                <div>
+                    <select>
+                        <option>Social</option>
+                        <option>Professional</option>
+                        <option selected>Music</option>
+                        <option>Image Sharing</option>
+                        <option>Entertainment</option>
+                    </select>
+                </div>
+                <div>
+                    <input class="manangement-delete"
+                           src="img/ui_icons/delete.png"
+                           name="image" type="image"
+                           width="20" height="20">
+                </div>
+            </li>
+
+            <li>
+                <div class="app-name">Name</div>
+                <div>
+                    <select>
+                        <option>Social</option>
+                        <option>Professional</option>
+                        <option selected>Music</option>
+                        <option>Image Sharing</option>
+                        <option>Entertainment</option>
+                    </select>
+                </div>
+                <div>
+                <input id="manangement-delete"
+                       type="image"
+                       src="img/ui_icons/delete.png"
+                       name="image"
+                       width="20"
+                       height="20">
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

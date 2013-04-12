@@ -7,7 +7,7 @@ var lines_init = function() {
       width_count, height_count, box_size, pad, // this is for when there are tons of apps
       allTheLines, hsl, colorArray, diff, appArray, nameArray,
       minRange, maxRange, interval, boxes, activeArray,
-      playTimeline = false, layer,
+      playTimeline = false, layer, toggle = false,
       frequencies = [];
 
   $(document).ready(function() {
@@ -229,9 +229,10 @@ function createAllTheHovers() {
     calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
   }
 
- function toggleApps(toggle){
+ function toggleApps(circ){
     //initial loading of lines
     if(toggle == true){
+      //circ.setFill('white');
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = true;
         boxes[k].setOpacity(1.0);
@@ -242,6 +243,7 @@ function createAllTheHovers() {
       toggle = false;
     }
     else{
+      //circ.setFill('gray');
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = false;
         boxes[k].setOpacity(0.3);
@@ -341,6 +343,7 @@ function createAllTheHovers() {
   function setUpAppSelection(){
     if (width_count > appArray.length + 2)
         width_count = appArray.length + 2;
+
     var stage = new Kinetic.Stage({
         container: 'container',
         width: box_size*width_count,
@@ -375,16 +378,6 @@ function createAllTheHovers() {
                 else
                     newx = (k % width_count)*box_size;
 
-                var imageObj = new Image();
-                imageObj.src = "/img/app_icons/livejournal.png";
-                var yoda = new Kinetic.Image({
-                    x: 0,
-                    y: 0,
-                    image: imageObj,
-                    width: 20,
-                    height: 20,
-                });
-
                 var img = images[src];
                 var box = new Kinetic.Rect({
                     x: newx, // change this
@@ -393,43 +386,55 @@ function createAllTheHovers() {
                     height: 20,
                     id: appArray[k],
                     name: nameArray[k],
+                    active: true,
                     fillPatternImage: img,
                     fillPatternScale: [20/img.width, 20/img.height]
                 });
 
-                // how to fill with an image?
-
                 boxes[k] = box;
 
                 box.on('mousedown', function() {
-                    if (this.getOpacity() == 1.0) {
+                    if (this.getOpacity() == 1.0 && this.active == true) {
+                        this.active = false;
                         this.setOpacity(0.3);
                         removeApp(this.getName(), this.getId());
-                    } else {
+                    }
+                    else {
+                        this.active = true;
                         this.setOpacity(1.0);
                         addAppBack(this.getId());
                     }
                     printApp(this.getName());
                     layer.draw();
                 });
-
                 box.on('mouseover', function() {
-                    var img = new Image();
-                    for (var src in sources) {
-                        console.log(images[src].width);
-                       
-                    }
-                    img.src = "/img/app_icons/livejournal.png"
                     this.setFill(colorset);
+                    if(activeArray[this.getId()] == false){
+                        this.setOpacity(1.0);
+                        activeArray[this.getId()] = true;
+                        calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+                        activeArray[this.getId()] = false;
+                        this.active = false;
+                    }
+                    else{
+                        this.active = true;
+                    }
                     printApp(this.getName());
                     layer.draw();
                     document.body.style.cursor = 'pointer';
                 });
-
                 box.on('mouseout', function() {
                     this.setFill(null);
                     this.setFillPatternImage(img);
+                    if(activeArray[this.getId()] == false){
+                        this.active = false;
+                        this.setOpacity(.3);
+                    }
+                    else{
+                        this.active = true;
+                    }
                     clearApp();
+                    calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
                     layer.draw();
                     document.body.style.cursor = 'default';
                 });
@@ -446,66 +451,34 @@ function createAllTheHovers() {
         else
             onx = (k % width_count)*box_size + 10;
         ony = Math.floor(k/width_count)*box_size + 10;
-        var circleON = new Kinetic.Circle({
+        var circle = new Kinetic.Circle({
             x: onx,
             y: ony,
             radius: 10,
             fill: 'white',
             stroke: 'gray',
-            name: "Toggle All On",
+            name: "Toggle All",
             strokeWidth: 1
         });
 
-        circleON.on('mousedown', function() {
+        circle.on('mousedown', function() {
             toggleApps(true);
             printApp(this.getName());
             layer.draw();
         });
 
-        circleON.on('mouseover', function() {
+        circle.on('mouseover', function() {
             printApp(this.getName());
             layer.draw();
         });
 
-        circleON.on('mouseout', function() {
+        circle.on('mouseout', function() {
             clearApp();
             layer.draw();
         });
 
-        var offx, offy;
-        if (k+1 < width_count)
-            offx = (k+1)*box_size + 10;
-        else
-            offx = ((k+1) % width_count)*box_size + 10;
-        offy = Math.floor(k/width_count)*box_size + 10;
-        var circleOFF = new Kinetic.Circle({
-            x: offx,
-            y: offy,
-            radius: 10,
-            fill: 'gray',
-            stroke: 'black',
-            name: "Toggle All Off",
-            strokeWidth: 1
-        });
+        layer.add(circle);
 
-        circleOFF.on('mousedown', function() {
-            toggleApps(false);
-            printApp(this.getName());
-            layer.draw();
-        });
-
-        circleOFF.on('mouseover', function() {
-            printApp(this.getName());
-            layer.draw();
-        });
-
-        circleOFF.on('mouseout', function() {
-            clearApp();
-            layer.draw();
-        });
-
-        layer.add(circleON);
-        layer.add(circleOFF);
         // add the layer to the stage
         stage.add(layer);
     });
