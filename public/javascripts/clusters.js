@@ -492,19 +492,21 @@ clusters_init = function(){
     for(var count = 0; count < c.length; count++){
         currimg = c[count];
         currimg.addEventListener("mouseover",function(evt) { hoverFunction(this);}, false);
-        currimg.addEventListener("mouseout",function(evt) { hoverOffFunction(this); }, false);
+        currimg.addEventListener("mouseout",function(evt) { hoverOffFunction(this);}, false);
      }
     }
 
     function hoverFunction(x){
         printClusterStats(x.attributes.url_id.value, "username", x.attributes.close_id.value, x.attributes.timeStamp.value);
         show_stats();
+        document.body.style.cursor = 'pointer'; // TODO: change so it will just be in the css
     }
 
     function hoverOffFunction(x){
       //  console.log("b");
     //console.log("mouseout");
         hide_stats();
+        document.body.style.cursor = 'default';
     }
 
     function deselect_old_cluster(old_category) {

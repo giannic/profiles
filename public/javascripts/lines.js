@@ -98,8 +98,8 @@ function createAllTheHovers() {
   //console.log(hovers[0]);
   for(var i = 0; i < hovers[0].length; i++){
     currline = hovers[0][i];
-    currline.addEventListener("mouseover",function(evt) { myFunction(this); }, false);
-    currline.addEventListener("mouseout",function(evt) { myFunction2(this); }, false);
+    currline.addEventListener("mouseover",function(evt) { myFunction(this); document.body.style.cursor = 'pointer';}, false);
+    currline.addEventListener("mouseout",function(evt) { myFunction2(this); document.body.style.cursor = 'default';}, false);
     }
 
 }
