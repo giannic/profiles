@@ -4,8 +4,84 @@ body {
     height: 100%;
     width: 100%;
     overflow: scroll;
+    background-image: url("../img/textures/cream_dust.png");
 }
 
 #wrapper {
 	height: 100%;	
+}
+
+#management-form-wrapper {
+    margin: 30px auto;
+    width: 100%;
+
+    form {
+        margin: auto;
+        width: 400px;
+        height: 36px;
+
+        input {
+            display: inline;
+        }
+
+        .alert {
+            position: absolute;
+            top: -30px;
+            left: 0px;
+            right: 0px;
+            line-height: 30px;
+        }
+    }
+}
+
+#app-management-wrapper {
+    margin: auto;
+    width: 100%;
+
+    h2 {
+        font-family: $TITLE_STACK;
+        text-align: left;
+        margin-bottom: 15px;
+        font-size: 20px;
+    }
+
+    ul {
+        margin: auto;
+        height: 150px;
+        width: 600px;
+
+        li {
+            border-top: 1px solid #CCCCCC;
+            list-style-type: none;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            position: relative;
+
+            div {
+                display: inline;
+            }
+
+            .app-name {
+                position: absolute;
+                left: 0;
+            }
+
+            .management-delete {
+                position: absolute;
+                right: 0;
+            }
+        }
+    }
+
+    select {
+        background: transparent;
+        width: 200px;
+        padding: 5px;
+        font-family: $BODY_STACK;
+        font-size: 16px;
+        color: #4D4D4D;
+        border: 1px solid #CCCCCC;
+        height: 29px;
+        -webkit-appearance: none;
+    }
 }

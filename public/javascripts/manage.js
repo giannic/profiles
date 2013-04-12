@@ -23,6 +23,10 @@ $("#disallow-button").click(function() {
     //$.post(allowEndpoint, {"domain": domain}, renderResponse);
 });
 
+$("#back-button").click(function() {
+    document.location.replace("/");
+});
+
 getWhitelist();
 
 function getCategoryMarkup() {

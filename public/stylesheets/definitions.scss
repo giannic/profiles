@@ -64,11 +64,12 @@ $BACKGROUND: #FFF;
 
 // d3 shapes
 $SHAPE_STROKE: #000;
-$SHAPE_FILL: #666;
+$SHAPE_FILL: #191919;
+$SHAPE_OPACITY: 0.9;
 
 // text
 $TEXT_FILL: #FFF;
-$SUBTEXT_FILL: #BBB;
+$SUBTEXT_FILL: #EEE;
 
 // spacing
 $BUTTON_PADDING_X: 20px;
@@ -86,6 +87,12 @@ $SHADOW: rgba(0, 0, 0, 0.8);
 // menus
 $MENU_BUTTON_OPACITY: 0.3;
 $MENU_BUTTON_ANIM_TIME: 0.5s;
+
+
+// z-indices
+$UI_Z: 100;
+$VIS_Z: 10;
+
 
 /*****************
  * GLOBAL MIXINS *
@@ -226,3 +233,6 @@ $MENU_BUTTON_ANIM_TIME: 0.5s;
   bottom: 0;
   margin: auto;
 }
+
+
+
