@@ -237,13 +237,34 @@ app.views.GridView = Backbone.View.extend({
     // if full, append a new row, and an application-inner
     if (full) {
       // this.$el.append(
-      var new_row = $(this.$el.find('.row')[0]).clone().find('.cf.row-wrapper').empty();
+      var orig_row = $(this.$el.find('.row')[0]).clone();
+      var new_row = $(this.$el.find('.row')[0]).clone();
+      new_row.find('.cf.row-wrapper').empty();
       new_row.append(new_app.el);
       this.$el.append(new_row);
+      var last_row_width = this.COLUMNS * (orig_row.find('.application').width() + 2 * parseInt(orig_row.find('.application').css('margin')));
+      $(new_row).find('.row-wrapper').width(last_row_width);
+
+      new_app.$el.height(0);
+      new_app.$el.css('top', '50%');
+
+      new_app.$el.find('.application-inner').stop().animate({
+          height: new_app.height,
+          top: 0
+        }, 200, function(){
+      });
 
     }
     else {
       $(this.$el.find('.cf.row-wrapper')[number_of_rows - 1]).append(new_app.el);
+      new_app.$el.height(0);
+      new_app.$el.css('top', '50%');
+
+      new_app.$el.find('.application-inner').stop().animate({
+          height: new_app.height,
+          top: 0
+        }, 200, function(){
+      });
     }
 
   },

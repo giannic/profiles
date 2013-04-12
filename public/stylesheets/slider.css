@@ -2,8 +2,8 @@
  * Customized development theme for jQRangeSlider
  */
 .frequency-line {
-  stroke: #CCCCCC;
-  stroke-width: 2;
+  stroke: #666666;
+  stroke-width: 1;
   fill: none; }
 
 .ui-rangeSlider {

@@ -16,6 +16,10 @@ grid_init = function(){
     $('#more-apps-box').prepend(new app.views.GridView({collection: app.applications}).render().el);
 
     $('body').on('keyup', function(e){
+      // check if it's cmd, alt, shift, ctrl
+      if (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey || e.keyCode == 91) {
+        return;
+      }
       // check if it's not focused on an input
       console.log(e);
       if (!$(e.target).is('input')) {

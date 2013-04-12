@@ -72,6 +72,7 @@ exports.create = (req, res) ->
     if err
       console.log(err)
       res.send(error: "Could not create app")
+      return
     else
       console.log("app create success")
       #res.send(success: data)
