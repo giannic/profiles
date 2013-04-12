@@ -62,9 +62,10 @@
           width: new_width,
           left: new_left,
           top: new_top,
-          'z-index': 11
         }, 100);
-
+    
+        this.$el.css('z-index',11);
+     
         this.$el.find('.url').css('display', 'block');
         this.$el.find('.delete').toggle();
 
@@ -108,6 +109,8 @@
           left: 0,
           top: 0
         }, 100);
+
+        this.$el.css('z-index',10);
 
         this.$el.find('.url').css('display', 'none');
         this.$el.find('.delete').toggle();
