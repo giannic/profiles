@@ -219,6 +219,8 @@ app.views.GridView = Backbone.View.extend({
     var number_of_rows = this.$el.find('.row').length;
     var number_of_apps = $(this.$el.find('.cf.row-wrapper')[number_of_rows - 1]).find('.application').length;
     // TODO: REFACTOR
+    console.log('HELLOOOOOO')
+    console.log((data))
     var current_column_width = this.width / this.COLUMNS;
     var row_num = number_of_rows - 1;
     var current_column = number_of_apps - 1;
