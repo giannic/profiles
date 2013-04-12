@@ -97,13 +97,16 @@ svg {
 nav {
     position: absolute;
     top: 0;
+    height: 100%;
 
     ul {
         list-style: none;
+        height: inherit;
+        position:relative;
 
         li {
             display: inline-block;
-            margin: $HEADER_MARGIN_TOP $HEADER_MARGIN_SIDE 0px 0px;
+            // margin: $HEADER_MARGIN_TOP $HEADER_MARGIN_SIDE 0px 0px;
         }
     }
 
@@ -131,14 +134,26 @@ nav {
 .type-nav {
     left: 0;
     li {
-            margin: $HEADER_MARGIN_TOP 0px 0px $HEADER_MARGIN_SIDE;
+        margin: 0px 0px 0px $HEADER_MARGIN_SIDE;
+        height: 100%;
+        width: 32px;
+        img {
+          width: 32px;
+          @include center_vert_in_rel(32px, 32px);
+        }
     }
 }
 
 .utility-nav {
     right: 0;
     li {
-            margin: $HEADER_MARGIN_TOP $HEADER_MARGIN_SIDE 0px 0px;
+      margin: 0px $HEADER_MARGIN_SIDE 0px 0px;
+      height: 100%;
+      min-width: 32px;
+      img {
+        @include center_vert_in_rel(32px, 32px);
+      }
+
     }
 }
 
