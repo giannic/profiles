@@ -58,7 +58,7 @@
 }
 
 #timeline_details {
-    text-align: right;
+    text-align: center;
     height: 20px;
     font: {
         size: 0.8em;
@@ -101,4 +101,18 @@
 
 #timeline_dateRight {
     color: rgba(165, 21, 21, .7);
+    position: absolute;
+    right: 0;
+}
+
+#timeline_step_back {
+    
+}
+
+#timeline_play_pause {
+
+}
+
+#timeline_step_forward {
+    
 }
