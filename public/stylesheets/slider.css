@@ -13,8 +13,8 @@
   height: 3px; }
 
 .ui-rangeSlider .ui-rangeSlider-innerBar {
-  height: 2px;
-  margin: 13px 6px;
+  height: 31px;
+  margin: 0px 6px;
   background: none; }
 
 .ui-rangeSlider .ui-rangeSlider-handle {
@@ -24,9 +24,9 @@
   cursor: col-resize; }
 
 .ui-rangeSlider .ui-rangeSlider-bar {
-  margin: 13px 0;
+  margin: 0;
+  height: 31px;
   background: none;
-  height: 2px;
   cursor: move;
   cursor: grab;
   cursor: -moz-grab; }
