@@ -65,14 +65,14 @@ var lines_init = function() {
       difference = endTime - startTime;
 
       //line graph dimensions
-      lineGraphWidth = 1000;
-      lineGraphHeight = 600;    
+      lineGraphWidth = WINDOW_WIDTH - 250;
+      lineGraphHeight = WINDOW_HEIGHT - 250;
 
       lineGraph = d3.select("#D3line").append("svg:svg")
         .attr("width", lineGraphWidth)
         .attr("height", lineGraphHeight);
-      
-      setUpAppSelection();
+
+        setUpAppSelection();
 
       initSlider();
       
