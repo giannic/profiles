@@ -4,6 +4,7 @@ var lines_init = function() {
       openArray, renderArray, closeArray,
       startTime, endTime, difference, leftBarTime, rightBarTime,
       lineGraphWidth, lineGraphHeight, lineGraph,
+      width_count, height_count, box_size, pad, // this is for when there are tons of apps
       allTheLines, hsl, colorArray, diff, appArray, nameArray,
       minRange, maxRange, interval, boxes, activeArray,
       playTimeline = false, layer,
@@ -67,7 +68,16 @@ var lines_init = function() {
       //line graph dimensions
       lineGraphWidth = WINDOW_WIDTH - 250;
       lineGraphHeight = WINDOW_HEIGHT - 250;
-
+      
+      box_size = 25,
+      pad = 5;
+      // subtract height based on number of apps;
+      width_count = Math.floor((lineGraphWidth - pad)/box_size);
+      height_count = Math.ceil(appArray.length/width_count);
+      
+      if (height_count > 1)
+        lineGraphHeight = lineGraphHeight - height_count*15; // 15 is arbitrary
+      
       lineGraph = d3.select("#D3line").append("svg:svg")
         .attr("width", lineGraphWidth)
         .attr("height", lineGraphHeight);
@@ -329,11 +339,12 @@ function createAllTheHovers() {
   }
 
   function setUpAppSelection(){
-
+      if (width_count > appArray.length + 2)
+        width_count = appArray.length + 2;
       var stage = new Kinetic.Stage({
           container: 'container',
-          width: 25*(appArray.length+2),
-          height: 25
+          width: box_size*width_count,
+          height: box_size*height_count
       });
 
       layer = new Kinetic.Layer();
@@ -343,14 +354,21 @@ function createAllTheHovers() {
 
       boxes = [];
 
-      for (var k = 0; k< appArray.length; k++) {
+      for (var k = 0; k < appArray.length; k++) {
           // anonymous function to induce scope
           (function() {
               colortrack = colorArray[k];
               var colorset = "hsl(" + colortrack + ",50%, 50%)";
+              var newy = Math.floor(k/width_count)*box_size,
+                  newx;
+              if (k < width_count)
+                newx = k*box_size;
+              else
+                newx = (k % width_count)*box_size;
+              console.log(newy);
               var box = new Kinetic.Rect({
-                  x: k * 25,
-                  y: 0,
+                  x: newx, // change this
+                  y: newy, // make this dynamic
                   width: 20,
                   height: 20,
                   id: appArray[k],
@@ -387,9 +405,16 @@ function createAllTheHovers() {
               layer.add(box);
           })();
       }
+              // this depends on where the row is
+              var onx, ony;
+              if (k < width_count)
+                onx = k*box_size + 10;
+              else
+                onx = (k % width_count)*box_size + 10;
+              ony = Math.floor(k/width_count)*box_size + 10;
               var circleON = new Kinetic.Circle({
-                  x: k * 25 + 10,
-                  y: 10,
+                  x: onx,
+                  y: ony,
                   radius: 10,
                   fill: 'white',
                   stroke: 'gray',
@@ -413,9 +438,15 @@ function createAllTheHovers() {
                   layer.draw();
               });
 
+              var offx, offy;
+              if (k+1 < width_count)
+                offx = (k+1)*box_size + 10;
+              else
+                offx = ((k+1) % width_count)*box_size + 10;
+              offy = Math.floor(k/width_count)*box_size + 10;
               var circleOFF = new Kinetic.Circle({
-                  x: (k + 1) * 25 + 10,
-                  y: 10,
+                  x: offx,
+                  y: offy,
                   radius: 10,
                   fill: 'gray',
                   stroke: 'black',
