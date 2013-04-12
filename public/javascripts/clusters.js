@@ -405,7 +405,10 @@ clusters_init = function(){
         cluster_apps[selected_category]
             .append('image')
             .attr('xlink:href', function(d) {
-                return d.img;
+                var j = d.url.indexOf("."),
+                    name = d.url.substring(0, j);
+                return "/img/app_icons/" + name + ".png";
+                //return d.img;
             })
             .attr("id", function(d, j){
                 return "link" + j + "_img_" + x.id;
@@ -558,10 +561,20 @@ clusters_init = function(){
         var circle_group = document.getElementById(d.id);
         circle_group.parentNode.appendChild(circle_group);
 
-        var new_width = 80, // TODO: change so based on browser width/height
+        // move the label to the very top
+        svg.select("#text_" + d.id)
+            .transition()
+            .attr("y", -window_height/2 + 20);
+        
+        svg.select("#less_" + d.id)
+            .transition()
+            .attr("y", -window_height/2 + 22);
+
+        var label_height = 50;
+        var new_width = 77, // TODO: change so based on browser width/height
             count = Math.floor((window_width - pad) / (new_width + pad)),
             new_space,
-            start_pos = {x: -window_width/2 + pad, y: -window_height/2 + pad},
+            start_pos = {x: -window_width/2 + pad, y: -window_height/2 + pad + label_height},
             space = new_width + pad;
 
         svg.selectAll(".link_img_" + d.id)
@@ -598,6 +611,11 @@ clusters_init = function(){
         svg.select("#less_" + d.id)
             .attr("display", "none");
 
+        // move the label back
+        svg.select("#text_" + d.id)
+            .transition()
+            .attr("y", 0);
+
         // move all the apps back to where they are
         svg.selectAll(".link_img_" + d.id)
             .transition()
@@ -616,43 +634,43 @@ clusters_init = function(){
             });
     }
 
-  function printClusterStats(s, u, l){
-    //console.log(s);
-    printThatApp(s);
-    //printUsername(u);
-    printLastVisit(l);
-    clearLastTime();  
-  }
-
-      function printThatApp(d){
-    var f = document.getElementById("thatapp");
-    while(f.childNodes.length >= 1) {
-      f.removeChild(f.firstChild);
+    function printClusterStats(s, u, l){
+        //console.log(s);
+        printThatApp(s);
+        //printUsername(u);
+        printLastVisit(l);
+        clearLastTime();  
     }
-    f.appendChild(f.ownerDocument.createTextNode(d));
+
+    function printThatApp(d){
+        var f = document.getElementById("thatapp");
+        while(f.childNodes.length >= 1) {
+            f.removeChild(f.firstChild);
+        }
+        f.appendChild(f.ownerDocument.createTextNode(d));
     }
 
     function printUsername(d){
-    var f = document.getElementById("username");
-    while(f.childNodes.length >= 1) {
-      f.removeChild(f.firstChild);
-    }
-    f.appendChild(f.ownerDocument.createTextNode(d));
+        var f = document.getElementById("username");
+        while(f.childNodes.length >= 1) {
+            f.removeChild(f.firstChild);
+        }
+        f.appendChild(f.ownerDocument.createTextNode(d));
     }
 
     function printLastVisit(d){
-    var f = document.getElementById("lastvisit");
-    while(f.childNodes.length >= 1) {
-      f.removeChild(f.firstChild);
-    }
-    f.appendChild(f.ownerDocument.createTextNode(d));
+        var f = document.getElementById("lastvisit");
+        while(f.childNodes.length >= 1) {
+            f.removeChild(f.firstChild);
+        }
+        f.appendChild(f.ownerDocument.createTextNode(d));
     }
      
     function clearLastTime(){
-    var f = document.getElementById("lasttime");
-    while(f.childNodes.length >= 1) {
-      f.removeChild(f.firstChild);
-    }
+        var f = document.getElementById("lasttime");
+        while(f.childNodes.length >= 1) {
+            f.removeChild(f.firstChild);
+        }
     }
 
 
