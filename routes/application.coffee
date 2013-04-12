@@ -1,5 +1,6 @@
 Application = require('../models/application')
 User = require('../models/user')
+user_routes = require('./user')
 helpers = require('./route_helpers')
 
 # App = new mongoose.Schema
@@ -62,7 +63,7 @@ exports.create = (req, res) ->
   console.log('creating app')
 
   properties = [{
-    category: req.body.category, 
+    category: req.body.category,
     name: req.body.app_name,
     userid: req.session.user_id,
     img: req.body.image_url, # url
@@ -74,6 +75,10 @@ exports.create = (req, res) ->
     else
       res.send(success: data)
   )
+  # add to whitelist
+  user_routes.add_to_whitelist(properties[0].userid, properties[0].url, res)
+
+
 
 ###
 # /apps/close
@@ -163,9 +168,9 @@ exports.update_category = (req, res) ->
   #app_id = req.body.appid
 
   Application.findOneAndUpdate(
-    {url: url, userid: user_id}, 
+    {url: url, userid: user_id},
     {$set: { category: category } },
-    {upsert: true}, 
+    {upsert: true},
     (err, result) ->
       if err
         console.log "ERROR: Category unable to be updated."
@@ -193,10 +198,10 @@ exports.get_by_user = (req, res) ->
 # if there is no userid, then don't return any data, redirect to login
 exports.get_apps_on_whitelist = (req, res) ->
   apps = []
-  #userid = "515e00a1b84f094dd5000001" 
+  #userid = "515e00a1b84f094dd5000001"
   helpers.loadUser req, res, ->
     # get all applications for this user
-    Application.find({userid: userid}, 'category img url open close open_count close_count',
+    Application.find({userid: req.session.user_id}, 'category img url open close open_count close_count',
       (err, result) ->
         # render error if there is one
         if err
@@ -206,7 +211,7 @@ exports.get_apps_on_whitelist = (req, res) ->
         else
           apps = result
           whitelist = []
-          User.findById(userid, {whitelist}, (err, result) ->
+          User.findById(req.session.user_id, {whitelist}, (err, result) ->
             if err then res.send(error: err)
             whitelist = result['whitelist']
             output = (app for app in apps when app['url'] in whitelist)

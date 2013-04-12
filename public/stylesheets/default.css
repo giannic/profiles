@@ -49,7 +49,7 @@ html {
 body {
   height: 100%;
   width: 100%;
-  overflow-x: hidden; }
+  overflow: hidden; }
 
 a {
   text-decoration: none;
@@ -149,7 +149,7 @@ nav {
       margin: auto; }
 
 .utility-nav {
-  right: 0; }
+  right: 20px; }
   .utility-nav li {
     margin: 0px 20px 0px 0px;
     height: 100%;
@@ -161,6 +161,19 @@ nav {
       top: 0;
       bottom: 0;
       margin: auto; }
+  .utility-nav #grid-search-wrapper {
+    margin-right: 150px;
+    padding: 0px;
+    position: relative; }
+    .utility-nav #grid-search-wrapper input {
+      width: 150px;
+      height: 20px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      top: 50%;
+      margin-top: -18px; }
 
 #grid-search {
   width: 150px;

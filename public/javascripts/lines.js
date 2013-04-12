@@ -229,9 +229,10 @@ function createAllTheHovers() {
     calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
   }
 
- function toggleApps(){
+ function toggleApps(circ){
     //initial loading of lines
     if(toggle == true){
+      circ.setFillRadialGradientColorStops([0, 'gray', 1, 'white']);
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = true;
         boxes[k].setOpacity(1.0);
@@ -242,6 +243,7 @@ function createAllTheHovers() {
       toggle = false;
     }
     else{
+    circ.setFillRadialGradientColorStops([0, 'white', 1, 'gray']);
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = false;
         boxes[k].setOpacity(0.3);
@@ -339,82 +341,111 @@ function createAllTheHovers() {
   }
 
   function setUpAppSelection(){
-      if (width_count > appArray.length + 2)
+    if (width_count > appArray.length + 2)
         width_count = appArray.length + 2;
-      var stage = new Kinetic.Stage({
-          container: 'container',
-          width: box_size*width_count,
-          height: box_size*height_count
-      });
 
-      layer = new Kinetic.Layer();
-      var canvas = layer.getCanvas();
-      canvas.element.style.position = "relative";
-      //canvas.setAttribute('style', 'position: relative;');
+    var stage = new Kinetic.Stage({
+        container: 'container',
+        width: box_size*width_count,
+        height: box_size*height_count
+    });
 
-      boxes = [];
+    layer = new Kinetic.Layer();
+    var canvas = layer.getCanvas();
+    canvas.element.style.position = "relative";
+    //canvas.setAttribute('style', 'position: relative;');
 
-      for (var k = 0; k < appArray.length; k++) {
-          // anonymous function to induce scope
-          (function() {
-              colortrack = colorArray[k];
-              var colorset = "hsl(" + colortrack + ",50%, 50%)";
-              var newy = Math.floor(k/width_count)*box_size,
-                  newx;
-              if (k < width_count)
-                newx = k*box_size;
-              else
-                newx = (k % width_count)*box_size;
-              //console.log(newy);
-              var box = new Kinetic.Rect({
-                  x: newx, // change this
-                  y: newy, // make this dynamic
-                  width: 20,
-                  height: 20,
-                  id: appArray[k],
-                  name: nameArray[k],
-                  fill: colorset
-              });
+    boxes = [];
 
-              boxes[k] = box;
+    var sources = {};
+    for (var j = 0; j < appArray.length; j++) {
+        sources[nameArray[j]] = "http://" + nameArray[j] + "/favicon.ico";
+    }
 
-              box.on('mousedown', function() {
-                  if (this.getOpacity() == 1.0) {
-                      this.setOpacity(0.3);
-                      removeApp(this.getName(), this.getId());
-                  } else {
-                      this.setOpacity(1.0);
-                      addAppBack(this.getId());
-                  }
-                  printApp(this.getName());
-                  layer.draw();
-              });
+    // create images
+    loadImages(sources, function(images) {
+        var k = 0;
+        for (var src in sources) {
+          console.log("yoyo");
+        //for (var k = 0; k < appArray.length; k++) {
+            // anonymous function to induce scope
+            (function() {
+                colortrack = colorArray[k];
+                var colorset = "hsl(" + colortrack + ",50%, 50%)";
+                var newy = Math.floor(k/width_count)*box_size,
+                    newx;
+                if (k < width_count)
+                    newx = k*box_size;
+                else
+                    newx = (k % width_count)*box_size;
 
-              box.on('mouseover', function() {
-                  if(activeArray[this.getId()] == false){
-                    this.setOpacity(1.0);
-                    activeArray[this.getId()] = true;
+                var img = images[src];
+                console.log("img is " + img)
+                var box = new Kinetic.Rect({
+                    x: newx,
+                    y: newy, 
+                    width: 20,
+                    height: 20,
+                    id: appArray[k],
+                    name: nameArray[k],
+                    active: true,
+                    fillPatternImage: img,
+                    fillPatternScale: [20/img.width, 20/img.height]
+                });
+
+                boxes[k] = box;
+
+                box.on('mousedown', function() {
+                    if (this.getOpacity() == 1.0 && this.active == true) {
+                        this.active = false;
+                        this.setOpacity(0.3);
+                        removeApp(this.getName(), this.getId());
+                    }
+                    else {
+                        this.active = true;
+                        this.setOpacity(1.0);
+                        addAppBack(this.getId());
+                    }
+                    printApp(this.getName());
+                    layer.draw();
+                });
+                box.on('mouseover', function() {
+                    this.setFill(colorset);
+                    if(activeArray[this.getId()] == false){
+                        this.setOpacity(1.0);
+                        activeArray[this.getId()] = true;
+                        calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+                        activeArray[this.getId()] = false;
+                        this.active = false;
+                    }
+                    else{
+                        this.active = true;
+                    }
+                    printApp(this.getName());
+                    layer.draw();
+                    document.body.style.cursor = 'pointer';
+                });
+                box.on('mouseout', function() {
+                    this.setFill(null);
+                    this.setFillPatternImage(img);
+                    if(activeArray[this.getId()] == false){
+                        this.active = false;
+                        this.setOpacity(.3);
+                    }
+                    else{
+                        this.active = true;
+                    }
+                    clearApp();
                     calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
-                    activeArray[this.getId()] = false;
-                  }
-                  printApp(this.getName());
-                  layer.draw();
-                  document.body.style.cursor = 'pointer';
-              });
+                    layer.draw();
+                    document.body.style.cursor = 'default';
+                    });
+                layer.add(box);
 
-              box.on('mouseout', function() {
-                  if(activeArray[this.getId()] == false){
-                    this.setOpacity(.3);
-                  }
-                  clearApp();
-                  calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
-                  layer.draw();
-                  document.body.style.cursor = 'default';
-              });
-
-              layer.add(box);
-          })();
-      }
+              })();
+              k++;
+            }
+            console.log(layer);
               // this depends on where the row is
               var onx, ony;
               if (k < width_count)
@@ -422,28 +453,33 @@ function createAllTheHovers() {
               else
                 onx = (k % width_count)*box_size + 10;
               ony = Math.floor(k/width_count)*box_size + 10;
-              var circleON = new Kinetic.Circle({
+
+              var circle = new Kinetic.Circle({
                   x: onx,
                   y: ony,
                   radius: 10,
-                  fill: 'white',
-                  stroke: 'gray',
-                  name: "Toggle All On",
+                  fillRadialGradientStartPoint: 0,
+                  fillRadialGradientStartRadius: 0,
+                  fillRadialGradientEndPoint: 0,
+                  fillRadialGradientEndRadius: 10,
+                  fillRadialGradientColorStops: [0, 'gray', 1, 'white'],
+                  stroke: 'white',
+                  name: "Toggle",
                   strokeWidth: 1
               });
 
-              circleON.on('mousedown', function() {
-                  toggleApps();
+              circle.on('mousedown', function() {
+                  toggleApps(this);
                   printApp(this.getName());
                   layer.draw();
               });
 
-              circleON.on('mouseover', function() {
+              circle.on('mouseover', function() {
                   printApp(this.getName());
                   layer.draw();
               });
 
-              circleON.on('mouseout', function() {
+              circle.on('mouseout', function() {
                   clearApp();
                   layer.draw();
               });
@@ -454,36 +490,11 @@ function createAllTheHovers() {
               else
                 offx = ((k+1) % width_count)*box_size + 10;
               offy = Math.floor(k/width_count)*box_size + 10;
-              var circleOFF = new Kinetic.Circle({
-                  x: offx,
-                  y: offy,
-                  radius: 10,
-                  fill: 'gray',
-                  stroke: 'black',
-                  name: "Toggle All Off",
-                  strokeWidth: 1
-              });
 
-              circleOFF.on('mousedown', function() {
-                  toggleApps();
-                  printApp(this.getName());
-                  layer.draw();
-              });
-
-              circleOFF.on('mouseover', function() {
-                  printApp(this.getName());
-                  layer.draw();
-              });
-
-              circleOFF.on('mouseout', function() {
-                  clearApp();
-                  layer.draw();
-              });
-
-              layer.add(circleON);
-              layer.add(circleOFF);
-        // add the layer to the stage
+              layer.add(circle);
+              //add layer to stage
         stage.add(layer);
+    });
   }
 
   function clearApp(){
@@ -590,4 +601,23 @@ function createAllTheHovers() {
       clearInterval(interval);
       obj.src = "img/controls/controls_play.gif";
   }
+
+    function loadImages(sources, callback) {
+        var images = {};
+        var loadedImages = 0;
+        var numImages = 0;
+        // get num of sources
+        for(var src in sources) {
+          numImages++;
+        }
+        for(var src in sources) {
+          images[src] = new Image();
+          images[src].onload = function() {
+            if(++loadedImages >= numImages) {
+              callback(images);
+            }
+          };
+          images[src].src = sources[src];
+        }
+    } 
 };

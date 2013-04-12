@@ -22,7 +22,9 @@ app.collections.Applications = Backbone.Collection.extend({
 
   model: app.models.Application,
 
-  initialize: function() {
+  initialize: function(data) {
+    console.log('this is the data')
+    console.log(data)
     this.by = 'open';
   },
 
@@ -44,7 +46,7 @@ app.collections.Applications = Backbone.Collection.extend({
   },
   search: function(key, value) {
     if(key && value) {
-      return _(this.filter(function(app){
+      return  _(this.filter(function(app){
         return app.get(key).indexOf(value) !== -1;
       }));
 
