@@ -375,11 +375,13 @@ function createAllTheHovers() {
               box.on('mouseover', function() {
                   printApp(this.getName());
                   layer.draw();
+                  document.body.style.cursor = 'pointer';
               });
 
               box.on('mouseout', function() {
                   clearApp();
                   layer.draw();
+                  document.body.style.cursor = 'default';
               });
 
               layer.add(box);
