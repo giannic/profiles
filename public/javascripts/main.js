@@ -74,7 +74,7 @@
             }
         });
 
-$("#newapp-button").click(function(event) {
+        $("#newapp-button").click(function(event) {
         // cache form input fields
         var name = $("#input-appname");
         var app_url = $("#input-appurl");
@@ -99,6 +99,10 @@ $("#newapp-button").click(function(event) {
 
         $('.close-more-apps').click(function() {
             $("#more-apps-box").toggle();
+        });
+
+        $("#manage-toggle").click(function() {
+            window.location.replace("/manage");
         });
 
         $("#logout-button").click(function() {
