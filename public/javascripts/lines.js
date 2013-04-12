@@ -52,7 +52,7 @@ var lines_init = function() {
           var endTimeA = stats[index]['close'][stats[index]['close'].length - 1];
 
           numberOfLines = numberOfLines+lengthA;
-          
+
           if (startTimeA < startTime) {
               startTime = startTimeA;
           }
@@ -75,12 +75,12 @@ var lines_init = function() {
       setUpAppSelection();
 
       initSlider();
-      
-      initFreqLine();
-  }});     
-});
 
-function myFunction(x){ 
+      initFreqLine();
+      }});
+  });
+
+function myFunction(x){
   var date = x.attributes.number.value;
   var val = new Date(date*1000);
   //console.log(val.format("dd-m-yy"));
@@ -88,11 +88,11 @@ function myFunction(x){
   show_stats();
 }
 
-function myFunction2(x){ 
+function myFunction2(x) {
   hide_stats();
 }
 
-function createAllTheHovers(){
+function createAllTheHovers() {
   var hovers = d3.selectAll("line"); // this should change
   //console.log("hovers = ");
   //console.log(hovers[0]);
@@ -115,7 +115,7 @@ function createAllTheHovers(){
         calcFreq(i);
     }
     var freqMax = Math.max.apply(null, frequencies);
-    
+
     var graph = d3.select(".frequency-container")
       .append("svg")
       .attr("width", w)
@@ -164,7 +164,7 @@ function createAllTheHovers(){
 
     //Set slider label dates to the min and max
     updateSliderDates(
-      getDate($("#timeline").rangeSlider("min")), 
+      getDate($("#timeline").rangeSlider("min")),
       getDate($("#timeline").rangeSlider("max")));
 
     $("#timeline").on("valuesChanging", function(e, data) {
@@ -173,7 +173,7 @@ function createAllTheHovers(){
 
     $("#timeline").on("valuesChanged", function(e, data) {
       calculateRender(
-        Math.round(data.values.min), 
+        Math.round(data.values.min),
         Math.round(data.values.max), 0);
         //updateSliderDates(getDate(data.values.min), getDate(data.values.max));
     });
@@ -249,8 +249,8 @@ function createAllTheHovers(){
 
       var string = nameArray[index];
       string = string.replace(' ', '-');
-      string = string.replace('.', '-'); 
-      string = string.replace('.', '-');          
+      string = string.replace('.', '-');
+      string = string.replace('.', '-');
 
       for (i = 0; i < renderArray.length; i++) {
           currentLine = lineGraph.append("a")
@@ -277,7 +277,7 @@ function createAllTheHovers(){
     d3.selectAll("line").remove();
     leftBarTime = startTime + (difference*startValIndex)/(100);
     rightBarTime = startTime + (difference*endValIndex)/(100);
-    diff = rightBarTime - leftBarTime; 
+    diff = rightBarTime - leftBarTime;
 
       for(var k = 0; k < appArray.length; k++){
         if(activeArray[k] == true){
@@ -312,13 +312,13 @@ function createAllTheHovers(){
     left = startTime + (difference*start)/(100);
     right = startTime + (difference*end)/(100);
     diff = right - left;
-    
+
     for (var i=0; i < appArray.length; i++) {
       if (activeArray[i]) {
         var app = appArray[i];
         openings = stats[app]['open'];
         closings = stats[app]['close'];
-        
+
         for (var j=0; j < openings.length; j++) {
           if((openings[j] > left) && (closings[j] < right)){
               frequencies[index] = frequencies[index] + 1;
@@ -375,11 +375,13 @@ function createAllTheHovers(){
               box.on('mouseover', function() {
                   printApp(this.getName());
                   layer.draw();
+                  document.body.style.cursor = 'pointer';
               });
 
               box.on('mouseout', function() {
                   clearApp();
                   layer.draw();
+                  document.body.style.cursor = 'default';
               });
 
               layer.add(box);
@@ -462,7 +464,7 @@ function createAllTheHovers(){
     printThatApp(s);
     //printUsername(u);
     printLastVisit(l);
-    printLastTime(t);  
+    printLastTime(t);
   }
 
   function printThatApp(d){
@@ -509,7 +511,7 @@ function createAllTheHovers(){
       }
 
       updateSliderDates(
-        getDate($("#timeline").rangeSlider("min")), 
+        getDate($("#timeline").rangeSlider("min")),
         getDate($("#timeline").rangeSlider("max")));
   }
 
@@ -525,7 +527,7 @@ function createAllTheHovers(){
       }
 
       updateSliderDates(
-        getDate($("#timeline").rangeSlider("min")), 
+        getDate($("#timeline").rangeSlider("min")),
         getDate($("#timeline").rangeSlider("max")));
   }
 
@@ -533,7 +535,7 @@ function createAllTheHovers(){
       playTimeline = !playTimeline;
       if (playTimeline) {
           interval = setInterval(function(){stepForward(1)},10);
-          obj.src = "img/controls_pause.gif";
+          obj.src = "img/controls/controls_pause.gif";
       } else {
           pause(obj);
       }
@@ -541,6 +543,6 @@ function createAllTheHovers(){
 
   function pause(obj) {
       clearInterval(interval);
-      obj.src = "img/controls_play.gif";
+      obj.src = "img/controls/controls_play.gif";
   }
 };

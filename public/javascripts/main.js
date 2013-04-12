@@ -12,6 +12,14 @@
       //console.log($('#visualizations').width());
       //console.log($('#grid').width());
       // $('#lines').width(WINDOW_WIDTH + 'px');
+      //
+    $('.menu-button').click(function() {
+        if ($(this).hasClass("menu-button-active") !== true) {
+            $(this).addClass("menu-button-active");
+        } else {
+            $(this).removeClass("menu-button-active");
+        }
+    });
 
       $('#grid-toggle').click(function() {
           $('#visualizations').stop().animate({
@@ -32,9 +40,22 @@
           }, 300);
       });
 
-      $('#add-account-toggle').click(function() {
-          $("#add-app-box").toggle();
-      });
+
+    $("#add-app-box").css("top", $('#header').height() - $('#add-app-box').height() - 18); // this needs to be fixed to take into account padding
+
+    $('#add-account-toggle').click(function() {
+        //$("#add-app-box").toggle();
+        if ($(this).hasClass("menu-button-active")) {
+            $("#add-app-box").css("top", $('#header').height() - $('#add-app-box').height());
+            $("#add-app-box").stop().animate({
+                top: "+=" + $("#add-app-box").height() // this also
+            }, 300);
+        } else {
+            $("#add-app-box").stop().animate({
+                top: "-=" +  $("#add-app-box").height()
+            }, 300);
+        }
+    });
 
       $('.close-more-apps').click(function() {
           $("#more-apps-box").toggle();

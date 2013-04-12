@@ -125,6 +125,11 @@ nav {
     nav .menu-button:hover {
       opacity: 1.0;
       cursor: pointer; }
+  nav .menu-button-active {
+    opacity: 1 !important; }
+    nav .menu-button-active:hover {
+      opacity: 0.3;
+      cursor: pointer; }
 
 .type-nav {
   left: 0; }
