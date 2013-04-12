@@ -232,9 +232,10 @@ function createAllTheHovers() {
  function toggleApps(circ){
     //initial loading of lines
     if(toggle == true){
-      circ.setFillRadialGradientColorStops([0, 'gray', 1, 'white']);
+      circ.setFillRadialGradientColorStops([0, '#C6C9D0', 1, 'white']);
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = true;
+        this.active = true;
         boxes[k].setOpacity(1.0);
         addAppBack(boxes[k].getId());
         layer.draw();
@@ -243,9 +244,10 @@ function createAllTheHovers() {
       toggle = false;
     }
     else{
-    circ.setFillRadialGradientColorStops([0, 'white', 1, 'gray']);
+    circ.setFillRadialGradientColorStops([0, 'white', 1, '#C6C9D0']);
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = false;
+        this.active = false;
         boxes[k].setOpacity(0.3);
         removeApp(boxes[k].getName(), boxes[k].getId());
         layer.draw();
@@ -366,7 +368,6 @@ function createAllTheHovers() {
     loadImages(sources, function(images) {
         var k = 0;
         for (var src in sources) {
-          console.log("yoyo");
         //for (var k = 0; k < appArray.length; k++) {
             // anonymous function to induce scope
             (function() {
@@ -380,7 +381,6 @@ function createAllTheHovers() {
                     newx = (k % width_count)*box_size;
 
                 var img = images[src];
-                console.log("img is " + img)
                 var box = new Kinetic.Rect({
                     x: newx,
                     y: newy, 
@@ -445,7 +445,6 @@ function createAllTheHovers() {
               })();
               k++;
             }
-            console.log(layer);
               // this depends on where the row is
               var onx, ony;
               if (k < width_count)
@@ -462,7 +461,7 @@ function createAllTheHovers() {
                   fillRadialGradientStartRadius: 0,
                   fillRadialGradientEndPoint: 0,
                   fillRadialGradientEndRadius: 10,
-                  fillRadialGradientColorStops: [0, 'gray', 1, 'white'],
+                  fillRadialGradientColorStops: [0, '#C6C9D0', 1, 'white'],
                   stroke: 'white',
                   name: "Toggle",
                   strokeWidth: 1
@@ -617,7 +616,10 @@ function createAllTheHovers() {
               callback(images);
             }
           };
-          images[src].src = sources[src];
+          var img = images[src];
+          img.src = sources[src];
+         
+          img.onerror = function (evt){this.onerror=null; this.src='/img/app_icons/favicon-default.gif';};
         }
     } 
 };

@@ -1,6 +1,8 @@
 {{#extend "stylesheets"}}
     <link rel="stylesheet" href="/stylesheets/default.css" />
     <link rel="stylesheet" href="/stylesheets/forms.css">
+    <link rel="stylesheet" href="/stylesheets/management.css">
+
 {{/extend}}
 
 {{#extend "javascripts"}}
@@ -12,6 +14,16 @@
     <div id="header">
         <a class="title" href="#">{{{title}}}</a>
         <p>{{{whitelist}}}</p>
+
+        <nav class="type-nav">
+            <ul>
+                <li>
+                    <img class="menu-button"
+                     id="back-button"
+                     src="img/ui_icons/back.png"/>
+                </li>
+            </ul>
+        </nav>
     </div>
 
     <div id="management-form-wrapper">
