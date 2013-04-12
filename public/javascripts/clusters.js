@@ -36,7 +36,7 @@ clusters_init = function(){
     num_categories = dataset.length;
 
     nodes = dataset;
-
+    console.log(nodes);
     // TODO: not using for size anymore?
     nodes.forEach(function(d, i) {
         if (dataset[i].apps.length > max_apps) {
