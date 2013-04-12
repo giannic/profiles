@@ -61,7 +61,7 @@
           height: new_height,
           width: new_width,
           left: new_left,
-          top: new_top,
+          top: new_top
         }, 100);
     
         this.$el.css('z-index',11);
