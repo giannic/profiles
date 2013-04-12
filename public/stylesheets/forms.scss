@@ -69,25 +69,13 @@
 }
 
 #form-wrapper {
-    margin: auto;
-    width: 100%;
-
-    // center this
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    margin: 30px auto;
+    width: 100%;   
 
     form {
         margin: auto;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
         width: 400px;
-        height: 150px;
+        height: 36px;
 
         .alert {
             position: absolute;
@@ -99,6 +87,32 @@
     }
 }
 
+#appmanagement-wrapper {
+    margin: auto;
+    width: 100%;
+
+    ul {
+        margin: auto;
+        height: 150px;
+        width: 600px;
+
+        li {
+            border-top: 1px solid #CCCCCC;
+            list-style-type: none;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            text-align: left;
+
+            div {
+                display: inline;
+            }
+
+            .app-name {
+                padding-right: 70px;
+            }
+        }
+    }
+}
 
 #add-app-box {
     position: absolute;
@@ -132,6 +146,15 @@
             bottom: 15px;
         }
     }
+}
+
+#input-appname {
+    display: inline;    
+}
+
+#allow-button {
+    display: inline;
+    margin: 0;
 }
 
 @-webkit-keyframes fade {

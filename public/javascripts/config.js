@@ -31,7 +31,7 @@ $(document).mousemove(function(e) {
 $(function() {
     //get the JSON file
     $.ajax({
-      url: 'apps/user',
+      url: 'apps/userallowed',
       dataType: 'json',
       error: function(err) {
         console.log(err);

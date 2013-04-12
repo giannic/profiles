@@ -154,6 +154,13 @@ nav {
     margin: 0px 20px 0px 0px;
     height: 100%;
     min-width: 32px; }
+    .utility-nav li input {
+      width: 32px;
+      height: 32px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      margin: auto; }
     .utility-nav li img {
       width: 32px;
       height: 32px;
