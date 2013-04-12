@@ -1,4 +1,5 @@
 clusters_init = function(){
+
     var window_width = WINDOW_WIDTH - 30,
         window_height = WINDOW_HEIGHT - 50, // TODO: subtract size of menubar
         image_width = [], // image widths of the apps
@@ -36,6 +37,8 @@ clusters_init = function(){
         id_index += 1;
     });
 
+    console.log(CAT_DATA)
+    console.log(dataset)
     num_categories = dataset.length;
 
     nodes = dataset;
@@ -89,6 +92,10 @@ clusters_init = function(){
             if (length > compare_apps)
                 length = compare_apps;
             x.r = (length/compare_apps)*x.r;
+            // cap it so it's not terribly big
+            if ((x.r + x.r*0.8 + pad*2)*2 > window_height) {
+                x.r = .25*window_height; // TODO: randomly chose
+            }
             // cap it so it's not terribly small
             if (x.r < 50) {
                 x.r = 50;
@@ -489,19 +496,21 @@ clusters_init = function(){
     for(var count = 0; count < c.length; count++){
         currimg = c[count];
         currimg.addEventListener("mouseover",function(evt) { hoverFunction(this);}, false);
-        currimg.addEventListener("mouseout",function(evt) { hoverOffFunction(this); }, false);
+        currimg.addEventListener("mouseout",function(evt) { hoverOffFunction(this);}, false);
      }
     }
 
     function hoverFunction(x){
         printClusterStats(x.attributes.url_id.value, "username", x.attributes.close_id.value, x.attributes.timeStamp.value);
         show_stats();
+        document.body.style.cursor = 'pointer'; // TODO: change so it will just be in the css
     }
 
     function hoverOffFunction(x){
       //  console.log("b");
     //console.log("mouseout");
         hide_stats();
+        document.body.style.cursor = 'default';
     }
 
     function deselect_old_cluster(old_category) {

@@ -23,8 +23,8 @@ app.collections.Applications = Backbone.Collection.extend({
   model: app.models.Application,
 
   initialize: function(data) {
-    console.log('this is the data')
-    console.log(data)
+    // console.log('this is the data')
+    // console.log(data)
     this.by = 'open';
   },
 

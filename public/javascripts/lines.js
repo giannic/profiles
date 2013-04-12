@@ -11,17 +11,8 @@ var lines_init = function() {
       frequencies = [];
 
   $(document).ready(function() {
-      //get the JSON file
-      $.ajax({
-          url: '/apps/user',
-          dataType: 'json',
-
-      error: function(err) {
-          console.log(err)
-          console.log('ERROR')
-      },
-
-      success: function(data) {
+      
+      var data = APP_DATA.apps;
 
       stats = data;
       numberOfLines = 0;
@@ -87,7 +78,6 @@ var lines_init = function() {
       initSlider();
 
       initFreqLine();
-      }});
   });
 
 function myFunction(x){
@@ -108,8 +98,8 @@ function createAllTheHovers() {
   //console.log(hovers[0]);
   for(var i = 0; i < hovers[0].length; i++){
     currline = hovers[0][i];
-    currline.addEventListener("mouseover",function(evt) { myFunction(this); }, false);
-    currline.addEventListener("mouseout",function(evt) { myFunction2(this); }, false);
+    currline.addEventListener("mouseover",function(evt) { myFunction(this); document.body.style.cursor = 'pointer';}, false);
+    currline.addEventListener("mouseout",function(evt) { myFunction2(this); document.body.style.cursor = 'default';}, false);
     }
 
 }
@@ -621,8 +611,8 @@ function createAllTheHovers() {
           img.src = sources[src];
 
           //img.onerror = function (evt) {this.onerror=null;}
-          img.onerror = function (evt){console.log('in here');this.onerror=null; this.src='/img/app_icons/favicon-default.gif';};
-        console.log('hihihi');
+          img.onerror = function (evt){this.onerror=null; this.src='/img/app_icons/favicon-default.gif';};
+        // console.log('hihihi');
           
         }
     } 
