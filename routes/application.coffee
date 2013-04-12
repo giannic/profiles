@@ -1,4 +1,5 @@
 Application = require('../models/application')
+User = require('../models/user')
 helpers = require('./route_helpers')
 
 # App = new mongoose.Schema
@@ -27,7 +28,7 @@ exports.open = (req, res) ->
   name = req.body.app_name
   url = req.body.url
   if not name
-    i = url.indexOf(".")
+    i = url.lastIndexOf(".")
     name = url.substring(0, i)
 
   console.log(name)
@@ -175,7 +176,6 @@ exports.update_category = (req, res) ->
         res.send success: "Category updated."
   )
 
-# if there is no userid, then don't return any data, redirect to login
 exports.get_by_user = (req, res) ->
   helpers.loadUser req, res, ->
     Application.find userid: req.session.user_id, 'category img url open close open_count close_count',
@@ -186,6 +186,33 @@ exports.get_by_user = (req, res) ->
         else
           console.log 'userid ' + req.session.user_id
           console.log 'success ' + result
+          console.log result
           res.json result
+
+# get applications for this user that are on whitelist
+# if there is no userid, then don't return any data, redirect to login
+exports.get_apps_on_whitelist = (req, res) ->
+  apps = []
+  #userid = "515e00a1b84f094dd5000001" 
+  helpers.loadUser req, res, ->
+    # get all applications for this user
+    Application.find({userid: userid}, 'category img url open close open_count close_count',
+      (err, result) ->
+        # render error if there is one
+        if err
+          console.log 'error' + err
+          res.send(error: err)
+        # get whitelist
+        else
+          apps = result
+          whitelist = []
+          User.findById(userid, {whitelist}, (err, result) ->
+            if err then res.send(error: err)
+            whitelist = result['whitelist']
+            output = (app for app in apps when app['url'] in whitelist)
+            res.send(apps: output)
+          )
+  )
+
 
 
