@@ -49,8 +49,7 @@ html {
 body {
   height: 100%;
   width: 100%;
-  overflow-x: hidden;
-  overflow-y: hidden; }
+  overflow-x: hidden; }
 
 a {
   text-decoration: none;
@@ -70,7 +69,8 @@ svg {
   text-align: center;
   font-family: Arvo-Regular, Georgia, Times, serif;
   color: #4d4d4d;
-  background-color: white; }
+  background-image: url("../img/textures/cream_dust.png");
+  background-repeat: repeat; }
 
 #header {
   width: 100%;
@@ -119,8 +119,11 @@ nav {
       margin: 15px 20px 0px 0px; }
   nav .menu-button {
     width: 32px;
-    height: 32px; }
+    height: 32px;
+    opacity: 0.3;
+    transition: opacity 0.5s ease-in; }
     nav .menu-button:hover {
+      opacity: 1.0;
       cursor: pointer; }
 
 .type-nav {
@@ -174,3 +177,7 @@ nav {
     bottom: 0;
     right: 0;
     color: #FFF; }
+
+.info-message {
+  color: #666666;
+  margin-top: 100px; }

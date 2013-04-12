@@ -110,25 +110,25 @@
   });
 
   var images = [
-    'img/behance-square.png',
-    'img/blogger-square.png',
-    'img/deviantart-square.png',
-    'img/digg-square.png',
-    'img/facebook-square.png',
-    'img/flickr-square.png',
-    'img/googleplus-square.png',
-    'img/instagram-square.png',
-    'img/lastfm-square.png',
-    'img/linkedin-square.png',
-    'img/livejournal-square.png',
-    'img/paypal-square.png',
-    'img/orkut-square.png',
-    'img/picasa-square.png',
-    'img/pinterest-square.png',
-    'img/skype-square.png',
-    'img/soundcloud-square.png',
-    'img/stumbleupon-square.png',
-    'img/tumblr-square.png'
+    'img/app_icons/behance-square.png',
+    'img/app_icons/blogger-square.png',
+    'img/app_icons/deviantart-square.png',
+    'img/app_icons/digg-square.png',
+    'img/app_icons/facebook-square.png',
+    'img/app_icons/flickr-square.png',
+    'img/app_icons/googleplus-square.png',
+    'img/app_icons/instagram-square.png',
+    'img/app_icons/lastfm-square.png',
+    'img/app_icons/linkedin-square.png',
+    'img/app_icons/livejournal-square.png',
+    'img/app_icons/paypal-square.png',
+    'img/app_icons/orkut-square.png',
+    'img/app_icons/picasa-square.png',
+    'img/app_icons/pinterest-square.png',
+    'img/app_icons/skype-square.png',
+    'img/app_icons/soundcloud-square.png',
+    'img/app_icons/stumbleupon-square.png',
+    'img/app_icons/tumblr-square.png'
   ];
 
   function render_html() {

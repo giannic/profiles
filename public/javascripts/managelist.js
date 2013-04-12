@@ -13,14 +13,14 @@ $(document).ready(function() {
 
 function makePost(endpoint) {
     var domain = $("#input-appname").val();
-    console.log(domain);
+    // console.log(domain);
     $.post(endpoint, {"domain": domain}, renderResponse);
 }
 
 function renderResponse(data, status, xhr) {
     if ("success" in data) {
         //$("#response").html("Success! " + data["success"]);
-        console.log(data["success"]);
+        // console.log(data["success"]);
         var newList = data["success"]["new_whitelist"];
         var outputHtml = "";
         for (var i = 0; i < newList.length; i ++) {

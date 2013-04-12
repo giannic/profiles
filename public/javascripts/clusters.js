@@ -441,10 +441,12 @@ clusters_init = function(){
 
         var hovers = svg.selectAll("image") // this should change
             .on("mouseenter", function() {
+                hoverFunction();
                 show_stats();
                 d3.event.stopPropagation();
             })
             .on("mouseleave", function() {
+                hoveroffFunction();
                 hide_stats();
             })
             .on("mousedown", function() {
@@ -454,7 +456,7 @@ clusters_init = function(){
         // make the more visible for those categories with too many apps
         svg.select("#more_" + x.id)
             .attr("display", function(x){
-                if (x.apps.length > cap_apps && 
+                if (x.apps.length > cap_apps &&
                     (x.id == selected_category) || (x.id == clicked_category)) {
                     // check if it's selected
                     return "visible";
@@ -465,14 +467,14 @@ clusters_init = function(){
     }
 
     function hoverFunction(x){
-        console.log("a");
+        // console.log("a");
     //console.log(x);
-    //printTheStats(x.attributes.href, "username");
+        printClusterStats("hiya", "username", "somethingelse");
     //show_stats();
     }
 
     function hoveroffFunction(x){
-        console.log("b");
+        // console.log("b");
     //console.log("mouseout");
     //hide_stats();
     }
@@ -547,7 +549,7 @@ clusters_init = function(){
         // hide the more link
         svg.select("#more_" + d.id)
             .attr("display", "none");
-        
+
         // bring up a less link
         svg.select("#less_" + d.id)
             .attr("display", "visible");
@@ -561,7 +563,7 @@ clusters_init = function(){
             new_space,
             start_pos = {x: -window_width/2 + pad, y: -window_height/2 + pad},
             space = new_width + pad;
- 
+
         svg.selectAll(".link_img_" + d.id)
             .transition()
             .attr("x", function(x, j){
@@ -614,6 +616,49 @@ clusters_init = function(){
             });
     }
 
+  function printClusterStats(s, u, l){
+    //console.log(s);
+    printThatApp(s);
+    //printUsername(u);
+    printLastVisit(l);
+    clearLastTime();  
+  }
+
+      function printThatApp(d){
+    var f = document.getElementById("thatapp");
+    while(f.childNodes.length >= 1) {
+      f.removeChild(f.firstChild);
+    }
+    f.appendChild(f.ownerDocument.createTextNode(d));
+    }
+
+    function printUsername(d){
+    var f = document.getElementById("username");
+    while(f.childNodes.length >= 1) {
+      f.removeChild(f.firstChild);
+    }
+    f.appendChild(f.ownerDocument.createTextNode(d));
+    }
+
+    function printLastVisit(d){
+    var f = document.getElementById("lastvisit");
+    while(f.childNodes.length >= 1) {
+      f.removeChild(f.firstChild);
+    }
+    f.appendChild(f.ownerDocument.createTextNode(d));
+    }
+     
+    function clearLastTime(){
+    var f = document.getElementById("lasttime");
+    while(f.childNodes.length >= 1) {
+      f.removeChild(f.firstChild);
+    }
+    }
+
+
+
 };
+
+
 
 

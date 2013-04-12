@@ -37,12 +37,12 @@ $(function() {
         console.log(err);
       },
       success: function(data) {
-        console.log("HERE");
-        console.log('HIHIHIHIHIHIHWHHHHQYQUYERYQUROUIF');
+        // console.log("HERE");
+        // console.log('HIHIHIHIHIHIHWHHHHQYQUYERYQUROUIF');
         APP_DATA = data;
         // format the data for categories
         var cats = _.uniq(_.pluck(data, 'category'));
-        console.log(cats);
+        // console.log(cats);
         _.each(cats, function(cat) {
          CAT_DATA[cat] = _.where(data, {category: cat});
         });
