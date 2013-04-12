@@ -157,7 +157,7 @@ exports.view = (req, res) ->
   )
 
 ###
-# /users/whitelist
+# /users/whitelist.json
 # pass in id
 # returns list of user's tracked apps
 ###
@@ -168,6 +168,19 @@ exports.whitelist = (req, res) ->
     if err
       res.send(error: err)
     res.json(result.whitelist)
+  )
+
+###
+# /users/whitelist
+# for use with browser sessions
+# returns list of user's tracked apps
+###
+exports.whitelist_session = (req, res) ->
+  user_id = req.session.user_id
+  User.findById(user_id, (err, result) ->
+    if err
+      res.send(error: err)
+    res.json(whitelist: result.whitelist)
   )
 
 ###

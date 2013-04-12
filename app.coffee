@@ -14,8 +14,8 @@ hbs = require('hbs')
 conf =
   db: {
     db: 'test',
-    host: 'davidxu.me',
-    #host: 'localhost',
+    #host: 'davidxu.me',
+    host: 'localhost',
     port: 27017,
     username: '',
     password: '',
@@ -72,6 +72,7 @@ app.get "/users.json", user.json_all
 app.get "/users/:id.json", user.view
 app.get "/users/:id/reset_whitelist", user.reset_whitelist
 app.get "/users/:id/whitelist.json", user.whitelist
+app.get "/users/whitelist", user.whitelist_session
 app.post "/users/allow", user.allow
 app.post "/users/disallow", user.disallow
 app.post "/users/delete_app", user.delete_app #untested
