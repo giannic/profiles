@@ -140,7 +140,8 @@
 
   function render_html() {
     this.$el.html(this.template({application: this.model.toJSON(),
-                                 img: images[Math.floor(Math.random() * (images.length))]}));
+                                 img: this.model.get('url').substring(0, this.model.get('url').lastIndexOf("."))
+    }));
     // TEMPORAROY TODO: remove image
     //this.$el.append($(app.templates.grid_img));
     // this.$el.append(_.template(app.templates.grid_img, {img: images[Math.floor(Math.random() * (images.length))]}));
