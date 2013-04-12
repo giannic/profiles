@@ -153,9 +153,9 @@ clusters_init = function(){
         .attr("r", function(x){
             return x.r;
         })
-        .style("fill", function(x, i){
-            return "hsl(" + i*(255/num_categories) + ",70%,40%)";
-        })
+        //.style("fill", function(x, i){
+            //return "hsl(" + i*(255/num_categories) + ",70%,40%)";
+        //})
         .attr("id", function(x){
             return "circle_" + x.id;
         });
@@ -166,8 +166,8 @@ clusters_init = function(){
         })
         .attr({
             "alignment-baseline": "middle",
-            "text-anchor": "middle",
-            "font-family": "Helvetica"
+            "text-anchor": "middle"
+            //"font-family": "Helvetica"
         })
         .attr("class", "vis-label")
         .attr("id", function(x){
@@ -206,7 +206,7 @@ clusters_init = function(){
             return "none";
         })
         .attr("dy", "18px")
-        .style('fill', "#eee")
+        //.style('fill', "#eee")
         .on("mousedown", function(d, i) {
             // TODO: change to a cursor
             more_apps(d, i);
@@ -235,7 +235,7 @@ clusters_init = function(){
             return "none";
         })
         .attr("dy", "18px")
-        .style('fill', "#eee")
+        //.style('fill', "#eee")
         .on("mousedown", function(d, i) {
             less_apps(d, i);
         });

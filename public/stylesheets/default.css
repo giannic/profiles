@@ -128,7 +128,7 @@ nav {
       opacity: 1.0;
       cursor: pointer; }
   nav .menu-button-active {
-    opacity: 1.0 !important; }
+    opacity: 1 !important; }
     nav .menu-button-active:hover {
       opacity: 0.3;
       cursor: pointer; }
