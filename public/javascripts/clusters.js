@@ -428,11 +428,22 @@ clusters_init = function(){
         cluster_apps[selected_category]
             .append('image')
             .attr('xlink:href', function(d) {
+                var that = this;
                 var j = d.url.indexOf("."),
                     name = d.url.substring(0, j);
-                return "/img/app_icons/" + name + ".png";
-
-                //return d.img;
+                // check to see if this image exists
+                var img = new Image();
+                img.src = "/img/app_icons/" + name + ".png";
+                img.onerror = function (evt) { 
+                    console.log('inside'); this.onerror=null; 
+                    this.src='/img/app_icons/social-networks.png';
+                    d3.select(that).attr('xlink:href', this.src);
+                };
+ 
+                console.log("THIS SHOULD BE SET");
+                console.log(img.src);
+                //console.log("updated src " + img.src);
+                return img.src;
             })
             .attr("id", function(d, j){
                 return "link" + j + "_img_" + x.id;
@@ -490,14 +501,20 @@ clusters_init = function(){
                 else
                     return "none";
             });
-    
-    var c = svg.selectAll("image")[0];
 
-    for(var count = 0; count < c.length; count++){
-        currimg = c[count];
-        currimg.addEventListener("mouseover",function(evt) { hoverFunction(this);}, false);
-        currimg.addEventListener("mouseout",function(evt) { hoverOffFunction(this);}, false);
-     }
+        for (var k = 0; k < x.apps.length; k++) {
+            var image = svg.select('#link_' + k + "_img_" + x.id)
+                .on("error", function() {console.log("ERORERJ:SLJ");} );
+           
+        }
+
+        var c = svg.selectAll("image")[0];
+
+        for(var count = 0; count < c.length; count++){
+            currimg = c[count];
+            currimg.addEventListener("mouseover",function(evt) { hoverFunction(this);}, false);
+            currimg.addEventListener("mouseout",function(evt) { hoverOffFunction(this);}, false);
+        }
     }
 
     function hoverFunction(x){
@@ -709,8 +726,6 @@ clusters_init = function(){
         }
         f.appendChild(f.ownerDocument.createTextNode(d));
     }
-
-
 
 };
 
