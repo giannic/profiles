@@ -232,10 +232,11 @@ function createAllTheHovers() {
  function toggleApps(circ){
     //initial loading of lines
     if(toggle == true){
-      circ.setFillRadialGradientColorStops([0, 'gray', 1, 'white']);
+      circ.setFillRadialGradientColorStops([0, '#C6C9D0', 1, 'white']);
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = true;
-        //boxes[k].setOpacity(1.0);
+        this.active = true;
+        boxes[k].setOpacity(1.0);
         addAppBack(boxes[k].getId());
         layer.draw();
       }
@@ -243,10 +244,11 @@ function createAllTheHovers() {
       toggle = false;
     }
     else{
-    circ.setFillRadialGradientColorStops([0, 'white', 1, 'gray']);
+    circ.setFillRadialGradientColorStops([0, 'white', 1, '#C6C9D0']);
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = false;
-        //boxes[k].setOpacity(0.3);
+        this.active = false;
+        boxes[k].setOpacity(0.3);
         removeApp(boxes[k].getName(), boxes[k].getId());
         layer.draw();
       }
@@ -391,7 +393,7 @@ function createAllTheHovers() {
                     fillPatternScale: [20/img.width, 20/img.height]
                 });
 
-                boxes[k] = box;
+                boxes[k-1] = box;
 
                 box.on('mousedown', function() {
                     if (this.getOpacity() == 1.0 && this.active == true) {
@@ -460,7 +462,7 @@ function createAllTheHovers() {
                   fillRadialGradientStartRadius: 0,
                   fillRadialGradientEndPoint: 0,
                   fillRadialGradientEndRadius: 10,
-                  fillRadialGradientColorStops: [0, 'gray', 1, 'white'],
+                  fillRadialGradientColorStops: [0, '#C6C9D0', 1, 'white'],
                   stroke: 'white',
                   name: "Toggle",
                   strokeWidth: 1
