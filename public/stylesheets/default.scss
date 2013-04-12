@@ -17,7 +17,6 @@ body {
     height: 100%;
     width: 100%;
     overflow-x: hidden;
-    overflow-y: hidden;
 }
 
 a {
@@ -46,7 +45,8 @@ svg {
     color: #4d4d4d;
 
     background: {
-        color: $BACKGROUND;
+        image: url("../img/textures/cream_dust.png");
+        repeat: repeat;
     }
 }
 
@@ -110,8 +110,11 @@ nav {
     .menu-button {
         width: 32px;
         height: 32px;
+        opacity: 0.3;
+        transition: opacity 0.5s ease-in;
 
         &:hover {
+            opacity: 1.0;
             cursor: pointer;
         }
     }
@@ -192,4 +195,9 @@ nav {
     }
 }
 
-
+.info-message {
+    color: $LIGHT_GREY;
+    margin: {
+        top: 100px;
+    }
+}

@@ -15,7 +15,6 @@
     <div id="form-wrapper">
         <form method="POST">
             <div class="alert"> {{{msg}}} </div>
-            <!--<label for="input-username">Username</label>-->
             <input class="user-input-field" id="input-username"
                    type="text" name="email"
                    placeholder="Username"
@@ -23,7 +22,6 @@
                     class="error"
                 {{/if}}
             />
-            <!--<label for="input-password">Password</label>-->
             <input class="user-input-field" id="input-password"
                    type="password" name="password"
                    placeholder="Password"
@@ -31,7 +29,8 @@
                     class="error"
                 {{/if}}
             />
-            <input class="form-button" type="submit" value="LOGIN"/>
+            <input class="form-button" type="submit" value="Login"/>
+            <span class="info-message"> Don't have an account? <a href="/register">Register</a>! </span>
         </form>
     </div>
 </div>

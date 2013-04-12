@@ -12,26 +12,24 @@
 }
 
 .ui-rangeSlider .ui-rangeSlider-innerBar {
-    height: 2px;
-    margin: 13px 6px;
-    //background: #c0c1c1;
+    height: 31px;
+    margin: 0px 6px;
     background: none;
 }
 
 .ui-rangeSlider .ui-rangeSlider-handle {
-    width: 2px;
+    width: 3px;
     height: 31px;
-    background: #c0232b;
-    background: #c1272d;
+    background: #666;
     cursor: col-resize;
 }
 
 .ui-rangeSlider .ui-rangeSlider-bar {
-    margin: 13px 0;
-    //background: #808181;
-    //background: rgba(128, 129, 129, 0.7);
+    //margin: 13px 0;
+    margin: 0;
+    height: 31px;
     background: none;
-    height: 2px;
+    //height: 2px;
     cursor: move;
     cursor: grab;
     cursor: -moz-grab;

@@ -46,6 +46,7 @@
 
       // click listener for submit button on "new app" pop up
       $("#newapp-button").click(function(event) {
+          console.log(window);
         // cache form input fields
         var name = $("#input-appname")
         var app_url = $("#input-appurl")

@@ -1,21 +1,35 @@
 {{#extend "stylesheets"}}
+    <link rel="stylesheet" href="/stylesheets/default.css" />
     <link rel="stylesheet" href="/stylesheets/forms.css">
 {{/extend}}
 
 {{#extend "javascripts"}}
 {{/extend}}
 
+<div id="wrapper">
+    <div id="header">
+        <a class="title" href="#">{{{title}}}</a>
+    </div>
 
-<div id="wrapper"> 
-  <div id="form-wrapper">
-    <form method="POST">
-      <div class="alert"> {{{msg}}} </div>
-      <!-- <h4> Login </h4>-->
-      <label for="input-username">Username</label>
-      <input id="input-username" type="text" name="email" {{#if msg}} class="error" {{/if}} />
-      <label for="input-password">Password</label>
-      <input id="input-password" type="password" name="password" {{#if msg}} class="error" {{/if}} />
-      <input type="submit" value="Register" />
-    </form>
-  </div>
+    <div id="form-wrapper">
+        <form method="POST">
+            <div class="alert"> {{{msg}}} </div>
+            <input class="user-input-field" id="input-username"
+                   type="text" name="email"
+                   placeholder="Username"
+                {{#if msg}}
+                    class="error"
+                {{/if}}
+            />
+            <input class="user-input-field" id="input-password"
+                   type="password" name="password"
+                   placeholder="Password"
+                {{#if msg}}
+                    class="error"
+                {{/if}}
+            />
+            <input class="form-button" type="submit" value="Register"/>
+            <span class="info-message"> Already have an account? <a href="/login">Login</a>! </span>
+        </form>
+    </div>
 </div>

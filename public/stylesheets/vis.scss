@@ -8,16 +8,14 @@
 
 #visualizations {
     position: absolute;
-    background: {
-        image: url('../img/textures/cream_dust.png');
-        repeat: repeat;
-    }
 }
 
 .vis-shape {
     //stroke: $SHAPE_STROKE;
-    //stroke-width: 2px;
+    //stroke-width: 1px;
     fill: $SHAPE_FILL;
+    fill-opacity: 1;
+    //stroke-opacity: 0.2;
 }
 
 .vis-label {
@@ -31,6 +29,10 @@
     font-family: $BODY_STACK;
     text-anchor: middle;
     fill: $SUBTEXT_FILL;
+
+    &:hover {
+        cursor: pointer;
+    }
 }
 
 #circles {
@@ -47,7 +49,7 @@
 #timeline_panel {
     position: relative;
     margin: auto;
-    width: 90%;
+    width: 1000px;
 }
 
 #timeline {
