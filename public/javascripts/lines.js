@@ -343,8 +343,8 @@ function createAllTheHovers() {
   }
 
   function setUpAppSelection(){
-    if (width_count > appArray.length + 2)
-        width_count = appArray.length + 2;
+    if (width_count > appArray.length + 1)
+        width_count = appArray.length + 1;
 
     var stage = new Kinetic.Stage({
         container: 'container',
@@ -366,7 +366,7 @@ function createAllTheHovers() {
 
     // create images
     loadImages(sources, function(images) {
-        var k = 0;
+        var k = 1;
         for (var src in sources) {
         //for (var k = 0; k < appArray.length; k++) {
             // anonymous function to induce scope
@@ -386,14 +386,14 @@ function createAllTheHovers() {
                     y: newy, 
                     width: 20,
                     height: 20,
-                    id: appArray[k],
-                    name: nameArray[k],
+                    id: appArray[k-1],
+                    name: nameArray[k-1],
                     active: true,
                     fillPatternImage: img,
                     fillPatternScale: [20/img.width, 20/img.height]
                 });
 
-                boxes[k] = box;
+                boxes[k-1] = box;
 
                 box.on('mousedown', function() {
                     if (this.getOpacity() == 1.0 && this.active == true) {
@@ -447,15 +447,16 @@ function createAllTheHovers() {
             }
               // this depends on where the row is
               var onx, ony;
-              if (k < width_count)
+              k = 0;
+/*              if (k < width_count)
                 onx = k*box_size + 10;
               else
-                onx = (k % width_count)*box_size + 10;
+                onx = (k % width_count)*box_size + 10; */
               ony = Math.floor(k/width_count)*box_size + 10;
 
               var circle = new Kinetic.Circle({
-                  x: onx,
-                  y: ony,
+                  x: 10,
+                  y: 10,
                   radius: 10,
                   fillRadialGradientStartPoint: 0,
                   fillRadialGradientStartRadius: 0,
@@ -618,8 +619,11 @@ function createAllTheHovers() {
           };
           var img = images[src];
           img.src = sources[src];
-         
-          img.onerror = function (evt){this.onerror=null; this.src='/img/app_icons/favicon-default.gif';};
+
+          //img.onerror = function (evt) {this.onerror=null;}
+          img.onerror = function (evt){console.log('in here');this.onerror=null; this.src='/img/app_icons/favicon-default.gif';};
+        console.log('hihihi');
+          
         }
     } 
 };
