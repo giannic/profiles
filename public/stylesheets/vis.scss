@@ -16,8 +16,10 @@
 
 .vis-shape {
     //stroke: $SHAPE_STROKE;
-    //stroke-width: 2px;
+    //stroke-width: 1px;
     fill: $SHAPE_FILL;
+    fill-opacity: 1;
+    //stroke-opacity: 0.2;
 }
 
 .vis-label {
@@ -38,7 +40,7 @@
 }
 
 #lines {
-    top: 300px;
+    top: 25px;
     position: relative;
     margin: 0 auto;
 
