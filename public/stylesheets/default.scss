@@ -153,7 +153,17 @@ nav {
       img {
         @include center_vert_in_rel(32px, 32px);
       }
+    }
 
+    #grid-search-wrapper {
+      margin-right: 150px;
+      padding: 0px;
+      position:relative;
+      input {
+        @include center_vert_in_rel(150px, 20px);
+        top: 50%;
+        margin-top: -18px;
+      }
     }
 }
 

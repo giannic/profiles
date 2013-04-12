@@ -161,6 +161,19 @@ nav {
       top: 0;
       bottom: 0;
       margin: auto; }
+  .utility-nav #grid-search-wrapper {
+    margin-right: 150px;
+    padding: 0px;
+    position: relative; }
+    .utility-nav #grid-search-wrapper input {
+      width: 150px;
+      height: 20px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      top: 50%;
+      margin-top: -18px; }
 
 #grid-search {
   width: 150px;
