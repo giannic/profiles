@@ -7,7 +7,10 @@ grid_init = function(){
     // global event bus
     grid_vent = _.extend({}, Backbone.Events);
 
-    app.applications = new app.collections.Applications(APP_DATA);
+    app.applications = new app.collections.Applications(APP_DATA.apps);
+    console.log('hihih')
+    console.log(app.applications)
+    console.log(APP_DATA)
     // append the grid to body
     $('#visualizations').prepend(new app.views.GridView({collection: app.applications}).render().el);
     $('#more-apps-box').prepend(new app.views.GridView({collection: app.applications}).render().el);

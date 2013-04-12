@@ -229,9 +229,10 @@ function createAllTheHovers() {
     calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
   }
 
- function toggleApps(){
+ function toggleApps(circ){
     //initial loading of lines
     if(toggle == true){
+      circ.setFill('white');
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = true;
         boxes[k].setOpacity(1.0);
@@ -242,6 +243,7 @@ function createAllTheHovers() {
       toggle = false;
     }
     else{
+      circ.setFill('gray');
       for(var k = 0; k < activeArray.length; k++){
         activeArray[k] = false;
         boxes[k].setOpacity(0.3);
@@ -373,16 +375,20 @@ function createAllTheHovers() {
                   height: 20,
                   id: appArray[k],
                   name: nameArray[k],
+                  active: true,
                   fill: colorset
               });
 
               boxes[k] = box;
 
               box.on('mousedown', function() {
-                  if (this.getOpacity() == 1.0) {
+                  if (this.getOpacity() == 1.0 && this.active == true) {
+                      this.active = false;
                       this.setOpacity(0.3);
                       removeApp(this.getName(), this.getId());
-                  } else {
+                  }
+                  else {
+                      this.active = true;
                       this.setOpacity(1.0);
                       addAppBack(this.getId());
                   }
@@ -396,6 +402,10 @@ function createAllTheHovers() {
                     activeArray[this.getId()] = true;
                     calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
                     activeArray[this.getId()] = false;
+                    this.active = false;
+                  }
+                  else{
+                    this.active = true;
                   }
                   printApp(this.getName());
                   layer.draw();
@@ -404,7 +414,11 @@ function createAllTheHovers() {
 
               box.on('mouseout', function() {
                   if(activeArray[this.getId()] == false){
+                    this.active = false;
                     this.setOpacity(.3);
+                  }
+                  else{
+                    this.active = true;
                   }
                   clearApp();
                   calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
@@ -422,28 +436,29 @@ function createAllTheHovers() {
               else
                 onx = (k % width_count)*box_size + 10;
               ony = Math.floor(k/width_count)*box_size + 10;
-              var circleON = new Kinetic.Circle({
+
+              var circle = new Kinetic.Circle({
                   x: onx,
                   y: ony,
                   radius: 10,
                   fill: 'white',
                   stroke: 'gray',
-                  name: "Toggle All On",
+                  name: "Toggle All",
                   strokeWidth: 1
               });
 
-              circleON.on('mousedown', function() {
-                  toggleApps();
+              circle.on('mousedown', function() {
+                  toggleApps(this);
                   printApp(this.getName());
                   layer.draw();
               });
 
-              circleON.on('mouseover', function() {
+              circle.on('mouseover', function() {
                   printApp(this.getName());
                   layer.draw();
               });
 
-              circleON.on('mouseout', function() {
+              circle.on('mouseout', function() {
                   clearApp();
                   layer.draw();
               });
@@ -454,34 +469,8 @@ function createAllTheHovers() {
               else
                 offx = ((k+1) % width_count)*box_size + 10;
               offy = Math.floor(k/width_count)*box_size + 10;
-              var circleOFF = new Kinetic.Circle({
-                  x: offx,
-                  y: offy,
-                  radius: 10,
-                  fill: 'gray',
-                  stroke: 'black',
-                  name: "Toggle All Off",
-                  strokeWidth: 1
-              });
 
-              circleOFF.on('mousedown', function() {
-                  toggleApps();
-                  printApp(this.getName());
-                  layer.draw();
-              });
-
-              circleOFF.on('mouseover', function() {
-                  printApp(this.getName());
-                  layer.draw();
-              });
-
-              circleOFF.on('mouseout', function() {
-                  clearApp();
-                  layer.draw();
-              });
-
-              layer.add(circleON);
-              layer.add(circleOFF);
+              layer.add(circle);
         // add the layer to the stage
         stage.add(layer);
   }
