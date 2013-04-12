@@ -4,6 +4,8 @@
     this.img = json.img;
     this.url = json.url;
     this.id = json.id;
+    this.close = json.close;
+    this.open = json.open;
   };
 })();
 
