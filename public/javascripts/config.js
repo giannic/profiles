@@ -1,8 +1,6 @@
-// THIS SHOULD NOT BE A GLOBAL, CHANGE AFTER CODE CLEANUP
-
 var APP_DATA = [],
-    CAT_DATA = {}, 
-    WINDOW_WIDTH = $(window).width(), 
+    CAT_DATA = {},
+    WINDOW_WIDTH = $(window).width(),
     WINDOW_HEIGHT = $(window).height(),
     app = {
         models: {},
@@ -10,6 +8,13 @@ var APP_DATA = [],
         views: {},
         templates: {}
     };
+
+/*
+ * durations constants
+ */
+var X_LINE_OFFSET = 0,
+    ROW_HEIGHT = 0,
+    CANVAS_WIDTH = 0; // add more as necessary
 
 show_stats = function(id) {
     $("#stats").show();
@@ -37,16 +42,10 @@ $(function() {
         console.log(err);
       },
       success: function(data) {
-        // console.log("HERE");
-        // console.log('HIHIHIHIHIHIHWHHHHQYQUYERYQUROUIF');
         APP_DATA = data;
         // format the data for categories
-        console.log('thisss')
-        console.log(data)
         var cats = _.uniq(_.pluck(data.apps, 'category'));
-        // console.log(_.pluck(data.apps, 'category'))
 
-        console.log(cats);
         _.each(cats, function(cat) {
          CAT_DATA[cat] = _.where(data.apps, {category: cat});
         });
@@ -62,4 +61,5 @@ var init = function(){
   clusters_init();
   lines_init();
   grid_init();
+  //durations_init(); // uncomment when function is implemented
 };
