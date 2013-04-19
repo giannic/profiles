@@ -26,6 +26,7 @@
     <script type="text/javascript" src="javascripts/main.js"></script>
     <script type="text/javascript" src="javascripts/views/GridView.js"></script>
     <script type="text/javascript" src="javascripts/grid.js"></script>
+    <script type="text/javascript" src="javascripts/durations.js"></script>
 {{/extend}}
 
 <div id="wrapper">
@@ -48,6 +49,11 @@
                     <img class="menu-button"
                          id="timelines-toggle"
                          src="img/ui_icons/timelines.png"/>
+                </li>
+                <li>
+                    <img class="menu-button"
+                         id="durations-toggle"
+                         src="img/ui_icons/timelines.png"/><!-- change-->
                 </li>
             </ul>
         </nav>
@@ -77,14 +83,20 @@
     </div>
 
     <div id="visualizations">
-        <div id="circles" class="vis"></div>
+        <!-- CIRCLES -->
+        <div id="circles" class="vis">
+        </div>
 
+        <!-- LINES -->
         <div id="lines" class="vis">
             <div id="container" style="position: relative; margin: 0px auto;">
-        </div>
-             <div id="appname" style="text-align: center; height: 25px; margin: 0px auto;"></div>
-            </p>
-            <div id="D3line"></div>
+            </div>
+
+            <div id="appname" style="text-align: center; height: 25px; margin: 0px auto;">
+            </div>
+
+            <div id="D3line">
+            </div>
             <div id="timeline_panel">
                 <div id="timeline"></div>
                 <p id="timeline_details">
@@ -114,9 +126,11 @@
                            height="20">
                     <span id="timeline_dateRight"> </span>
                 </p>
-              </div>
             </div>
-          </div>
+        </div>
+
+        <div id="durations" class="vis">
+            <canvas id="durations-canvas"></canvas>
         </div>
     </div>
 

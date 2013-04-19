@@ -1,3 +1,5 @@
+var VIS_COUNT = 4;
+
 var APP_DATA = [],
     CAT_DATA = {},
     WINDOW_WIDTH = $(window).width(),
@@ -57,9 +59,9 @@ $(function() {
 });
 
 
-var init = function(){
-  clusters_init();
-  lines_init();
-  grid_init();
-  //durations_init(); // uncomment when function is implemented
+var init = function() {
+    clusters_init();
+    lines_init();
+    grid_init();
+    durations_init(); // uncomment when function is implemented
 };

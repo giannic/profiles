@@ -37,8 +37,6 @@ clusters_init = function(){
         id_index += 1;
     });
 
-    console.log(CAT_DATA)
-    console.log(dataset)
     num_categories = dataset.length;
 
     nodes = dataset;
@@ -48,11 +46,9 @@ clusters_init = function(){
         var imgs = nodes[count].apps;
         for(var count2 = 0; count2 < imgs.length; count2++){
             allImages[store] = imgs[count2];
-          //  console.log(allImages[store]);
             store++;
         }
     }
-    //console.log(allImages);
 
     nodes.forEach(function(d, i) {
         if (dataset[i].apps.length > max_apps) {
@@ -434,15 +430,11 @@ clusters_init = function(){
                 // check to see if this image exists
                 var img = new Image();
                 img.src = "/img/app_icons/" + name + ".png";
-                img.onerror = function (evt) { 
-                    console.log('inside'); this.onerror=null; 
+                img.onerror = function (evt) {
+                    console.log('inside'); this.onerror=null;
                     this.src='/img/app_icons/social-networks.png';
                     d3.select(that).attr('xlink:href', this.src);
                 };
- 
-                console.log("THIS SHOULD BE SET");
-                console.log(img.src);
-                //console.log("updated src " + img.src);
                 return img.src;
             })
             .attr("id", function(d, j){
@@ -505,7 +497,7 @@ clusters_init = function(){
         for (var k = 0; k < x.apps.length; k++) {
             var image = svg.select('#link_' + k + "_img_" + x.id)
                 .on("error", function() {console.log("ERORERJ:SLJ");} );
-           
+
         }
 
         var c = svg.selectAll("image")[0];
@@ -524,8 +516,6 @@ clusters_init = function(){
     }
 
     function hoverOffFunction(x){
-      //  console.log("b");
-    //console.log("mouseout");
         hide_stats();
         document.body.style.cursor = 'default';
     }
@@ -683,7 +673,6 @@ clusters_init = function(){
     }
 
     function printClusterStats(s, u, l, t){
-        //console.log(s);
         printThatApp(s);
         //printUsername(u);
         printLastVisit(l);

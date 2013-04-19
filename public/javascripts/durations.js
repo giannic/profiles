@@ -53,7 +53,11 @@ function render_app() {
  * Output: Draws paints entire canvas
  */
 function render_all_apps() {
-
+    //console.log(APP_DATA);
+    $.each(APP_DATA.apps, function(idx, app) {
+        // just testing
+        //console.log(app.open[0]);
+    });
 }
 
 
@@ -62,5 +66,6 @@ function render_all_apps() {
  * called inside config.js
  */
 function durations_init() {
+    render_all_apps();
 
 }
