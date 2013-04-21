@@ -73,6 +73,9 @@ var lines_init = function() {
         .attr("width", lineGraphWidth)
         .attr("height", lineGraphHeight);
 
+      var mostVisited = findMostUsedApp();
+      console.log(mostVisited);
+
       setUpAppSelection();
 
       initSlider();
@@ -86,6 +89,20 @@ function myFunction(x){
   //console.log(val.format("dd-m-yy"));
   printTheStats(x.attributes.name.value, "username", $.datepicker.formatDate('MM dd, yy', val), val.toLocaleTimeString());
   show_stats();
+}
+
+function findMostUsedApp(){
+  var longest = stats[0].open.length;
+  var mostUsed = stats[0].url;
+
+  for(var i = 0; i < stats.length; i++){
+    var length = stats[i].open.length;
+    if(length > longest){
+      longest = length;
+      mostUsed = stats[i].url;
+    }
+  }
+  return mostUsed;
 }
 
 function myFunction2(x) {
@@ -361,7 +378,7 @@ function createAllTheHovers() {
         //for (var k = 0; k < appArray.length; k++) {
             // anonymous function to induce scope
             (function() {
-                colortrack = colorArray[k];
+                colortrack = colorArray[k-1];
                 var colorset = "hsl(" + colortrack + ",50%, 50%)";
                 var newy = Math.floor(k/width_count)*box_size,
                     newx;
