@@ -38,7 +38,8 @@ var lines_init = function() {
             var index = appArray[i];
             var lengthA = stats[index]['open'].length;
             var startTimeA = stats[index]['open'][0];
-            var endTimeA = stats[index]['close'][stats[index]['close'].length - 1];
+            var endTimeA = 
+                stats[index]['close'][stats[index]['close'].length - 1];
 
             numberOfLines = numberOfLines + lengthA;
 
@@ -139,12 +140,17 @@ var lines_init = function() {
             getDate($("#timeline").rangeSlider("max")));
 
         $("#timeline").on("valuesChanging", function(e, data) {
-            updateSliderDates(getDate(data.values.min), getDate(data.values.max));
+            updateSliderDates(
+                getDate(data.values.min), 
+                getDate(data.values.max));
         });
 
         $("#timeline").on("valuesChanged", function(e, data) {
-            calculateRender(Math.round(data.values.min), Math.round(data.values.max), 0);
-            //updateSliderDates(getDate(data.values.min), getDate(data.values.max));
+            calculateRender(
+                Math.round(data.values.min), 
+                Math.round(data.values.max), 0);
+            //updateSliderDates(getDate(data.values.min), 
+                //getDate(data.values.max));
         });
 
         $("#timeline_play_pause").click(function() {
@@ -160,16 +166,21 @@ var lines_init = function() {
         });
 
         //initial loading of lines
-        calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+        calculateRender(
+            $("#timeline").rangeSlider("min"), 
+            $("#timeline").rangeSlider("max"), 1);
 
         //slight edit to the jQRange html
-        $(".ui-rangeSlider-container").prepend("<div class='frequency-container'></div>");
+        $(".ui-rangeSlider-container")
+            .prepend("<div class='frequency-container'></div>");
     }
 
     function updateSliderDates(dateLeft, dateRight) {
         var dl = dateLeft, dr = dateRight;
-        $("#timeline_dateLeft").text($.datepicker.formatDate('MM dd, yy', dl));
-        $("#timeline_dateRight").text($.datepicker.formatDate('MM dd, yy', dr));
+        $("#timeline_dateLeft")
+            .text($.datepicker.formatDate('MM dd, yy', dl));
+        $("#timeline_dateRight")
+            .text($.datepicker.formatDate('MM dd, yy', dr));
     }
 
     //Gets the date of a certain index on the slider
@@ -203,7 +214,7 @@ var lines_init = function() {
     }
 
     /*
-     * ANIMATION CONTROLS
+     * Animation Controls
      */
     function stepBackward(stepInterval) {
         var tMin = $("#timeline").rangeSlider("min");
@@ -214,7 +225,9 @@ var lines_init = function() {
             $("#timeline").rangeSlider("max", tMax - stepInterval);
         }
 
-        updateSliderDates(getDate($("#timeline").rangeSlider("min")), getDate($("#timeline").rangeSlider("max")));
+        updateSliderDates(
+            getDate($("#timeline").rangeSlider("min")), 
+            getDate($("#timeline").rangeSlider("max")));
     }
 
     function stepForward(stepInterval) {
@@ -228,7 +241,9 @@ var lines_init = function() {
             $("#timeline").rangeSlider("min", tMin + stepInterval * .1);
         }
 
-        updateSliderDates(getDate($("#timeline").rangeSlider("min")), getDate($("#timeline").rangeSlider("max")));
+        updateSliderDates(
+            getDate($("#timeline").rangeSlider("min")), 
+            getDate($("#timeline").rangeSlider("max")));
     }
 
     function play(obj) {
@@ -261,7 +276,17 @@ var lines_init = function() {
         string = string.replace('.', '-');
 
         for ( i = 0; i < renderArray.length; i++) {
-            currentLine = lineGraph.append("a").attr("xlink:href", "http://www." + nameArray[index]).append("svg:line").attr("x1", renderArray[i]).attr("y1", 0).attr("x2", renderArray[i]).attr("y2", lineGraphHeight).attr("name", nameArray[index]).attr("class", string).attr("number", openArray[i]).style("stroke-width", 3).style("stroke", "hsl(" + colorArray[index] + ",50%, 50%)");
+            currentLine = lineGraph.append("a")
+                .attr("xlink:href", "http://www." + nameArray[index])
+                .append("svg:line").attr("x1", renderArray[i])
+                .attr("y1", 0).attr("x2", renderArray[i])
+                .attr("y2", lineGraphHeight)
+                .attr("name", nameArray[index])
+                .attr("class", string)
+                .attr("number", openArray[i])
+                .style("stroke-width", 3)
+                .style("stroke", "hsl(" + colorArray[index] + ",50%, 50%)");
+
             var x = (closeArray[i] - openArray[i]) / diff + .5;
             currentLine.style("stroke-opacity", x);
         }
