@@ -1,5 +1,4 @@
 clusters_init = function(){
-
     var window_width = WINDOW_WIDTH - 30,
         window_height = WINDOW_HEIGHT - 50, // TODO: subtract size of menubar
         image_width = [], // image widths of the apps
@@ -50,12 +49,14 @@ clusters_init = function(){
         }
     }
 
+    // keep track of the max number of apps for sizing
     nodes.forEach(function(d, i) {
         if (dataset[i].apps.length > max_apps) {
             max_apps = dataset[i].apps.length;
         }
     });
 
+    // force layout used for collisions
     force = d3.layout.force()
         .size([window_width, window_height])
         .nodes(nodes)
@@ -209,9 +210,7 @@ clusters_init = function(){
             return "none";
         })
         .attr("dy", "18px")
-        //.style('fill', "#eee")
         .on("mousedown", function(d, i) {
-            // TODO: change to a cursor
             more_apps(d, i);
         });
 
@@ -238,7 +237,6 @@ clusters_init = function(){
             return "none";
         })
         .attr("dy", "18px")
-        //.style('fill', "#eee")
         .on("mousedown", function(d, i) {
             less_apps(d, i);
         });
@@ -453,7 +451,6 @@ clusters_init = function(){
                 var val = new Date(date*1000);
                 return val.toLocaleTimeString();
             })
-            .classed("link_img_" + x.id, true)
             .attr("x", function(d, j){
                 var dist = image_width[i]/2 + x.r + pad;
                 d.x = Math.cos(angle*j)*dist;
@@ -504,13 +501,19 @@ clusters_init = function(){
 
         for(var count = 0; count < c.length; count++){
             currimg = c[count];
-            currimg.addEventListener("mouseover",function(evt) { hoverFunction(this);}, false);
-            currimg.addEventListener("mouseout",function(evt) { hoverOffFunction(this);}, false);
+            currimg.addEventListener("mouseover",function(evt) {
+                                    hoverFunction(this);}, false);
+            currimg.addEventListener("mouseout",function(evt) {
+                                    hoverOffFunction(this);}, false);
+            currimg.addEventListener("mousedown", function(evt) {
+                                    evt.stopPropagation();}, false);
         }
     }
 
     function hoverFunction(x){
-        printClusterStats(x.attributes.url_id.value, "username", x.attributes.close_id.value, x.attributes.timeStamp.value);
+        printClusterStats(x.attributes.url_id.value, "username",
+                        x.attributes.close_id.value,
+                        x.attributes.timeStamp.value);
         show_stats();
         document.body.style.cursor = 'pointer'; // TODO: change so it will just be in the css
     }
@@ -615,7 +618,7 @@ clusters_init = function(){
             start_pos = {x: -window_width/2 + pad, y: -window_height/2 + pad + label_height},
             space = new_width + pad;
 
-        svg.selectAll(".link_img_" + d.id)
+        svg.selectAll(".image_" + d.id)
             .transition()
             .attr("x", function(x, j){
                 // check if x position is gerater than the window width
@@ -655,7 +658,7 @@ clusters_init = function(){
             .attr("y", 0);
 
         // move all the apps back to where they are
-        svg.selectAll(".link_img_" + d.id)
+        svg.selectAll(".image_" + d.id)
             .transition()
             .attr("x", function(x){
                 return x.x;
