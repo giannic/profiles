@@ -185,7 +185,7 @@ var lines_init = function() {
     //Gets the date of a certain index on the slider
     function getDate(index) {
         var date = startTime + (difference * index) / (100);
-        return new Date(date * 1000);
+        return new Date(date * 1000);g
     }
 
     //Given an index which is slider_min < index < slider_max
