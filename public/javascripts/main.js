@@ -64,6 +64,19 @@
             }, 300);
         });
 
+//        $("#container").css("top", $('#header').height() - $('#container').height() - 118); // this needs to be fixed to take into account padding
+        
+        $('#container-toggle').click(function() {
+            if (!$(this).hasClass("menu-button-active")) { // NOT active
+                $("#container").stop().animate({
+                    top: $("#header").height() - $("#container").height() - 118 // this also
+                }, 300);
+            } else { // active already
+                $("#container").stop().animate({
+                    top: $("#header").height() - 18 // this also
+                }, 300);
+            }
+        });
 
         // ADD App Box
         $("#add-app-box").css("top", $('#header').height() - $('#add-app-box').height() - 18); // this needs to be fixed to take into account padding

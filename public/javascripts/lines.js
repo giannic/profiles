@@ -1,7 +1,7 @@
 var lines_init = function() {
     var numberOfLines, stats = null, openArray, renderArray, closeArray, 
     startTime, endTime, difference, leftBarTime, rightBarTime, lineGraphWidth, 
-    lineGraphHeight, lineGraph, width_count, height_count, box_size, 
+    lineGraphHeight, lineGraph, width_count, height_count, box_size,
     pad, // this is for when there are tons of apps
     allTheLines, hsl, colorArray, diff, appArray, nameArray, 
     minRange, maxRange, interval, boxes, activeArray, playTimeline = false, 
@@ -72,10 +72,29 @@ var lines_init = function() {
           .attr("width", lineGraphWidth)
           .attr("height", lineGraphHeight);
 
+        findMostUsedApp();
+
         setUpAppSelection();
 
         initSlider();
         initFreqLine();
+
+        // now hide the container
+//        $("#container").css("top", $('#header').height() - $('#container').height() - 18); // this needs to be fixed to take into account padding
+
+        /*
+        $('#container-toggle').click(function() {
+            if (!$(this).hasClass("menu-button-active")) { // NOT active
+                $("#container").stop().animate({
+                    top: $("#header").height() - $("#container").height() - 18 // this also
+                }, 300);
+            } else { // active already
+                $("#container").stop().animate({
+                    top: $("#header").height() // this also
+                }, 300);
+            }
+        });*/
+
     });
 
     /*************************************************************************
@@ -374,7 +393,12 @@ var lines_init = function() {
                 mostUsed = stats[i].url;
             }
         }
-        return mostUsed;
+
+        for (var i = 0; i < stats.length; i++) {
+            if (stats[i].url != mostUsed) {
+                activeArray[i] = false;
+            }
+        }       
     }
 
     function loadImages(sources, callback) {
@@ -440,6 +464,12 @@ var lines_init = function() {
                         newx = (k % width_count) * box_size;
 
                     var img = images[src];
+                    var isActive = activeArray[k - 1];
+                    var opac = 1.0;
+                    if(isActive == false){
+                        opac = 0.3;
+                    }
+
                     var box = new Kinetic.Rect({
                         x : newx,
                         y : newy,
@@ -448,6 +478,7 @@ var lines_init = function() {
                         id : appArray[k - 1],
                         name : nameArray[k - 1],
                         active : true,
+                        opacity : opac,
                         fillPatternImage : img,
                         fillPatternScale : [20 / img.width, 20 / img.height]
                     });
