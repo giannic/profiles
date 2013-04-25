@@ -8,6 +8,8 @@ var tabDomains = {}; // maps tab ids to URLs
 var activeDomains = {}; // domains that are open already
 var whitelist = [];
 var _recording = true;
+var processUrlLock = false;
+var focusedTabDomain = null;
 
 $(document).ready(function() {
   setTimeout(init, 1000);
@@ -98,11 +100,16 @@ function logTime() {
 
 // Make appropriate web requests when a tab is created or changed
 function processUrl(tabId, url) {
+  if (processUrlLock) {
+    return;
+  }
+  processUrlLock = true;
   var domain = getDomain(url);
 
   // If user opened chrome://*, ignore and return
   var excludedDomains = ["chrome", "extensions", "devtools"];
   if (excludedDomains.indexOf(domain) != -1) {
+    processUrlLock = false;
     return false;
   }
 
@@ -240,7 +247,9 @@ function postToClose(domain, appId, posixTime) {
   // Remove this domain from list of active domains
   delete activeDomains[domain];
   var postData = {"appid": appId, "close_date": posixTime};
-  $.post(apiUrlClose, postData);
+  $.post(apiUrlClose, postData, function() {
+    processUrlLock = false;
+  });
   console.log("POST to close for " + domain);
 };
 
@@ -271,11 +280,13 @@ function postToOpen(domain) {
       // save active domains to chrome storage
       storage.set({"activeDomains": activeDomains});
       console.log("Successful POST to open for " + domain);
+      processUrlLock = false;
     },
     error: function(xhr, status, e) {
       console.log("Error in POST to open:\n" + e);
       // remove domain from active domains
       delete activeDomains[domain];
+      processUrlLock = false;
     }
   });
 };
@@ -428,12 +439,21 @@ chrome.tabs.onCreated.addListener(function(tab) {
 
 // Tab focused listener
 chrome.tabs.onActivated.addListener(function(activeInfo) {
-  //console.log("tab " + activeInfo["tabId"] + " active");
+  var tabId = activeInfo["tabId"];
+  chrome.tabs.get(tabId, function(tab) {
+    console.log("Focused tab id " + tabId);
+    var url = tab.url;
+    console.log("Focused tab with URL " + url);
+    if (url && url != focusedTabDomain) {
+      // POST to end focus of current domain
+      // POST to open focus for new domain
+    }
+  });
 });
 
 // Tab updated listener
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {         
-  //console.log("tab " + tabId + " updated");
+  console.log("tab " + tabId + " updated");
   // If user has toggled off recording, do nothing
   if (!_recording) {
     return;
@@ -442,6 +462,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   if (!("url" in changeInfo) || changeInfo["url"] == "chrome://newtab/") {
     return;
   }
+  console.log("processing url " + tab["url"]);
   processUrl(tabId, tab["url"]);
 });
 
