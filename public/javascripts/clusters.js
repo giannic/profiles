@@ -1,258 +1,405 @@
 clusters_init = function(){
-
     var window_width = WINDOW_WIDTH - 30,
         window_height = WINDOW_HEIGHT - 50, // TODO: subtract size of menubar
         image_width = [], // image widths of the apps
         image_height = [],
         selected_category,  // selected on hover, app id
-        clicked_category,
-        cluster_apps = {},
+        clicked_category,  // selected on click, app id
         pad = 10, // padding for boundary circle + app circles
-        max_apps = -1, // max number of apps that exists in user's categories
-        cap_apps = 9, // cap for the more button // TODO: change to 9
-        compare_apps,
-        num_categories = 0,
+        cap_apps = 3, // cap for the more button // TODO: change to 9
         nodes = {},
-        allImages = {},
         force = 0,
-        groups,
         foci = 0, // to keep track of focal pos for each node
-        collision_padding = 15; // padding for collisions
+        collision_padding = 15, // padding for collisions
+        svg,
+        drag_category = "";
 
-    var svg = d3.select("#circles")
-                .append("svg")
-                .attr("width", WINDOW_WIDTH)
-                .attr("height", WINDOW_HEIGHT),
-        defs = svg.append('defs');
+    $(document).ready(function() {
+        svg = d3.select("#circles")
+                    .append("svg")
+                    .attr("width", WINDOW_WIDTH)
+                    .attr("height", WINDOW_HEIGHT),
+            defs = svg.append('defs');
 
-    var dataset, circles, label;
-    dataset = [];
+        var dataset = [];
 
-    // TEMPORARY WAY TO CREATE UNIQUE ID'S
-    var id_index = 0;
-    _.each(CAT_DATA, function(obj, key, list){
-        var new_cluster = new window.Cluster(key, obj);
-        new_cluster.id = 'category' + id_index;
-        dataset.push(new_cluster);
-        id_index += 1;
-    });
+        // TEMPORARY WAY TO CREATE UNIQUE ID'S
+        var id_index = 0;
+        _.each(CAT_DATA, function(obj, key, list){
+            var new_cluster = new window.Cluster(key, obj);
+            new_cluster.id = 'category' + id_index;
+            dataset.push(new_cluster);
+            id_index += 1;
+        });
 
-    num_categories = dataset.length;
+        var num_categories = dataset.length;
 
-    nodes = dataset;
+        nodes = dataset;
 
-    var store = 0;
-    for(var count = 0; count < nodes.length; count++){
-        var imgs = nodes[count].apps;
-        for(var count2 = 0; count2 < imgs.length; count2++){
-            allImages[store] = imgs[count2];
-            store++;
-        }
-    }
-
-    nodes.forEach(function(d, i) {
-        if (dataset[i].apps.length > max_apps) {
-            max_apps = dataset[i].apps.length;
-        }
-    });
-
-    force = d3.layout.force()
-        .size([window_width, window_height])
-        .nodes(nodes)
-        .alpha(0.1)
-        .charge(0) // charge is node-node attraction/repulsion
-        .gravity(0) // gravity -> move to center
-        .friction(0.3) // lower so doesn't bounce too much off boundary
-        .on("tick", tick)
-        .start();
-
-    // groups contain category information
-    groups = svg.selectAll("g")
-        .data(nodes)
-        .enter()
-        .append("g")
-        .attr("id", function(x){
-            return x.id;
-        })
-        .attr("transform", function(x, i) {
-            // scale the category circle and image size
-            // get the r of enlarged circle (rough calculation, assuming grid config)
-            var r = Math.floor(Math.sqrt((window_width*window_height)/(4*num_categories)));
-            // reduce it to r of the smaller circle
-            x.r = (r - (2*pad))/1.8;
-            // update the r for expansion
-            var compare_apps = cap_apps;
-            if (max_apps < cap_apps)
-                compare_apps = max_apps;
-            var length = x.apps.length;
-            if (length > compare_apps)
-                length = compare_apps;
-            x.r = (length/compare_apps)*x.r;
-            // cap it so it's not terribly big
-            if ((x.r + x.r*0.8 + pad*2)*2 > window_height) {
-                x.r = .25*window_height; // TODO: randomly chose
+        // keep track of the max number of apps (overall) for sizing
+        var max_apps = -1;
+        nodes.forEach(function(d, i) {
+            if (dataset[i].apps.length > max_apps) {
+                max_apps = dataset[i].apps.length;
             }
-            // cap it so it's not terribly small
-            if (x.r < 50) {
-                x.r = 50;
-            }
+        });
 
-            // x.r is unchanging radius
-            // x.radius changes upon mouseenter/leave
-            x.radius = x.r;
-            image_width[i] = image_height[i] = 0.8*x.r;
+        // force layout used for collisions
+        force = d3.layout.force()
+            .size([window_width, window_height])
+            .nodes(nodes)
+            .alpha(0.1)
+            .charge(0) // charge is node-node attraction/repulsion
+            .gravity(0) // gravity -> move to center
+            .friction(0.3) // lower so doesn't bounce too much off boundary
+            .on("tick", tick)
+            .start();
 
-            // force layout will automatically choose x/y
-            return "translate(" + [x.x, x.y] + ")";
-        })
-        .on("mouseenter", function(x, i) {
-            // category selected
-            if (!selected_category || selected_category != x.id) {
-                if (!clicked_category ||
-                    (clicked_category != x.id)) {
-                    // check if for some reason there's eome other selected category
-                    if (selected_category && (selected_category != clicked_category))
-                        deselect_old_cluster(selected_category);
-                    selected_category = x.id;
-                    select_new_cluster(x, i);
+        // groups contain category information
+        var groups = svg.selectAll("g")
+            .data(nodes)
+            .enter()
+            .append("g")
+            .attr("id", function(x){
+                return x.id;
+            })
+            .attr("transform", function(x, i) {
+                // scale the category circle and image size
+                // get the r of enlarged circle (roughly, grid config)
+                var r = Math.floor(Math.sqrt(
+                    (window_width*window_height)/(4*num_categories)));
+
+                // reduce it to r of the smaller circle
+                x.r = (r - (2*pad))/1.8;
+
+                // update the r for expansion
+                var compare_apps = cap_apps;
+                if (max_apps < cap_apps)
+                    compare_apps = max_apps;
+                var length = x.apps.length;
+                if (length > compare_apps)
+                    length = compare_apps;
+                x.r = (length/compare_apps)*x.r;
+
+                // cap it so it's not terribly big
+                if ((x.r + x.r*0.8 + pad*2)*2 > window_height) {
+                    x.r = .25*window_height; // TODO: randomly chose
                 }
-            }
-        })
-        .on("mouseleave", function(x, i) {
-            if (clicked_category != selected_category) {
-                if (x.id == selected_category) {
-                    // add a radius check to reduce some of the instabilities
-                    // caused by mouseleave firing when a circle moves away from mouse
-                    // on hover and doesn't transition radius size on time
-                    // not perfect if you go in between circles
-                    var circle = d3.select("#circle_" + x.id);
-                    var check_x = d3.event.pageX - circle.attr("cx"),//x.x,
-                        check_y = d3.event.pageY - circle.attr("cy"),//x.y,
-                        dist = Math.sqrt(check_x*check_x + check_y*check_y);
+                // cap it so it's not terribly small
+                if (x.r < 50) {
+                    x.r = 50;
+                }
 
-                    // check the radius of the circle
-                    var cr = circle.attr("r");
-                    if (dist > cr) {
-                        d3.transition().each("end", deselect_old_cluster(selected_category));
-                        selected_category = "";
+                // x.r is unchanging radius
+                // x.radius changes upon mouseenter/leave
+                x.radius = x.r;
+                image_width[i] = image_height[i] = 0.8*x.r;
+
+                // force layout will automatically choose x/y
+                return "translate(" + [x.x, x.y] + ")";
+            })
+            .on("mouseenter", function(x, i) {
+                // category selected
+                if (!selected_category || selected_category != x.id) {
+                    if (!clicked_category ||
+                        (clicked_category != x.id)) {
+                        // check if for some reason there's
+                        // another selected category
+                        if (selected_category &&
+                            (selected_category != clicked_category))
+                            if (selected_category != drag_category){
+                                deselect_old_cluster(selected_category);
+                            }
+                        selected_category = x.id;
+                        select_new_cluster(x, i);
                     }
                 }
-            }
-        })
-        .on("mousedown", function(x){
-            // make sure double click doesn't contract
-            if (clicked_category != x.id) {
-                // deselect any previously clicked ones
-                // doesn't actually select otherwise
-                if (clicked_category)
+            })
+            .on("mouseleave", function(x, i) {
+                if (clicked_category != selected_category) {
+                    if (x.id == selected_category) {
+                        if (selected_category != drag_category) {
+                            // add a radius check to reduce instabilities
+                            // caused by mouseleave firing when a circle moves
+                            // away from mouse on hover and doesn't transition
+                            // radius size on time, not perfect in between circles
+                            var circle = d3.select("#circle_" + x.id);
+                            var check_x = d3.event.pageX - circle.attr("cx"),
+                                check_y = d3.event.pageY - circle.attr("cy"),
+                                dist = Math.sqrt(check_x*check_x + check_y*check_y);
+
+                            // check the radius of the circle
+                            var cr = circle.attr("r");
+                            if (dist > cr) {
+                                d3.transition().each("end", 
+                                    deselect_old_cluster(selected_category));
+                                selected_category = "";
+                            }
+                        }
+                    }
+                }
+            })
+            .on("mousedown", function(x){
+                // make sure double click doesn't contract
+                if (clicked_category != x.id) {
+                    // deselect any previously clicked ones
+                    // doesn't actually select otherwise
+                    if (clicked_category)
+                        deselect_old_cluster(clicked_category);
+                    clicked_category = x.id;
+                }
+            });
+
+        // category circles
+        groups.append("circle")
+            .attr("class", "vis-shape")
+            .attr("r", function(x){
+                return x.r;
+            })
+            //.style("fill", function(x, i){
+                //return "hsl(" + i*(255/num_categories) + ",70%,40%)";
+            //})
+            .attr("id", function(x){
+                return "circle_" + x.id;
+            });
+
+        groups.append("text")
+            .text(function(x){
+                return x.name;
+            })
+            .attr({
+                "alignment-baseline": "middle",
+                "text-anchor": "middle"
+                //"font-family": "Helvetica"
+            })
+            .attr("class", "vis-label")
+            .attr("id", function(x){
+                return "text_" + x.id;
+            })
+            .style('fill', function(x, i){
+                return "white";
+            })
+            .attr("font-size", function(x){
+                // reduce the font size based on the radius
+                if (0.16*x.r < 12)
+                    return 12;
+                return 0.16*x.r;
+            });
+
+        // append this only if there are more than cap_apps apps!
+        groups.append("text")
+            .text("MORE")
+            .attr("id", function(x){
+                return "more_" + x.id;
+            })
+            .attr({
+                //"alignment-baseline": "middle",
+                "text-anchor": "middle",
+                "font-family": "Helvetica"
+            })
+            .attr("class", "vis-sublabel")
+            .attr("font-size", function(x) {
+                // reduce the font size based on the radius
+                if (0.16*x.r < 12)
+                    return 12;
+                return 0.1*x.r;
+            })
+            .attr("display", function(d) {
+                // change to visible when selecting category
+                return "none";
+            })
+            .attr("dy", "18px")
+            .on("mousedown", function(d, i) {
+                more_apps(d, i);
+            });
+
+        // every group also has a less text
+        groups.append("text")
+            .text("LESS")
+            .attr("id", function(x){
+                return "less_" + x.id;
+            })
+            .attr({
+                //"alignment-baseline": "middle",
+                "text-anchor": "middle",
+                "font-family": "Helvetica"
+            })
+            .attr("class", "vis-sublabel")
+            .attr("font-size", function(x) {
+                // reduce the font size based on the radius
+                if (0.16*x.r < 12)
+                    return 12;
+                return 0.1*x.r;
+            })
+            .attr("display", function(d) {
+                // change to visible when selecting category
+                return "none";
+            })
+            .attr("dy", "18px")
+            .on("mousedown", function(d, i) {
+                less_apps(d, i);
+            });
+
+        // clicking on white space should deselect everything
+        $('#circles').click(function(e) {
+            // make sure it's not within a cluster
+            if (!e.target.id) {
+                if (clicked_category) {
                     deselect_old_cluster(clicked_category);
-                clicked_category = x.id;
+                    clicked_category = "";
+                    selected_category = "";
+                }
             }
         });
 
-    // category circles
-    circles = groups.append("circle")
-        .attr("class", "vis-shape")
-        .attr("r", function(x){
-            return x.r;
-        })
-        //.style("fill", function(x, i){
-            //return "hsl(" + i*(255/num_categories) + ",70%,40%)";
-        //})
-        .attr("id", function(x){
-            return "circle_" + x.id;
-        });
-
-    label = groups.append("text")
-        .text(function(x){
-            return x.name;
-        })
-        .attr({
-            "alignment-baseline": "middle",
-            "text-anchor": "middle"
-            //"font-family": "Helvetica"
-        })
-        .attr("class", "vis-label")
-        .attr("id", function(x){
-            return "text_" + x.id;
-        })
-        .style('fill', function(x, i){
-            return "white";
-        })
-        .attr("font-size", function(x){
-            // reduce the font size based on the radius
-            if (0.16*x.r < 12)
-                return 12;
-            return 0.16*x.r;
-        });
-
-    // append this only if there are more than cap_apps apps!
-    groups.append("text")
-        .text("MORE")
-        .attr("id", function(x){
-            return "more_" + x.id;
-        })
-        .attr({
-            //"alignment-baseline": "middle",
-            "text-anchor": "middle",
-            "font-family": "Helvetica"
-        })
-        .attr("class", "vis-sublabel")
-        .attr("font-size", function(x) {
-            // reduce the font size based on the radius
-            if (0.16*x.r < 12)
-                return 12;
-            return 0.1*x.r;
-        })
-        .attr("display", function(d) {
-            // change to visible when selecting category
-            return "none";
-        })
-        .attr("dy", "18px")
-        //.style('fill', "#eee")
-        .on("mousedown", function(d, i) {
-            // TODO: change to a cursor
-            more_apps(d, i);
-        });
-
-    // every group also has a less text
-    groups.append("text")
-        .text("LESS")
-        .attr("id", function(x){
-            return "less_" + x.id;
-        })
-        .attr({
-            //"alignment-baseline": "middle",
-            "text-anchor": "middle",
-            "font-family": "Helvetica"
-        })
-        .attr("class", "vis-sublabel")
-        .attr("font-size", function(x) {
-            // reduce the font size based on the radius
-            if (0.16*x.r < 12)
-                return 12;
-            return 0.1*x.r;
-        })
-        .attr("display", function(d) {
-            // change to visible when selecting category
-            return "none";
-        })
-        .attr("dy", "18px")
-        //.style('fill', "#eee")
-        .on("mousedown", function(d, i) {
-            less_apps(d, i);
-        });
-
-    $('#circles').click(function(e) {
-        // make sure it's not within a cluster
-        if (!e.target.id) {
-            if (clicked_category) {
-                deselect_old_cluster(clicked_category);
-                clicked_category = "";
-                selected_category = "";
-            }
-        }
+        // separate function so don't have to create apps on every hover
+        create_apps();
     });
+
+    function dragstart(d, i) {
+        drag_category = selected_category;
+    }
+
+    function dragmove(d, i) {
+        var drag_app = "#link" + i + "_img_" + drag_category;
+
+        // move the drag category circle to the back so dragging over
+        // other categories expands
+        // this however puts the app behind everything else...
+        var circle_group = document.getElementById(drag_category);
+        circle_group.parentNode.insertBefore(
+            circle_group, circle_group.parentNode.firstChild);
+
+        var drag_app_obj = d3.select(drag_app),
+            currx = parseFloat(drag_app_obj.attr("x")),
+            curry = parseFloat(drag_app_obj.attr("y"));
+
+        drag_app_obj
+            .attr("x", function(){ return currx + d3.event.dx; })
+            .attr("y", function(){ return curry + d3.event.dy; });
+    }
+
+    function dragend(d, i) {
+        if (selected_category != drag_category && drag_category != ""
+            && selected_category != "") {
+            // change the category of d to the selected category
+            console.log("test");
+            console.log("selected cat is " + selected_category);
+            console.log("drag is " + drag_category);
+            selected_category == "";
+        }
+        else {
+            d3.select("#link" + i + "_img_" + drag_category)
+                .attr("x", d.x)
+                .attr("y", d.y);
+        }
+        drag_category = "";
+    }
+
+    // this creates all the apps as hidden
+    function create_apps() {
+        // add drag for category movement
+        force.drag = d3.behavior.drag()
+            .on("dragstart", dragstart)
+            .on("drag", dragmove)
+            .on("dragend", dragend);
+
+        // add all the images from the start with 0 width
+        nodes.forEach(function(x, i) {
+            var d = x.apps,
+                category = svg.selectAll("#" + x.id);
+
+            //console.log("catid is " + x.id);
+            var length = x.apps.length;
+            if (length > cap_apps)
+                length = cap_apps;
+            var angle = (360/length)*Math.PI/180;
+
+            var cluster_apps = {};
+            cluster_apps[x.id] =
+                category.selectAll()
+                    .data(x.apps)
+                    .enter()
+                    .append("a")
+                    .attr("data-category", x.name)
+                    .attr("id", function(d, j) {
+                        // we need an id for every object for unfocus to work
+                        "link" + j + "_" + x.id;
+                    })
+                    .attr("xlink:href", function(d){
+                        return "http://" + d.url; // TODO: fix
+                    })
+                    .classed(x.id, true);
+
+            // append each image
+            cluster_apps[x.id]
+                .append('image')
+                .attr('xlink:href', function(d) {
+                    var that = this;
+                    var j = d.url.indexOf("."),
+                        name = d.url.substring(0, j);
+                    // check to see if this image exists
+                    var img = new Image();
+                    img.src = "/img/app_icons/" + name + ".png";
+                    img.onerror = function (evt) {
+                        this.onerror = null;
+                        this.src = '/img/app_icons/social-networks.png';
+                        d3.select(that).attr('xlink:href', this.src);
+                    };
+                    return img.src;
+                })
+                .attr("id", function(d, j){
+                    return "link" + j + "_img_" + x.id;
+                })
+                .attr("url_id", function(d){
+                    return d.url;
+                })
+                .attr("close_id", function(d){
+                    var date = d.close[d.close.length-1];
+                    var val = new Date(date*1000);
+                    return $.datepicker.formatDate('MM dd, yy', val);
+                })
+                .attr("timeStamp", function(d){
+                    var date = d.close[d.close.length-1];
+                    var val = new Date(date*1000);
+                    return val.toLocaleTimeString();
+                })
+                .attr("x", function(d, j){
+                    var dist = image_width[i]/2 + x.r + pad;
+                    d.x = Math.cos(angle*j)*dist;
+                    d.x = d.x - image_width[i]/2;
+                    return d.x;
+                })
+                .attr("y", function(d, j){
+                    var dist = image_width[i]/2 + x.r + pad;
+                    d.y = Math.sin(angle*j)*dist;
+                    d.y = d.y - image_height[i]/2;
+                    return d.y;
+                })
+                .classed('image_' + x.id, true)
+                .attr("width", function(d){
+                    return 0;
+                })
+                .attr("height", function(d){
+                    return 0;
+                })
+                .attr("display", function(d, j){
+                    return "none";
+                })
+                .call(force.drag);
+        });
+        var c = svg.selectAll("image")[0];
+
+        for(var count = 0; count < c.length; count++){
+            currimg = c[count];
+            currimg.addEventListener("mouseover",function(evt) {
+                                    hoverFunction(this);}, false);
+            currimg.addEventListener("mouseout",function(evt) {
+                                    hoverOffFunction(this);}, false);
+            currimg.addEventListener("mousedown", function(evt) {
+                                    evt.stopPropagation();}, false);
+        }
+    }
 
     // collision & tick from https://gist.github.com/GerHobbelt/3116713
     function tick(e) {
@@ -274,7 +421,7 @@ clusters_init = function(){
                 });
             }
         }
-
+        
         //force.friction(0.1);
         while (++i < n) {
             q.visit(collide(nodes[i]));
@@ -284,8 +431,10 @@ clusters_init = function(){
         svg.selectAll("g")
             .each(cluster(10 * e.alpha * e.alpha))
             .attr("transform", function(d, i) {
-                d.x = Math.max(d.radius, Math.min(window_width - d.radius, d.x));
-                d.y = Math.max(d.radius, Math.min(window_height - d.radius, d.y));
+                d.x = Math.max(d.radius,
+                    Math.min(window_width - d.radius, d.x));
+                d.y = Math.max(d.radius,
+                    Math.min(window_height - d.radius, d.y));
                 // save the positions if foci not set yet
                 if (!foci) {
                     // save this value of x and y to fix to this position
@@ -325,7 +474,7 @@ clusters_init = function(){
 
         // For cluster nodes, apply custom gravity.
         if (node == d) {
-          node = {x: window_width / 2, y: window_height / 2, radius: -d.radius};
+          node = {x: window_width/2, y: window_height/2, radius: -d.radius};
           k = .1 * Math.sqrt(d.radius);
         }
 
@@ -373,11 +522,7 @@ clusters_init = function(){
     }
 
     function select_new_cluster(x, i) {
-        var length = x.apps.length;
-        if (length > cap_apps)
-            length = cap_apps;
-        var angle = (360/length)*Math.PI/180, // RADIANS
-            selected_circle = d3.select("#circle_" + selected_category),
+        var selected_circle = d3.select("#circle_" + selected_category),
             selected_text = d3.select("#text_" + selected_category),
             r = x.r;
 
@@ -403,70 +548,7 @@ clusters_init = function(){
             }
         }
 
-        // assign the created objects into the corresponding cluster_objects
-        cluster_apps[selected_category] =
-            category.selectAll()
-                .data(x.apps)
-                .enter()
-                .append("a")
-                .attr("data-category", x.name)
-                .attr("id", function(d, j) {
-                    // we need an id for every object to get the unfocus to work
-                    "link" + j + "_" + x.id;
-                })
-                .attr("xlink:href", function(d){
-                    return "http://" + d.url; // TODO: fix so it's not hardcoded
-                })
-                .classed(x.id, true)
-                ;
-
-        // append each image
-        cluster_apps[selected_category]
-            .append('image')
-            .attr('xlink:href', function(d) {
-                var that = this;
-                var j = d.url.indexOf("."),
-                    name = d.url.substring(0, j);
-                // check to see if this image exists
-                var img = new Image();
-                img.src = "/img/app_icons/" + name + ".png";
-                img.onerror = function (evt) {
-                    console.log('inside'); this.onerror=null;
-                    this.src='/img/app_icons/social-networks.png';
-                    d3.select(that).attr('xlink:href', this.src);
-                };
-                return img.src;
-            })
-            .attr("id", function(d, j){
-                return "link" + j + "_img_" + x.id;
-            })
-            .attr("url_id", function(d){
-                return d.url;
-            })
-            .attr("close_id", function(d){
-                var date = d.close[d.close.length-1];
-                var val = new Date(date*1000);
-                return $.datepicker.formatDate('MM dd, yy', val);
-            })
-            .attr("timeStamp", function(d){
-                var date = d.close[d.close.length-1];
-                var val = new Date(date*1000);
-                return val.toLocaleTimeString();
-            })
-            .classed("link_img_" + x.id, true)
-            .attr("x", function(d, j){
-                var dist = image_width[i]/2 + x.r + pad;
-                d.x = Math.cos(angle*j)*dist;
-                d.x = d.x - image_width[i]/2;
-                return d.x;
-            })
-            .attr("y", function(d, j){
-                var dist = image_width[i]/2 + x.r + pad;
-                d.y = Math.sin(angle*j)*dist;
-                d.y = d.y - image_height[i]/2;
-                return d.y;
-            })
-            .classed('image_' + selected_category, true)
+        d3.selectAll(".image_" + selected_category)
             .transition()
             .attr("width", function(d){
                 // make the app img about 80% size of category
@@ -486,48 +568,26 @@ clusters_init = function(){
         svg.select("#more_" + x.id)
             .attr("display", function(x){
                 if (x.apps.length > cap_apps &&
-                    (x.id == selected_category) || (x.id == clicked_category)) {
+                    (x.id == selected_category) ||
+                    (x.id == clicked_category)) {
                     // check if it's selected
                     return "visible";
                 }
                 else
                     return "none";
             });
-
-        for (var k = 0; k < x.apps.length; k++) {
-            var image = svg.select('#link_' + k + "_img_" + x.id)
-                .on("error", function() {console.log("ERORERJ:SLJ");} );
-
-        }
-
-        var c = svg.selectAll("image")[0];
-
-        for(var count = 0; count < c.length; count++){
-            currimg = c[count];
-            currimg.addEventListener("mouseover",function(evt) { hoverFunction(this);}, false);
-            currimg.addEventListener("mouseout",function(evt) { hoverOffFunction(this);}, false);
-        }
-    }
-
-    function hoverFunction(x){
-        printClusterStats(x.attributes.url_id.value, "username", x.attributes.close_id.value, x.attributes.timeStamp.value);
-        show_stats();
-        document.body.style.cursor = 'pointer'; // TODO: change so it will just be in the css
-    }
-
-    function hoverOffFunction(x){
-        hide_stats();
-        document.body.style.cursor = 'default';
     }
 
     function deselect_old_cluster(old_category) {
         // old_category is the cluster to deselect (either clicked or selected)
 
+        var old_cluster, selected_obj;
+
         // first deselect the circle
-        var old_cluster = typeof old_category === 'undefined' ? svg.selectAll() :
+        old_cluster = typeof old_category === 'undefined' ? svg.selectAll() :
             svg.selectAll("#circle_" + old_category);
 
-        var selected_obj = old_cluster.classed('selected', false)
+        selected_obj = old_cluster.classed('selected', false)
             .transition()
             .attr('r', function(d){
                 d.radius = d.r;
@@ -540,7 +600,7 @@ clusters_init = function(){
         selected_obj = old_cluster.classed('selected', false)
             .transition()
             .attr('width', 0)
-            .attr('height', 0)
+            .attr('height', 0);
 
         // make the more button not visible
         svg.select("#more_" + old_category)
@@ -548,7 +608,7 @@ clusters_init = function(){
 
         var old_apps = typeof old_category === 'undefined' ? svg.selectAll()
             : svg.selectAll("." + old_category);
-        old_apps.transition().attr('r', 0).remove();
+        old_apps.transition().attr('r', 0);
     }
 
     function parse_data(json) {
@@ -578,9 +638,26 @@ clusters_init = function(){
         return dataset;
     }
 
+    function hoverFunction(x){
+        printClusterStats(x.attributes.url_id.value, "username",
+                        x.attributes.close_id.value,
+                        x.attributes.timeStamp.value);
+        show_stats();
+        // TODO: change so it will just be in the css
+        document.body.style.cursor = 'pointer';
+    }
+
+    function hoverOffFunction(x){
+        hide_stats();
+        // TODO: change so it will just be in the css
+        document.body.style.cursor = 'default';
+    }
+
     // displays the shadow box over apps for more apps
     function more_apps(d, i) {
         //force.stop(); // TODO: do force stop and fix the position
+        // TODO: bug, right clicking in more causes apps to go back
+        // to their original place?
         var circle = svg.select("#circle_" + d.id)
             .transition()
             .attr("r", WINDOW_WIDTH)
@@ -612,10 +689,11 @@ clusters_init = function(){
         var new_width = 77, // TODO: change so based on browser width/height
             count = Math.floor((window_width - pad) / (new_width + pad)),
             new_space,
-            start_pos = {x: -window_width/2 + pad, y: -window_height/2 + pad + label_height},
+            start_pos = {x: -window_width/2 + pad,
+                        y: -window_height/2 + pad + label_height},
             space = new_width + pad;
 
-        svg.selectAll(".link_img_" + d.id)
+        svg.selectAll(".image_" + d.id)
             .transition()
             .attr("x", function(x, j){
                 // check if x position is gerater than the window width
@@ -655,7 +733,7 @@ clusters_init = function(){
             .attr("y", 0);
 
         // move all the apps back to where they are
-        svg.selectAll(".link_img_" + d.id)
+        svg.selectAll(".image_" + d.id)
             .transition()
             .attr("x", function(x){
                 return x.x;
@@ -717,7 +795,3 @@ clusters_init = function(){
     }
 
 };
-
-
-
-

@@ -9,7 +9,6 @@ var lines_init = function() {
 
 
     $(document).ready(function() {
-
         var data = APP_DATA.apps;
         stats = data;
         numberOfLines = 0;
@@ -188,7 +187,7 @@ var lines_init = function() {
     //Gets the date of a certain index on the slider
     function getDate(index) {
         var date = startTime + (difference * index) / (100);
-        return new Date(date * 1000);
+        return new Date(date * 1000);g
     }
 
     //Given an index which is slider_min < index < slider_max
@@ -657,6 +656,5 @@ var lines_init = function() {
         }
         f.appendChild(f.ownerDocument.createTextNode("Time: "));
         f.appendChild(f.ownerDocument.createTextNode(d));
-    }
-
-}; 
+    } 
+};
