@@ -78,6 +78,22 @@ var lines_init = function() {
 
         initSlider();
         initFreqLine();
+
+        // now hide the container
+        $("#container").css("top", $('#header').height() - $('#container').height() - 18); // this needs to be fixed to take into account padding
+
+        $('#container-toggle').click(function() {
+            if (!$(this).hasClass("menu-button-active")) { // NOT active
+                $("#container").stop().animate({
+                    top: $("#header").height() - $("#container").height() - 18 // this also
+                }, 300);
+            } else { // active already
+                $("#container").stop().animate({
+                    top: $("#header").height() // this also
+                }, 300);
+            }
+        });
+
     });
 
     /*************************************************************************
