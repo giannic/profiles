@@ -9,9 +9,7 @@
       end_time = 100,
       total_time,
       timeline_width = WINDOW_WIDTH,
-      timeline_height = WINDOW_HEIGHT
-      ;
-
+      timeline_height = WINDOW_HEIGHT;
 
   /*
    * Sums the total duration of an app
@@ -48,20 +46,32 @@
    * Output: Draws only one line segment of an app
    */
   function render_app_segment(y, focus_time, unfocus_time) {
-    
+
     console.log('hello')
     var start_x = focus_time / total_time * timeline_width;
     var end_x = unfocus_time / total_time * timeline_width;
-   
+
     console.log(start_x)
     console.log(end_x)
     console.log(y)
+
+    /*
+    canvas_ctx.beginPath();
+    canvas_ctx.moveTo(10,10);
+    canvas_ctx.lineTo(10,200);
+    canvas_ctx.lineWidth = 1;
+    canvas_ctx.strokeStyle = "black";
+    canvas_ctx.stroke();
+    canvas_ctx.closePath();
+    */
+
     canvas_ctx.beginPath();
     canvas_ctx.moveTo(start_x, y);
     canvas_ctx.lineTo(end_x, y);
-    canvas_ctx.closePath();
+    canvas_ctx.lineWidth = 1;
+    canvas_ctx.strokeStyle = "black";
     canvas_ctx.stroke();
-
+    canvas_ctx.closePath();
   }
 
   /* Renders all the line segments for app
@@ -87,11 +97,15 @@
 
   function initialize() {
     canvas = $('#durations-canvas');
+    canvas = document.getElementById('durations-canvas');
     canvas_height = WINDOW_HEIGHT - $('#header').height(); // subtract size of menubar
-    canvas.height(canvas_height);
-    
+    //canvas.height = canvas_height;
+    // this is how clusters is doing it atm
+    canvas.height = WINDOW_HEIGHT - 50;
+    canvas.width = WINDOW_WIDTH - 30;
+
     total_time = end_time - start_time;
-    canvas_ctx = canvas[0].getContext('2d');
+    canvas_ctx = canvas.getContext('2d');
   }
 
   /*
@@ -100,7 +114,7 @@
    */
   app.util.vis.durations_init = function() {
     initialize();
-      
+
     render_app_segment(300, 40, 60);
     render_all_apps();
 
