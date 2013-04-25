@@ -1,6 +1,5 @@
 (function(){
     $('document').ready(function() {
-        var VIS_COUNT = 3; // $('.vis').length;
         var base_url = "http://localhost:3000";
 
         $('.vis').width(WINDOW_WIDTH);
@@ -55,6 +54,13 @@
             $('#timelines-toggle').addClass("menu-button-active");
             $('#visualizations').stop().animate({
                 left: -2 * WINDOW_WIDTH + 'px'
+            }, 300);
+        });
+
+        $('#durations-toggle').click(function() {
+            $('#durations-toggle').addClass("menu-button-active");
+            $('#visualizations').stop().animate({
+                left: -3 * WINDOW_WIDTH + 'px'
             }, 300);
         });
 
