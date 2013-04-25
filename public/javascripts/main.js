@@ -64,7 +64,6 @@
             }, 300);
         });
 
-
         // ADD App Box
         $("#add-app-box").css("top", $('#header').height() - $('#add-app-box').height() - 18); // this needs to be fixed to take into account padding
 
