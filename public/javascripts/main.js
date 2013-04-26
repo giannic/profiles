@@ -162,5 +162,6 @@
             while (c && c !== p) c = c.parentNode;
             return c === p;
         }
+
     });
-})()
+})();
