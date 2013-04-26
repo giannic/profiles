@@ -214,6 +214,11 @@ var lines_init = function() {
     }
 
     /*
+     * Date Selector Controls
+     */
+     
+
+    /*
      * Animation Controls
      */
     function stepBackward(stepInterval) {
