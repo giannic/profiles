@@ -79,21 +79,42 @@ var lines_init = function() {
         initSlider();
         initFreqLine();
 
-        // now hide the container
-//        $("#container").css("top", $('#header').height() - $('#container').height() - 18); // this needs to be fixed to take into account padding
-
-        /*
         $('#container-toggle').click(function() {
             if (!$(this).hasClass("menu-button-active")) { // NOT active
+                $("#container").css("display", "block");
+                $("#appname").css("display", "block");
                 $("#container").stop().animate({
-                    top: $("#header").height() - $("#container").height() - 18 // this also
+                    top: $("#container").height() - 25 // fix
                 }, 300);
+                $("#appname").stop().animate({
+                    top: $("#container").height() - 25
+                }, 300);
+                // update the height of the lines
+                lineGraphHeight -= 60;
+                lineGraph
+                    .transition()
+                    .attr("height", lineGraphHeight);
+                calculateRender($("#timeline").rangeSlider("min"),
+                    $("#timeline").rangeSlider("max"), 1);
             } else { // active already
+                // update the height of the lines
+                lineGraphHeight += 60;
+                lineGraph
+                    .transition()
+                    .attr("height", lineGraphHeight);
+                // need to rerender (otherwise won't work if you hover over the apps)
+                calculateRender($("#timeline").rangeSlider("min"),
+                    $("#timeline").rangeSlider("max"), 1);
                 $("#container").stop().animate({
-                    top: $("#header").height() // this also
+                    top: $("#header").height() - $("#container").height() - 118
                 }, 300);
+                $("#appname").stop().animate({
+                    top: $("#header").height() - $("#container").height() - 118
+                }, 300);
+                setTimeout( function(){ $("#container").css("display", "none");
+                    $("#appname").css("display", "none"); }, 200 );
             }
-        });*/
+            });
 
     });
 
@@ -298,6 +319,7 @@ var lines_init = function() {
         string = string.replace('.', '-');
         string = string.replace('.', '-');
 
+        console.log(lineGraphHeight);
         for ( i = 0; i < renderArray.length; i++) {
             currentLine = lineGraph.append("a")
                 .attr("xlink:href", "http://www." + nameArray[index])
