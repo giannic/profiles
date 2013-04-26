@@ -2,6 +2,27 @@
   /*
    * PLEASE LOOK IN CONFIG FILE FOR CONSTANTS FOR OFFSETS
    */
+
+  var sample_data = [
+    {
+      focus: [10, 30, 50, 70],
+      unfocus: [20, 40, 60, 80]
+    },
+    {
+      focus: [20, 40, 60],
+      unfocus: [30, 50, 70]
+    },
+    {
+      focus: [0],
+      unfocus: [10]
+    },
+    {
+      focus: [70],
+      unfocus: [100]
+    }
+  ];
+  var apps_durations;
+  // mapping of apps to their total
   var canvas,
       canvas_ctx,
       canvas_height,
@@ -11,26 +32,29 @@
       timeline_width = WINDOW_WIDTH,
       timeline_height = WINDOW_HEIGHT;
 
+  
   /*
    * Sums the total duration of an app
    * Input: All JSON Data
    * Output: Array sorted in order of most used to least used
    */
-  function sum_all_durations(app) {
-      var sum = 0;
-      for (var i in app.open) {
-          sum += app.open[i];
-      }
-      console.log("SUM: ============" + sum);
+  function sum_all_durations(json) {
+      var d_json = _.map(json, sum_duration_per_app, function(memo, dur){ return memo + dur; }); 
+      return _.sortBy(d_json, function(app) {
+        return -app.durations;
+      });
   }
 
   /*
    * Sums the total duration of an app
    * Input: JSON Data for one app
-   * Output: Duration of the app
+   * Output: Duration of the app, array of duration times
    */
-  function sum_duration_per_app() {
-
+  function sum_duration_per_app(app) {
+    app.durations = _.reduce(_.zip(app.focus, app.unfocus), function(memo, pair) {
+      return memo + pair[1] - pair[0];
+    }, 0);
+    return app;
   }
 
   /*
@@ -115,6 +139,7 @@
    */
   app.util.vis.durations_init = function() {
     initialize();
+    console.log(sum_all_durations(sample_data));
 
     //render_app_segment(300, 40, 60);
     render_all_apps();

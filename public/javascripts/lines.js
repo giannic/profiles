@@ -1,6 +1,10 @@
+// globals so others can use
+var startTime;
+var endTime;
 var lines_init = function() {
+  
     var numberOfLines, stats = null, openArray, renderArray, closeArray, 
-    startTime, endTime, difference, leftBarTime, rightBarTime, lineGraphWidth, 
+    difference, leftBarTime, rightBarTime, lineGraphWidth, 
     lineGraphHeight, lineGraph, width_count, height_count, box_size,
     pad, // this is for when there are tons of apps
     allTheLines, hsl, colorArray, diff, appArray, nameArray, 
