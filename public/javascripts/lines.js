@@ -55,7 +55,7 @@ var lines_init = function() {
 
         //line graph dimensions
         lineGraphWidth = WINDOW_WIDTH - 250;
-        lineGraphHeight = WINDOW_HEIGHT - 250;
+        lineGraphHeight = WINDOW_HEIGHT - 190; // changes to 250?
 
         box_size = 25, pad = 5;
 
@@ -77,21 +77,43 @@ var lines_init = function() {
         initSlider();
         initFreqLine();
 
-        // now hide the container
-//        $("#container").css("top", $('#header').height() - $('#container').height() - 18); // this needs to be fixed to take into account padding
+        $("#container").css("top", $('#header').height() - $('#container').height() - 118); // this needs to be fixed to take into account padding
+        $("#appname").css("top", $('#header').height() - $('#container').height() - 118); // this needs to be fixed to take into account padding
 
-        /*
         $('#container-toggle').click(function() {
             if (!$(this).hasClass("menu-button-active")) { // NOT active
+                // update the height of the lines
+                lineGraphHeight += 60;
+                lineGraph
+                    .transition()
+                    .attr("height", lineGraphHeight);
+                // need to rerender (otherwise won't work if you hover over the apps)
+                calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
                 $("#container").stop().animate({
-                    top: $("#header").height() - $("#container").height() - 18 // this also
+                    top: $("#header").height() - $("#container").height() - 118 // this also
                 }, 300);
+                $("#appname").stop().animate({
+                    top: $("#header").height() - $("#container").height() - 118 // this also
+                }, 300);
+                setTimeout( function(){ $("#container").css("display", "none");
+                    $("#appname").css("display", "none"); }, 200 );
             } else { // active already
+                $("#container").css("display", "block");
+                $("#appname").css("display", "block");
                 $("#container").stop().animate({
-                    top: $("#header").height() // this also
+                    top: $("#container").height() - 25 // TODO: this might not be quite right
                 }, 300);
-            }
-        });*/
+                $("#appname").stop().animate({
+                    top: $("#container").height() - 25 // TODO: this might not be quite right
+                }, 300);
+                // update the height of the lines
+                lineGraphHeight -= 60;
+                lineGraph
+                    .transition()
+                    .attr("height", lineGraphHeight);
+                }
+                calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
+        });
 
     });
 
@@ -291,6 +313,7 @@ var lines_init = function() {
         string = string.replace('.', '-');
         string = string.replace('.', '-');
 
+        console.log(lineGraphHeight);
         for ( i = 0; i < renderArray.length; i++) {
             currentLine = lineGraph.append("a")
                 .attr("xlink:href", "http://www." + nameArray[index])
