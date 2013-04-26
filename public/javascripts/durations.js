@@ -16,8 +16,12 @@
    * Input: All JSON Data
    * Output: Array sorted in order of most used to least used
    */
-  function sum_all_durations() {
-
+  function sum_all_durations(app) {
+      var sum = 0;
+      for (var i in app.open) {
+          sum += app.open[i];
+      }
+      console.log("SUM: ============" + sum);
   }
 
   /*
@@ -36,7 +40,7 @@
    *         x: 0
    *         y: app_ranking * height_per_row
    */
-  function render_icon() {
+  function render_icon(app_id) {
 
   }
 
@@ -47,13 +51,9 @@
    */
   function render_app_segment(y, focus_time, unfocus_time) {
 
-    console.log('hello')
     var start_x = focus_time / total_time * timeline_width;
     var end_x = unfocus_time / total_time * timeline_width;
 
-    console.log(start_x)
-    console.log(end_x)
-    console.log(y)
 
     /*
     canvas_ctx.beginPath();
@@ -78,7 +78,7 @@
    * Input: app_index, all_focus_data
    * Output: Draws all the line segments of an app, as well as its icon
    */
-  function render_app() {
+  function render_app(app_index, focus) {
 
   }
 
@@ -87,10 +87,11 @@
    * Output: Draws paints entire canvas
    */
   function render_all_apps() {
-      //console.log(APP_DATA);
       $.each(APP_DATA.apps, function(idx, app) {
+          sum_duration_per_app(app);
           // just testing
           //console.log(app.open[0]);
+          //console.log(app.close[0]);
       });
   }
 
@@ -115,7 +116,7 @@
   app.util.vis.durations_init = function() {
     initialize();
 
-    render_app_segment(300, 40, 60);
+    //render_app_segment(300, 40, 60);
     render_all_apps();
 
   };
