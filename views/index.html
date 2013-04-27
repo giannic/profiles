@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/stylesheets/vis.css" />
     <link rel="stylesheet" href="stylesheets/forms.css" />
     <link rel="stylesheet" href="/stylesheets/grid.css">
+    <link rel="stylesheet" href="/stylesheets/durations.css">
 {{/extend}}
 
 {{#extend "javascripts"}}
@@ -78,6 +79,12 @@
                          id="logout-button"
                          src="img/ui_icons/logout.png"/>
                 </li>
+                <li>
+                    <!-- TEMPORARILIY ADDING THIS FOR TESTING TOGGLE FOR APPS IN LINES -->
+                    <img class="menu-button"
+                        id="container-toggle"
+                        src="img/ui_icons/add.png"/>
+                </li>
             </ul>
         </nav>
     </div>
@@ -91,7 +98,6 @@
         <div id="lines" class="vis">
             <div id="container" style="position: relative; margin: 0px auto;">
             </div>
-
             <div id="appname" style="text-align: center; height: 25px; margin: 0px auto;">
             </div>
 

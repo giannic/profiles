@@ -11,7 +11,8 @@ clusters_init = function(){
         force = 0,
         foci = 0, // to keep track of focal pos for each node
         collision_padding = 15, // padding for collisions
-        svg;
+        svg,
+        drag_category = "";
 
     $(document).ready(function() {
         svg = d3.select("#circles")
@@ -106,7 +107,9 @@ clusters_init = function(){
                         // another selected category
                         if (selected_category &&
                             (selected_category != clicked_category))
-                            deselect_old_cluster(selected_category);
+                            if (selected_category != drag_category){
+                                deselect_old_cluster(selected_category);
+                            }
                         selected_category = x.id;
                         select_new_cluster(x, i);
                     }
@@ -115,21 +118,23 @@ clusters_init = function(){
             .on("mouseleave", function(x, i) {
                 if (clicked_category != selected_category) {
                     if (x.id == selected_category) {
-                        // add a radius check to reduce instabilities
-                        // caused by mouseleave firing when a circle moves
-                        // away from mouse on hover and doesn't transition
-                        // radius size on time, not perfect in between circles
-                        var circle = d3.select("#circle_" + x.id);
-                        var check_x = d3.event.pageX - circle.attr("cx"),
-                            check_y = d3.event.pageY - circle.attr("cy"),
-                            dist = Math.sqrt(check_x*check_x + check_y*check_y);
+                        if (selected_category != drag_category) {
+                            // add a radius check to reduce instabilities
+                            // caused by mouseleave firing when a circle moves
+                            // away from mouse on hover and doesn't transition
+                            // radius size on time, not perfect in between circles
+                            var circle = d3.select("#circle_" + x.id);
+                            var check_x = d3.event.pageX - circle.attr("cx"),
+                                check_y = d3.event.pageY - circle.attr("cy"),
+                                dist = Math.sqrt(check_x*check_x + check_y*check_y);
 
-                        // check the radius of the circle
-                        var cr = circle.attr("r");
-                        if (dist > cr) {
-                            d3.transition().each("end", 
-                                deselect_old_cluster(selected_category));
-                            selected_category = "";
+                            // check the radius of the circle
+                            var cr = circle.attr("r");
+                            if (dist > cr) {
+                                d3.transition().each("end", 
+                                    deselect_old_cluster(selected_category));
+                                selected_category = "";
+                            }
                         }
                     }
                 }
@@ -250,9 +255,55 @@ clusters_init = function(){
         // separate function so don't have to create apps on every hover
         create_apps();
     });
- 
+
+    function dragstart(d, i) {
+        drag_category = selected_category;
+    }
+
+    function dragmove(d, i) {
+        var drag_app = "#link" + i + "_img_" + drag_category;
+
+        // move the drag category circle to the back so dragging over
+        // other categories expands
+        // this however puts the app behind everything else...
+        var circle_group = document.getElementById(drag_category);
+        circle_group.parentNode.insertBefore(
+            circle_group, circle_group.parentNode.firstChild);
+
+        var drag_app_obj = d3.select(drag_app),
+            currx = parseFloat(drag_app_obj.attr("x")),
+            curry = parseFloat(drag_app_obj.attr("y"));
+
+        drag_app_obj
+            .attr("x", function(){ return currx + d3.event.dx; })
+            .attr("y", function(){ return curry + d3.event.dy; });
+    }
+
+    function dragend(d, i) {
+        if (selected_category != drag_category && drag_category != ""
+            && selected_category != "") {
+            // change the category of d to the selected category
+            console.log("test");
+            console.log("selected cat is " + selected_category);
+            console.log("drag is " + drag_category);
+            selected_category == "";
+        }
+        else {
+            d3.select("#link" + i + "_img_" + drag_category)
+                .attr("x", d.x)
+                .attr("y", d.y);
+        }
+        drag_category = "";
+    }
+
     // this creates all the apps as hidden
     function create_apps() {
+        // add drag for category movement
+        force.drag = d3.behavior.drag()
+            .on("dragstart", dragstart)
+            .on("drag", dragmove)
+            .on("dragend", dragend);
+
         // add all the images from the start with 0 width
         nodes.forEach(function(x, i) {
             var d = x.apps,
@@ -291,8 +342,8 @@ clusters_init = function(){
                     var img = new Image();
                     img.src = "/img/app_icons/" + name + ".png";
                     img.onerror = function (evt) {
-                        this.onerror=null;
-                        this.src='/img/app_icons/social-networks.png';
+                        this.onerror = null;
+                        this.src = '/img/app_icons/social-networks.png';
                         d3.select(that).attr('xlink:href', this.src);
                     };
                     return img.src;
@@ -334,7 +385,8 @@ clusters_init = function(){
                 })
                 .attr("display", function(d, j){
                     return "none";
-                });
+                })
+                .call(force.drag);
         });
         var c = svg.selectAll("image")[0];
 
@@ -346,7 +398,7 @@ clusters_init = function(){
                                     hoverOffFunction(this);}, false);
             currimg.addEventListener("mousedown", function(evt) {
                                     evt.stopPropagation();}, false);
-        }    
+        }
     }
 
     // collision & tick from https://gist.github.com/GerHobbelt/3116713
@@ -369,7 +421,7 @@ clusters_init = function(){
                 });
             }
         }
-
+        
         //force.friction(0.1);
         while (++i < n) {
             q.visit(collide(nodes[i]));
@@ -604,6 +656,8 @@ clusters_init = function(){
     // displays the shadow box over apps for more apps
     function more_apps(d, i) {
         //force.stop(); // TODO: do force stop and fix the position
+        // TODO: bug, right clicking in more causes apps to go back
+        // to their original place?
         var circle = svg.select("#circle_" + d.id)
             .transition()
             .attr("r", WINDOW_WIDTH)
@@ -741,7 +795,3 @@ clusters_init = function(){
     }
 
 };
-
-
-
-

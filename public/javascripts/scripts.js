@@ -15,7 +15,7 @@ grid_init = function(){
     $('#visualizations').prepend(new app.views.GridView({collection: app.applications}).render().el);
     $('#more-apps-box').prepend(new app.views.GridView({collection: app.applications}).render().el);
 
-    $('body').on('keyup', function(e){
+    $('body').on('keydown', function(e){
       // check if it's cmd, alt, shift, ctrl
       if (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey || e.keyCode == 91) {
         return;
@@ -23,6 +23,7 @@ grid_init = function(){
       // check if it's not focused on an input
       // console.log(e);
       if (!$(e.target).is('input')) {
+        
         if (!e.ctrlKey && !e.altKey) {
           $('#grid-search').focus();
           // if it's the first letter
@@ -37,6 +38,9 @@ grid_init = function(){
       }
     });
     $('#grid-search').on('keyup', function(e){
+        if (e.keyCode === 13) {
+          grid_vent.trigger('redirect'); // redirect to website
+        }
         // if first character, append
         grid_vent.trigger('grid-search');
     });

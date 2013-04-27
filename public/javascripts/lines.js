@@ -1,7 +1,11 @@
+// globals so others can use
+var startTime;
+var endTime;
 var lines_init = function() {
+  
     var numberOfLines, stats = null, openArray, renderArray, closeArray, 
-    startTime, endTime, difference, leftBarTime, rightBarTime, lineGraphWidth, 
-    lineGraphHeight, lineGraph, width_count, height_count, box_size, 
+    difference, leftBarTime, rightBarTime, lineGraphWidth, 
+    lineGraphHeight, lineGraph, width_count, height_count, box_size,
     pad, // this is for when there are tons of apps
     allTheLines, hsl, colorArray, diff, appArray, nameArray, 
     minRange, maxRange, interval, boxes, activeArray, playTimeline = false, 
@@ -72,10 +76,50 @@ var lines_init = function() {
           .attr("width", lineGraphWidth)
           .attr("height", lineGraphHeight);
 
+        findMostUsedApp();
+
         setUpAppSelection();
 
         initSlider();
         initFreqLine();
+
+        $('#container-toggle').click(function() {
+            if (!$(this).hasClass("menu-button-active")) { // NOT active
+                $("#container").css("display", "block");
+                $("#appname").css("display", "block");
+                $("#container").stop().animate({
+                    top: $("#container").height() - 25 // fix
+                }, 300);
+                $("#appname").stop().animate({
+                    top: $("#container").height() - 25
+                }, 300);
+                // update the height of the lines
+                lineGraphHeight -= 60;
+                lineGraph
+                    .transition()
+                    .attr("height", lineGraphHeight);
+                calculateRender($("#timeline").rangeSlider("min"),
+                    $("#timeline").rangeSlider("max"), 1);
+            } else { // active already
+                // update the height of the lines
+                lineGraphHeight += 60;
+                lineGraph
+                    .transition()
+                    .attr("height", lineGraphHeight);
+                // need to rerender (otherwise won't work if you hover over the apps)
+                calculateRender($("#timeline").rangeSlider("min"),
+                    $("#timeline").rangeSlider("max"), 1);
+                $("#container").stop().animate({
+                    top: $("#header").height() - $("#container").height() - 118
+                }, 300);
+                $("#appname").stop().animate({
+                    top: $("#header").height() - $("#container").height() - 118
+                }, 300);
+                setTimeout( function(){ $("#container").css("display", "none");
+                    $("#appname").css("display", "none"); }, 200 );
+            }
+            });
+
     });
 
     /*************************************************************************
@@ -274,6 +318,7 @@ var lines_init = function() {
         string = string.replace('.', '-');
         string = string.replace('.', '-');
 
+        console.log(lineGraphHeight);
         for ( i = 0; i < renderArray.length; i++) {
             currentLine = lineGraph.append("a")
                 .attr("xlink:href", "http://www." + nameArray[index])
@@ -374,7 +419,12 @@ var lines_init = function() {
                 mostUsed = stats[i].url;
             }
         }
-        return mostUsed;
+
+        for (var i = 0; i < stats.length; i++) {
+            if (stats[i].url != mostUsed) {
+                activeArray[i] = false;
+            }
+        }       
     }
 
     function loadImages(sources, callback) {
@@ -440,6 +490,12 @@ var lines_init = function() {
                         newx = (k % width_count) * box_size;
 
                     var img = images[src];
+                    var isActive = activeArray[k - 1];
+                    var opac = 1.0;
+                    if(isActive == false){
+                        opac = 0.3;
+                    }
+
                     var box = new Kinetic.Rect({
                         x : newx,
                         y : newy,
@@ -448,6 +504,7 @@ var lines_init = function() {
                         id : appArray[k - 1],
                         name : nameArray[k - 1],
                         active : true,
+                        opacity : opac,
                         fillPatternImage : img,
                         fillPatternScale : [20 / img.width, 20 / img.height]
                     });

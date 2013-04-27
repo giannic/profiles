@@ -8,7 +8,10 @@ var APP_DATA = [],
         models: {},
         collections: {},
         views: {},
-        templates: {}
+        templates: {},
+        util: {
+          vis: {}
+        }
     };
 
 /*
@@ -63,5 +66,6 @@ var init = function() {
     clusters_init();
     lines_init();
     grid_init();
-    durations_init(); // uncomment when function is implemented
+    app.util.vis.durations_init(); // uncomment when function is implemented
+
 };
