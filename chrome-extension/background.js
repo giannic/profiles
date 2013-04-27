@@ -50,7 +50,7 @@ function checkDirtyClose() {
     function(items) {
       var posixTime = items.lastKnownTime;
       if (!posixTime) {
-        posixtime = getcurrenttime();
+        posixtime = getCurrentTime();
       }
 
       // if any dirty-closed domains, record a close time of last
