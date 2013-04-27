@@ -25,6 +25,12 @@ html, body {
         float: left;
         position: relative;
 
+        &.selected {
+         -webkit-box-shadow: 0 0 5px 5px#888;
+         -moz-box-shadow: 0 0 5px 5px#888;
+         box-shadow: 0 0 5px 5px#888;
+        }
+
         .delete {
             display: none;
             position: absolute;
@@ -80,6 +86,7 @@ html, body {
 
         }
     }
+    
 }
 
 .cf:after {
