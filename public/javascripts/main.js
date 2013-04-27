@@ -1,6 +1,7 @@
 (function(){
     $('document').ready(function() {
-        var base_url = "http://localhost:3000";
+        //var base_url = "http://localhost:3000";
+        var base_url = "http://davidxu.me:3000";
 
         $('.vis').width(WINDOW_WIDTH);
         $('#visualizations').width(VIS_COUNT*WINDOW_WIDTH + 5 + 'px');
