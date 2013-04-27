@@ -24,7 +24,6 @@ exports.json_all = (req, res) ->
 # userid, url, open_date, category, img_url
 ###
 exports.open = (req, res) ->
-  # res.render "hi"
   console.log req.body
   name = req.body.app_name
   url = req.body.url
@@ -54,31 +53,6 @@ exports.open = (req, res) ->
       if err then res.send(error: "Could not update database: App Open")
       res.send({appid: results.id})
   )
-
-###
-# /apps/create
-# url, category, img_url, name
-###
-exports.create = (req, res) ->
-  console.log('creating app')
-
-  properties = [{
-    category: req.body.category,
-    name: req.body.app_name,
-    userid: req.session.user_id,
-    img: req.body.image_url, # url
-    url: req.body.app_url }]
-  Application.create(properties, (err, data) ->
-    if err
-      console.log(err)
-      res.send(error: "Could not create app")
-      return
-    else
-      console.log("app create success")
-      res.send(success: data)
-  )
-  # add to whitelist
-  user_routes.add_to_whitelist(properties[0].userid, properties[0].url, res)
 
 
 
@@ -117,8 +91,82 @@ exports.close = (req, res) ->
         if err then res.send(error: "Could not update database: App Close")
         res.send(success: "Database updated: App close")
     )
-
   )
+
+###
+# /apps/focus
+# req.body:
+# url, userid, time
+###
+exports.focus = (req, res) ->
+  console.log req.body
+  userid = req.body.userid
+  time = req.body.time
+
+  Application.findOneAndUpdate(
+    { userid: req.body.userid, url: req.body.url },
+    {
+      $push: {focus: req.body.time},
+      $inc: {focus_count: 1},
+    },
+    {upsert: false},
+    (err, results) ->
+      if err
+        res.send(error: "Could not update database: /focus")
+        console.log('error: ' + err)
+      else
+        console.log('focus updated')
+        console.log('results: ' + results)
+        res.send(results)
+  )
+
+###  
+# /apps/unfocus
+# req.body:
+# url, userid, time
+###
+exports.unfocus = (req, res) ->
+  Application.findOneAndUpdate(
+    { userid: req.body.userid, url: req.body.url },
+    {
+      $push: {unfocus: req.body.time},
+      $inc: {unfocus_count: 1},
+    },
+    { upsert: false },
+    (err, results) ->
+      if err
+        res.send(error: "Could not update database: unfocus")
+        console.log('error: ' + err)
+      else
+        console.log('unfocus updated!')
+        console.log('results: ' + results)
+        res.send(results)
+  )
+
+###
+# /apps/create
+# url, category, img_url, name
+###
+exports.create = (req, res) ->
+  console.log('creating app')
+
+  properties = [{
+    category: req.body.category,
+    name: req.body.app_name,
+    userid: req.session.user_id,
+    img: req.body.image_url, # url
+    url: req.body.app_url }]
+  Application.create(properties, (err, data) ->
+    if err
+      console.log(err)
+      res.send(error: "Could not create app")
+      return
+    else
+      console.log("app create success")
+      res.send(success: data)
+  )
+  # add to whitelist
+  user_routes.add_to_whitelist(properties[0].userid, properties[0].url, res)
 
 ###
 # /apps/delete
@@ -136,6 +184,7 @@ exports.delete = (req, res) ->
     else
       res.send(success: result)
   )
+
 
 ###
 # testing purposes only
@@ -185,7 +234,7 @@ exports.update_category = (req, res) ->
 
 exports.get_by_user = (req, res) ->
   helpers.loadUser req, res, ->
-    Application.find userid: req.session.user_id, 'category img url open close open_count close_count',
+    Application.find userid: req.session.user_id, 'category img url open close open_count close_count focus unfocus focus_count unfocus_count',
       (err, result) ->
         if err
           console.log 'error' + err

@@ -8,8 +8,12 @@ Application = new mongoose.Schema
   userid: String,  # user id
   open: [Number],
   close: [Number],
+  focus: [Number],
+  unfocus: [Number],
   open_count: {type: Number, required: true, default: 0 },
   close_count: {type: Number, required: true, default: 0 },
+  focus_count: {type: Number, required: true, default: 0 },
+  unfocus_count: {type: Number, required: true, default: 0 },
   img: {type: String, default: 'placeholder.png'},   # url
   url: {type: String, required: true}  # DOMAIN url
   # email: {type: String, index: {unique: true}}

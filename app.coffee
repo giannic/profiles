@@ -14,8 +14,8 @@ hbs = require('hbs')
 conf =
   db: {
     db: 'test',
-    host: 'davidxu.me',
-    #host: 'localhost',
+    #host: 'davidxu.me',
+    host: 'localhost',
     port: 27017,
     username: '',
     password: '',
@@ -89,6 +89,8 @@ app.get "/manage", user.manage
 app.get "/apps.json", application.json_all
 app.post "/apps/open", application.open
 app.post "/apps/close", application.close
+app.post "/apps/focus", application.focus
+app.post "/apps/unfocus", application.unfocus
 app.post "/apps/delete", application.delete
 app.post "/apps/create", application.create
 app.get "/apps/new", application.new_test  # just for testing
