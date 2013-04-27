@@ -10,6 +10,7 @@
       height: Math.floor(1000/6), // square for now
       margin: 15,
       r: 1000/12, // temporary
+      selected: false,
 
       template: _.template(app.templates.application),
 
@@ -43,6 +44,7 @@
       },
 
       render: function() {
+        if(this.selected) this.$el.addClass('selected');
         // return render_d3.call(this);
         return render_html.call(this);
       },

@@ -10,6 +10,7 @@ app.views.GridView = Backbone.View.extend({
   apps: [],
   expanded_apps: [],
   expanded_corners: [],
+  redirect_to: undefined,
 
 
   template: _.template(app.templates.grid),
@@ -33,14 +34,13 @@ app.views.GridView = Backbone.View.extend({
     this.listenTo(grid_vent, 'grid-search', this.search);
     this.listenTo(grid_vent, 'grid-add', this.add_application);
     this.listenTo(grid_vent, 'grid-delete', this.delete_application);
+    this.listenTo(grid_vent, 'redirect', this.redirect);
   },
 
   render: function(search_key, search_value) {
     this.apps = [];
     this.$el.width(this.width);
     this.$el.html(this.template(this.collection.toJSON()));
-    // this.$el.toggleClass('done', this.model.get('done'));
-    // this.input = this.$('.edit');
 
     var current_row;
     var that = this;
@@ -48,6 +48,7 @@ app.views.GridView = Backbone.View.extend({
     var row_index = 0;  // position in the row
     var row_num = 0;
     this.collection.search(search_key, search_value).each(function(item, i) {
+        
         var current_column = row_index < that.COLUMNS ? row_index : row_index % that.COLUMNS;
         if (current_column === 0) {
             that.$el.append(current_row);
@@ -62,6 +63,13 @@ app.views.GridView = Backbone.View.extend({
                             row: row_num,
                             column: current_column
                            });
+        // if first app, add selected to it, and set "redirect_to"
+        if(i === 0 && search_value) {
+          new_app.selected = true;
+          that.redirect_to = new_app.model.get('url');
+        }
+
+
         that.apps.push(new_app);
         current_row.find('.row-wrapper').append(new_app.render().el);
         row_index++;
@@ -73,11 +81,6 @@ app.views.GridView = Backbone.View.extend({
     // TODO: HARDCODED WIDTH
     var $curr_row = $(current_row);
     var last_row_width = this.COLUMNS * ($curr_row.find('.application').width() + 2 * parseInt($curr_row.find('.application').css('margin')));
-    // console.log('widthhh')
-    // console.log(last_row_width)
-    // console.log(this.COLUMNS)
-    // console.log($curr_row.find('.application').length *  $curr_row.find('.application').width())
-    // console.log($curr_row.find('.application').css('margin'))
     $(current_row).find('.row-wrapper').width(last_row_width);
     return this;
   },
@@ -294,7 +297,6 @@ app.views.GridView = Backbone.View.extend({
   search: function() {
     // this.model.toggle();
     this.render('url', $('#grid-search').val());
-
   },
 
 
@@ -313,6 +315,11 @@ app.views.GridView = Backbone.View.extend({
 
   updateOnEnter: function(e) {
   },
+
+  redirect: function() {
+    window.location = 'http://www.' + this.redirect_to;
+  },
+
 
   clear: function() {
   }
