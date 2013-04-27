@@ -126,36 +126,21 @@ exports.focus = (req, res) ->
 # url, userid, time
 ###
 exports.unfocus = (req, res) ->
-  # nested db calls idgaf
-  Application.findOne(
+  Application.findOneAndUpdate(
     { userid: req.body.userid, url: req.body.url },
-    (err, data) ->
-      if err then res.send(error: "Could not update database: unfocus")
-      if (not data)
-        res.send(error: "Could not update database: Null value in unfocus")
-        return
-      if data.focus.length == data.unfocus.length
-        res.send(error: "Could not update database: focus and unfocus arrays of equal length already")
-        return
-      if data.focus.length > data.unfocus.length
-        res.send(error: "Could not update database: More unfocus times than focus times.")
-        return
-      Application.findOneAndUpdate(
-        { userid: req.body.userid, url: req.body.url },
-        {
-          $push: {unfocus: req.body.time},
-          $inc: {unfocus_count: 1},
-        },
-        { upsert: false },
-        (err, results) ->
-          if err
-            res.send(error: "Could not update database: unfocus")
-            console.log('error: ' + err)
-          else
-            console.log('unfocus updated!')
-            console.log('results: ' + results)
-            res.send(results)
-      )
+    {
+      $push: {unfocus: req.body.time},
+      $inc: {unfocus_count: 1},
+    },
+    { upsert: false },
+    (err, results) ->
+      if err
+        res.send(error: "Could not update database: unfocus")
+        console.log('error: ' + err)
+      else
+        console.log('unfocus updated!')
+        console.log('results: ' + results)
+        res.send(results)
   )
 
 ###
