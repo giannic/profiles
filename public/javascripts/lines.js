@@ -5,8 +5,10 @@ var lines_init = function() {
     pad, // this is for when there are tons of apps
     allTheLines, hsl, colorArray, diff, appArray, nameArray, 
     minRange, maxRange, interval, boxes, activeArray, playTimeline = false, 
-    layer, toggle = false, frequencies = [];
-
+    layer, toggle = false, frequencies = [],
+    MS_IN_DAY = 86400000,               // milliseconds in a day
+    MS_IN_WEEK = 604800000;             // milliseconds in a week 
+    //MS_IN_MONTH = 26297000000000;
 
     $(document).ready(function() {
         var data = APP_DATA.apps;
@@ -78,6 +80,7 @@ var lines_init = function() {
 
         initSlider();
         initFreqLine();
+        initViewControls();
 
         $('#container-toggle').click(function() {
             if (!$(this).hasClass("menu-button-active")) { // NOT active
@@ -113,9 +116,8 @@ var lines_init = function() {
                 }, 300);
                 setTimeout( function(){ $("#container").css("display", "none");
                     $("#appname").css("display", "none"); }, 200 );
-            }
+                }
             });
-
     });
 
     /*************************************************************************
@@ -214,6 +216,13 @@ var lines_init = function() {
             .prepend("<div class='frequency-container'></div>");
     }
 
+    function initViewControls() {
+
+        $('#timeline_day_view').click(function () {
+            getDayActivity();
+        });
+    }
+
     function updateSliderDates(dateLeft, dateRight) {
         var dl = dateLeft, dr = dateRight;
         $("#timeline_dateLeft")
@@ -255,7 +264,25 @@ var lines_init = function() {
     /*
      * Date Selector Controls
      */
-     
+
+    /*
+     * View activity in the past day 
+     */
+     function getDayActivity () {
+        //var diff = 100 - (1/((endTime-startTime) / (MS_IN_DAY/1000)));
+        var diff = ((endTime-startTime) / (MS_IN_DAY/1000));
+        console.log(diff)
+
+        //updateSliderDates(dateLeft, dateRight)
+     }
+
+     function getWeekActivity () {
+
+     }
+
+     function getMonthActivity () {
+
+     }
 
     /*
      * Animation Controls
