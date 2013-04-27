@@ -10,6 +10,15 @@
     position: absolute;
 }
 
+#container {
+    position: relative; 
+    margin: 0px auto; 
+    background: {
+        color: $HEADER_BACKGROUND;
+    }
+    
+}
+
 .vis-shape {
     //stroke: $SHAPE_STROKE;
     //stroke-width: 1px;

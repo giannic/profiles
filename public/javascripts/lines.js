@@ -110,15 +110,16 @@ var lines_init = function() {
                 calculateRender($("#timeline").rangeSlider("min"),
                     $("#timeline").rangeSlider("max"), 1);
                 $("#container").stop().animate({
-                    top: $("#header").height() - $("#container").height() - 118
+                    top: $("#header").height() - $("#container").height() - 85
                 }, 300);
                 $("#appname").stop().animate({
-                    top: $("#header").height() - $("#container").height() - 118
+                    top: $("#header").height() - $("#container").height() - 85
                 }, 300);
-                setTimeout( function(){ $("#container").css("display", "none");
-                    $("#appname").css("display", "none"); }, 200 );
+
+       //         setTimeout( function(){ $("#container").css("display", "none");
+              //      $("#appname").css("display", "none"); }, 200 );
             }
-            });
+            }); 
 
     });
 
