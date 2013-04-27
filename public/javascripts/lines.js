@@ -117,7 +117,7 @@ var lines_init = function() {
                 }, 300);
 
        //         setTimeout( function(){ $("#container").css("display", "none");
-              //      $("#appname").css("display", "none"); }, 200 );
+                setTimeout( function(){ $("#appname").css("display", "none"); }, 200 );
             }
             }); 
 
@@ -319,7 +319,6 @@ var lines_init = function() {
         string = string.replace('.', '-');
         string = string.replace('.', '-');
 
-        console.log(lineGraphHeight);
         for ( i = 0; i < renderArray.length; i++) {
             currentLine = lineGraph.append("a")
                 .attr("xlink:href", "http://www." + nameArray[index])
