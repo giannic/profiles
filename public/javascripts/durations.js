@@ -35,20 +35,6 @@
   var ordered_apps;
 
 
-
-  function initialize() {
-    canvas = $('#durations-canvas');
-    canvas = document.getElementById('durations-canvas');
-    canvas_height = WINDOW_HEIGHT - $('#header').height(); // subtract size of menubar
-    //canvas.height = canvas_height;
-    // this is how clusters is doing it atm
-    canvas.height = WINDOW_HEIGHT - 50;
-    canvas.width = WINDOW_WIDTH - 30;
-
-    total_time = end_time - start_time;
-    canvas_ctx = canvas.getContext('2d');
-  }
-
   /*
    * main setup function for durations
    * called inside config.js
@@ -59,7 +45,22 @@
     render_all_apps_from_json(sample_data);
 
   };
-  
+ 
+  /*
+   *
+   * internal setup function. Sets up canvas
+   *
+   */
+  function initialize() {
+    canvas = $('#durations-canvas');
+    canvas = document.getElementById('durations-canvas');
+    canvas_height = WINDOW_HEIGHT - $('#header').height(); // subtract size of menubar
+    canvas.width = WINDOW_WIDTH - 30;
+
+    total_time = end_time - start_time;
+    canvas_ctx = canvas.getContext('2d');
+  }
+ 
   /*
    * order apps by duration 
    * Input: All JSON Data
