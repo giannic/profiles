@@ -85,6 +85,7 @@ var lines_init = function() {
 
         $('#container-toggle').click(function() {
             if (!$(this).hasClass("menu-button-active")) { // NOT active
+                $('#container-toggle')[0].src = "img/ui_icons/up.png";
                 $("#container").css("display", "block");
                 $("#appname").css("display", "block");
                 $("#container").stop().animate({
@@ -102,6 +103,7 @@ var lines_init = function() {
                     $("#timeline").rangeSlider("max"), 1);
             } else { // active already
                 // update the height of the lines
+                $('#container-toggle')[0].src = "img/ui_icons/down.png";
                 lineGraphHeight += 60;
                 lineGraph
                     .transition()
