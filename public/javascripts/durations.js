@@ -46,12 +46,10 @@ app.util.vis.durations_init = function() {
  * internal setup function. Sets up canvas
  */
 function initialize() {
-    //canvas = $('#durations-canvas');
+    $("#durations").width(WINDOW_WIDTH - 100);
     canvas = document.getElementById('durations-canvas');
-    canvas_height = WINDOW_HEIGHT - $('#header').height(); // subtract size of menubar
-    canvas.width = WINDOW_WIDTH - 30;
-
-
+    canvas.height = WINDOW_HEIGHT - $('#header').height(); // subtract size of menubar
+    canvas.width = 800;
 
     total_time = end_time - start_time;
     canvas_ctx = canvas.getContext('2d');
@@ -89,19 +87,10 @@ function sum_duration_per_app(app) {
  *         y: app_ranking * height_per_row
  */
 function render_icon(app_id) {
-    console.log("rendering icon");
-    var icon;
-
-    icon = new Image();
-    icon.src = 'img/app_icons/linkedin-square.png';
-
-    icon.onload = function() {
-        // x, y, w, h
-        canvas_ctx.drawImage(icon, 0, 50, ICON_WIDTH, ICON_HEIGHT);
-        icon = new Image();
-        icon.src = 'img/app_icons/spotify-square.png';
-        canvas_ctx.drawImage(icon, 50, 50, ICON_WIDTH, ICON_HEIGHT);
-    };
+    $("#durations-sidebar").prepend('<img class="durations-icon" src="img/app_icons/linkedin-square.png"/>');
+    $("#durations-sidebar").prepend('<img class="durations-icon" src="img/app_icons/linkedin-square.png"/>');
+    $("#durations-sidebar").prepend('<img class="durations-icon" src="img/app_icons/linkedin-square.png"/>');
+    $("#durations-sidebar").prepend('<img class="durations-icon" src="img/app_icons/linkedin-square.png"/>');
 }
 
 /*
