@@ -72,5 +72,4 @@ var init = function() {
     lines_init();
     grid_init();
     app.util.vis.durations_init(); // uncomment when function is implemented
-
 };

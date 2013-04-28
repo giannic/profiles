@@ -17,14 +17,45 @@ var canvas,
     duration_y_spacing;
 var ordered_apps;
 
+window.requestAnimFrame = (function(){
+    return window.requestAnimationFrame       ||
+           window.webkitRequestAnimationFrame ||
+           window.mozRequestAnimationFrame    ||
+    function( callback ){
+        window.setTimeout(callback, 1000 / 60);
+    };
+})();
+
+
+
+function my_animate(num_frames, num_frames_remain, increment) {
+    var line_width_change = ICON_HEIGHT * (3/4),
+        y_space_change = DURATIONS_Y_SPACING * (3/4);
+
+    duration_line_width += increment * line_width_change/num_frames;
+    duration_y_spacing += increment * y_space_change/num_frames;
+
+    canvas_ctx.clearRect(0, 0, canvas.width, canvas.height);
+    render_all_apps_from_json(APP_DATA);
+
+    console.log("doing some crazy shiz");
+    requestAnimFrame(function() {
+        if (num_frames_remain > 0) {
+            my_animate(num_frames, num_frames_remain - 1, increment);
+        }
+    });
+}
 /*
  * Action events
  */
 $(document).ready(function() {
+
     $("#durations-compress").click(function() {
         if ($(this).hasClass("durations-compressed")) {
-            duration_line_width = ICON_HEIGHT;
-            duration_y_spacing = DURATIONS_Y_SPACING;
+            //duration_line_width = ICON_HEIGHT;
+            //duration_y_spacing = DURATIONS_Y_SPACING;
+            my_animate(10, 10, 1);
+
             $(this).removeClass("durations-compressed")
                    .addClass("durations-expanded")
                    .attr("src", "img/ui_icons/up.png");
@@ -36,8 +67,11 @@ $(document).ready(function() {
             }, ANIMATE_TIME);
 
         } else {
-            duration_line_width = ICON_HEIGHT/4;
-            duration_y_spacing = DURATIONS_Y_SPACING/4;
+            //duration_line_width = ICON_HEIGHT/4;
+            //duration_y_spacing = DURATIONS_Y_SPACING/4;
+
+            my_animate(10, 10, -1);
+
             $(this).removeClass("durations-expanded")
                    .addClass("durations-compressed")
                    .attr("src", "img/ui_icons/down.png");
@@ -47,9 +81,11 @@ $(document).ready(function() {
                 $(this).css('visibility', 'hidden');
             });
         }
-        canvas_ctx.clearRect(0, 0, canvas.width, canvas.height);
-        render_all_apps_from_json(APP_DATA);
+        //canvas_ctx.clearRect(0, 0, canvas.width, canvas.height);
+        //render_all_apps_from_json(APP_DATA);
     });
+
+
 });
 
 /*
@@ -68,11 +104,8 @@ app.util.vis.durations_init = function() {
 function initialize() {
     $("#durations").width(duration_width);
     canvas = document.getElementById('durations-canvas');
-    //canvas.height = WINDOW_HEIGHT - $('#header').height(); // subtract size of menubar
     canvas.height = duration_height; // subtract size of menubar
     canvas.width = 930; // 10 margin
-    //console.log(duration_height);
-    //console.log(WINDOW_HEIGHT);
 
     duration_line_width = ICON_HEIGHT;
     duration_y_spacing = DURATIONS_Y_SPACING;
@@ -90,8 +123,6 @@ function initialize() {
 function order_apps(json) {
   var d_json = _.map(json, sum_duration_per_app);
   var n = _.sortBy(d_json, function(app) {
-      //return -app.durations;
-      //console.log(app.durations);
       return -app.durations || 0;
   });
   return n;
@@ -103,10 +134,6 @@ function order_apps(json) {
  * Output: Duration of the app, array of duration times
  */
 function sum_duration_per_app(app) {
-    //app.durations = _.reduce(_.zip(app.open, app.close), function(memo, pair) {
-    // console.log('sum_dureatio_perapp')
-    // console.log(app)
-    //app.durations = _.reduce(_.zip(app.open, app.close), function(memo, pair) {
     if (app.focus === undefined || app.unfocus === undefined) {
         console.log("Failed to get focus data for:");
         console.log(app);
