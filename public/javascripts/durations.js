@@ -3,26 +3,6 @@
  */
 
 (function() {
-
-var sample_data = [
-    {
-        focus: [10, 30, 50, 70],
-        unfocus: [20, 40, 60, 80]
-    },
-    {
-        focus: [20, 40, 60],
-        unfocus: [30, 50, 70]
-    },
-    {
-        focus: [0],
-        unfocus: [10]
-    },
-    {
-        focus: [80],
-        unfocus: [100]
-    }
-];
-
 var apps_durations;
 // mapping of apps to their total
 var canvas,
@@ -33,7 +13,8 @@ var canvas,
     total_time,
     duration_width = WINDOW_WIDTH, // not used
     duration_height = WINDOW_HEIGHT,
-    duration_line_width;
+    duration_line_width,
+    duration_y_spacing;
 var ordered_apps;
 
 /*
@@ -43,12 +24,28 @@ $(document).ready(function() {
     $("#durations-compress").click(function() {
         if ($(this).hasClass("durations-compressed")) {
             duration_line_width = ICON_HEIGHT;
-            $(this).removeClass("durations-compressed");
-            $(this).addClass("durations-expanded");
+            duration_y_spacing = DURATIONS_Y_SPACING;
+            $(this).removeClass("durations-compressed")
+                   .addClass("durations-expanded")
+                   .attr("src", "img/ui_icons/up.png");
+
+            $("#durations-sidebar")
+            .css('visibility', 'visible')
+            .animate({
+                opacity: 1.0
+            }, ANIMATE_TIME);
+
         } else {
             duration_line_width = ICON_HEIGHT/4;
-            $(this).removeClass("durations-expanded");
-            $(this).addClass("durations-compressed");
+            duration_y_spacing = DURATIONS_Y_SPACING/4;
+            $(this).removeClass("durations-expanded")
+                   .addClass("durations-compressed")
+                   .attr("src", "img/ui_icons/down.png");
+            $("#durations-sidebar").animate({
+                opacity: 0.0
+            }, ANIMATE_TIME, function() {
+                $(this).css('visibility', 'hidden');
+            });
         }
         canvas_ctx.clearRect(0, 0, canvas.width, canvas.height);
         render_all_apps_from_json(APP_DATA);
@@ -78,6 +75,7 @@ function initialize() {
     //console.log(WINDOW_HEIGHT);
 
     duration_line_width = ICON_HEIGHT;
+    duration_y_spacing = DURATIONS_Y_SPACING;
     start_time = startTime; // change to startTime, endTime
     end_time = endTime;
     total_time = end_time - start_time;
@@ -164,10 +162,10 @@ function render_app_segment(y, focus_time, unfocus_time) {
  * Output: Draws all the line segments of an app, as well as its icon
  */
 function render_app(item, index) {
-    var y_by_rank = index * (ICON_HEIGHT + DURATIONS_Y_SPACING) + STROKE_WIDTH/2;
+    var y_by_rank = index * (duration_line_width + duration_y_spacing) + STROKE_WIDTH/2;
     //var focus_pairs = _.zip(item.open, item.close);
     if (item.focus === undefined || item.unfocus === undefined) {
-        console.log("OMGOMGOGMOGMGOMGOMG");
+        console.log("focus or unfocus time missing");
     }
 
     var focus_pairs = _.zip(item.focus, item.unfocus);
