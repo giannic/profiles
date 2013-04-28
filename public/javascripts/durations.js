@@ -51,9 +51,9 @@ function initialize() {
     canvas = document.getElementById('durations-canvas');
     //canvas.height = WINDOW_HEIGHT - $('#header').height(); // subtract size of menubar
     canvas.height = duration_height; // subtract size of menubar
-    canvas.width = 940;
-    console.log(duration_height);
-    console.log(WINDOW_HEIGHT);
+    canvas.width = 930; // 10 margin
+    //console.log(duration_height);
+    //console.log(WINDOW_HEIGHT);
 
     start_time = startTime; // change to startTime, endTime
     end_time = endTime;
@@ -70,7 +70,7 @@ function order_apps(json) {
   var d_json = _.map(json, sum_duration_per_app);
   var n = _.sortBy(d_json, function(app) {
       //return -app.durations;
-      console.log(app.durations);
+      //console.log(app.durations);
       return -app.durations || 0;
   });
   return n;
@@ -85,7 +85,13 @@ function sum_duration_per_app(app) {
     //app.durations = _.reduce(_.zip(app.open, app.close), function(memo, pair) {
     // console.log('sum_dureatio_perapp')
     // console.log(app)
-    app.durations = _.reduce(_.zip(app.open, app.close), function(memo, pair) {
+    //app.durations = _.reduce(_.zip(app.open, app.close), function(memo, pair) {
+    if (app.focus === undefined || app.unfocus === undefined) {
+        console.log("Failed to get focus data for:");
+        console.log(app);
+        return 0;
+    }
+    app.durations = _.reduce(_.zip(app.focus, app.unfocus), function(memo, pair) {
         // console.log(memo)
         return memo + pair[1] - pair[0];
     }, 0);
@@ -108,8 +114,8 @@ function render_icon(item) {
 
     // need to consider apps with no images
 
-    console.log(img_copy);
-    $("#durations-sidebar").append('<img class="durations-icon" src="img/app_icons/' + img_copy + '-square.png"/>');
+    //console.log(img_copy);
+    $("#durations-sidebar").append('<a href="http://' + item.url + '"><img class="durations-icon" src="img/app_icons/' + img_copy + '-square.png" onError="this.src = \'img/app_icons/social-networks-square.png\'"/></a>');
 }
 
 /*
@@ -136,12 +142,18 @@ function render_app_segment(y, focus_time, unfocus_time) {
  */
 function render_app(item, index) {
     var y_by_rank = index * (ICON_HEIGHT + DURATIONS_Y_SPACING) + STROKE_WIDTH/2;
-    var focus_pairs = _.zip(item.open, item.close);
-    _.each(focus_pairs, function(pair){
-        render_app_segment(y_by_rank, pair[0], pair[1]);
+    //var focus_pairs = _.zip(item.open, item.close);
+    if (item.focus === undefined || item.unfocus === undefined) {
+        console.log("OMGOMGOGMOGMGOMGOMG");
+    }
+
+    var focus_pairs = _.zip(item.focus, item.unfocus);
+    _.each(focus_pairs, function(pair) {
+        if (pair[0] !== undefined && pair[1] !== undefined) {
+            render_app_segment(y_by_rank, pair[0], pair[1]);
+        }
     });
 
-    console.log(item);
     render_icon(item);
 }
 
@@ -152,9 +164,8 @@ function render_app(item, index) {
 function render_all_apps_from_json(data) {
     ordered_apps = order_apps(data.apps);
     // is underscore async?
-    for(var index in ordered_apps)
+    for (var index in ordered_apps) {
         render_app(ordered_apps[index], index);
-    
+    }
 }
-
 })();
