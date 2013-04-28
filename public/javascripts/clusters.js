@@ -1,8 +1,6 @@
 clusters_init = function(){
     var window_width = WINDOW_WIDTH - 30,
         window_height = WINDOW_HEIGHT - 50, // TODO: subtract size of menubar
-        image_width = [], // image widths of the apps
-        image_height = [],
         selected_category,  // selected on hover, app id
         clicked_category,  // selected on click, app id
         pad = 10, // padding for boundary circle + app circles
@@ -13,7 +11,8 @@ clusters_init = function(){
         collision_padding = 15, // padding for collisions
         svg,
         drag_category = "",
-        selected_category_name = "";
+        selecting_clicked_category,
+        selected_category_name = ""; // TODO: should probably change this
 
     $(document).ready(function() {
         svg = d3.select("#circles")
@@ -32,8 +31,6 @@ clusters_init = function(){
             dataset.push(new_cluster);
             id_index += 1;
         });
-
-        var num_categories = dataset.length;
 
         nodes = dataset;
 
@@ -65,36 +62,7 @@ clusters_init = function(){
                 return x.id;
             })
             .attr("transform", function(x, i) {
-                // scale the category circle and image size
-                // get the r of enlarged circle (roughly, grid config)
-                var r = Math.floor(Math.sqrt(
-                    (window_width*window_height)/(4*num_categories)));
-
-                // reduce it to r of the smaller circle
-                x.r = (r - (2*pad))/1.8;
-
-                // update the r for expansion
-                var compare_apps = cap_apps;
-                if (max_apps < cap_apps)
-                    compare_apps = max_apps;
-                var length = x.apps.length;
-                if (length > compare_apps)
-                    length = compare_apps;
-                x.r = (length/compare_apps)*x.r;
-
-                // cap it so it's not terribly big
-                if ((x.r + x.r*0.8 + pad*2)*2 > window_height) {
-                    x.r = .25*window_height; // TODO: randomly chose
-                }
-                // cap it so it's not terribly small
-                if (x.r < 50) {
-                    x.r = 50;
-                }
-
-                // x.r is unchanging radius
-                // x.radius changes upon mouseenter/leave
-                x.radius = x.r;
-                image_width[i] = image_height[i] = 0.8*x.r;
+                calculate_radius(x, i, max_apps); // TODO: probably shouldn't be here
 
                 // force layout will automatically choose x/y
                 return "translate(" + [x.x, x.y] + ")";
@@ -113,7 +81,11 @@ clusters_init = function(){
                             }
                         selected_category = x.id;
                         selected_category_name = x.name;
-                        select_new_cluster(x, i);
+                        select_new_cluster(x);
+                    }
+                    else if (clicked_category) {
+                        selecting_clicked_category = x.id;
+                        selected_category_name = x.name;
                     }
                 }
             })
@@ -259,7 +231,10 @@ clusters_init = function(){
     });
 
     function dragstart(d, i) {
-        drag_category = selected_category;
+        if (selecting_clicked_category)
+            drag_category = selecting_clicked_category;
+        else
+            drag_category = selected_category;
     }
 
     function dragmove(d, i) {
@@ -281,10 +256,23 @@ clusters_init = function(){
             .attr("y", function(){ return curry + d3.event.dy; });
     }
 
+    // TODO: FIX BUGS WHEN DRAGGING OUTSIDE
     function dragend(d, i) {
-        if (selected_category != drag_category && drag_category != ""
-            && selected_category != "") {
-            selected_category == "";
+        // TODO: make this work for clicked category
+        if (drag_category != "" && ((selected_category != drag_category &&
+            selected_category != "") ||
+            (selecting_clicked_category != drag_category &&
+            selecting_clicked_category != ""))) {
+            var dragging = drag_category; // TODO: wtf why do i have to redefine
+            var selecting;
+            if (selected_category == drag_category) {
+                selecting = selecting_clicked_category;
+                selecting_clicked_category == "";
+            }
+            else {
+                selecting = selected_category;
+                selected_category == "";
+            }
             $.post("/apps/category", {
                 "url": d.url,
                 "category": selected_category_name
@@ -295,8 +283,7 @@ clusters_init = function(){
                 }
                 else {
                     console.log(data); 
-                    // update the clusters
-                    create_apps();
+                    update_app_category(d, selecting, dragging);
                 }
             });
         }
@@ -306,6 +293,130 @@ clusters_init = function(){
                 .attr("y", d.y);
         }
         drag_category = "";
+    }
+
+    function calculate_radius(x, i, max_apps) {
+        // scale the category circle and image size
+        // get the r of enlarged circle (roughly, grid config)
+        var r = Math.floor(Math.sqrt(
+            (window_width*window_height)/(4*nodes.length)));
+
+        // reduce it to r of the smaller circle
+        x.r = (r - (2*pad))/1.8;
+
+        // update the r for expansion
+        var compare_apps = cap_apps;
+        if (max_apps < cap_apps)
+            compare_apps = max_apps;
+        var length = x.apps.length;
+        if (length > compare_apps)
+            length = compare_apps;
+        x.r = (length/compare_apps)*x.r;
+
+        // cap it so it's not terribly big
+        if ((x.r + x.r*0.8 + pad*2)*2 > window_height) {
+            x.r = .25*window_height; // TODO: randomly chose
+        }
+        // cap it so it's not terribly small
+        if (x.r < 50) {
+            x.r = 50;
+        }
+
+        // x.r is unchanging radius
+        // x.radius changes upon mouseenter/leave
+        x.radius = x.r;
+        x.app_img_size = 0.8*x.r;
+    }
+
+    function update_app_category(d, new_category, old_category) {
+        var remove_cluster, add_cluster, app, remove_i,
+            max_apps = -1; // TODO: consider making this global?
+
+        // need to find the node with the category to remove it from
+        // need to find the node with the category to add it to
+
+        // TODO: will this be slow for large data?
+        nodes.forEach(function(x, i) {
+            var len = x.apps.length;
+            if (x.id == new_category) {
+                add_cluster = x;
+                len++; // because will be adding to length
+            }
+            else if (x.id == old_category) {
+                remove_i = i;
+                remove_cluster = x;
+                len--; // because will be removing from length
+            }
+            if (len > max_apps)
+                max_apps = len;
+        });
+
+        // now get the app from the remove cluster
+        for (var i = 0; i < remove_cluster.apps.length; i++) {
+            if (remove_cluster.apps[i].url == d.url) {
+                app = remove_cluster.apps[i];
+                remove_cluster.apps.splice(i, 1);
+                break;
+            }
+        }
+        // add the app to the add cluster
+        add_cluster.apps.push(app);
+
+        // check the length of remove cluster, if 0 remove it
+        if (remove_cluster.apps.length == 0) {
+            nodes.splice(remove_i, 1);
+            // remove the group of this category
+            svg.select("#" + old_category)
+                .transition()
+                .remove();
+
+            // TODO: reposition everything?
+        }
+
+        nodes.forEach(function(x, i) {
+            calculate_radius(x, i, max_apps);
+        });
+
+        // now to update the clusters and the nodes
+        // resize ALL clusters (max number of apps may have changed!)
+        svg.selectAll("circle")
+            .transition()
+            .attr("r", function(x) {
+                return x.r;
+            });
+        svg.selectAll(".vis-label")
+            .transition()
+            .attr("font-size", function(x){
+                // reduce the font size based on the radius
+                if (0.16*x.r < 12)
+                    return 12;
+                return 0.16*x.r;
+            });
+        svg.selectAll(".vis-sublabel")
+            .transition()
+            .attr("font-size", function(x) {
+                // reduce the font size based on the radius
+                if (0.16*x.r < 12)
+                    return 12;
+                return 0.1*x.r;
+            });
+
+        // remove ALL cluster images (because x.r changed for all categories)
+        svg.selectAll("a")
+            .attr("r", 0).remove();
+
+        // add the cluster images back
+        create_apps();
+
+        // select the new category
+        if (clicked_category != new_category) {
+            clicked_category = new_category;
+        }
+        else {
+            selected_category = "";
+        }
+        select_new_cluster(add_cluster);
+        deselect_old_cluster(old_category);
     }
 
     // this creates all the apps as hidden
@@ -376,15 +487,15 @@ clusters_init = function(){
                     return val.toLocaleTimeString();
                 })
                 .attr("x", function(d, j){
-                    var dist = image_width[i]/2 + x.r + pad;
+                    var dist = x.app_img_size/2 + x.r + pad;
                     d.x = Math.cos(angle*j)*dist;
-                    d.x = d.x - image_width[i]/2;
+                    d.x = d.x - x.app_img_size/2;
                     return d.x;
                 })
                 .attr("y", function(d, j){
-                    var dist = image_width[i]/2 + x.r + pad;
+                    var dist = x.app_img_size/2 + x.r + pad;
                     d.y = Math.sin(angle*j)*dist;
-                    d.y = d.y - image_height[i]/2;
+                    d.y = d.y - x.app_img_size/2;
                     return d.y;
                 })
                 .classed('image_' + x.id, true)
@@ -532,17 +643,17 @@ clusters_init = function(){
         };
     }
 
-    function select_new_cluster(x, i) {
-        var selected_circle = d3.select("#circle_" + selected_category),
-            selected_text = d3.select("#text_" + selected_category),
+    function select_new_cluster(x) {
+        var selected_circle = d3.select("#circle_" + x.id),
+            selected_text = d3.select("#text_" + x.id),
             r = x.r;
 
         selected_circle.transition()
             .attr("r", function(x){
-                x.radius = r + image_width[i] + pad*2;
+                x.radius = r + x.app_img_size + pad*2;
                 return x.radius;
             });
-
+        
         // need to keep both selected so parent is the only unclassed
         selected_circle.classed("selected", true);
         selected_text.classed("selected", true);
@@ -559,14 +670,14 @@ clusters_init = function(){
             }
         }
 
-        d3.selectAll(".image_" + selected_category)
+        d3.selectAll(".image_" + x.id)
             .transition()
             .attr("width", function(d){
                 // make the app img about 80% size of category
-                return image_width[i];
+                return x.app_img_size;
             })
             .attr("height", function(d){
-                return image_height[i];
+                return x.app_img_size;
             })
             .attr("display", function(d, j){
                 // hide them if they're above the cap;
@@ -579,8 +690,8 @@ clusters_init = function(){
         svg.select("#more_" + x.id)
             .attr("display", function(x){
                 if (x.apps.length > cap_apps &&
-                    (x.id == selected_category) ||
-                    (x.id == clicked_category)) {
+                    ((x.id == selected_category) || // TODO: is this double counted?
+                    (x.id == clicked_category))) {
                     // check if it's selected
                     return "visible";
                 }
@@ -752,8 +863,8 @@ clusters_init = function(){
             .attr("y", function(x){
                 return x.y;
             })
-            .attr("width", image_width[i])
-            .attr("height", image_height[i])
+            .attr("width", d.app_img_size)
+            .attr("height", d.app_img_size)
             .attr("display", function(x, j){
                 if (j >= cap_apps)
                     return "none";
