@@ -67,12 +67,13 @@ function initialize() {
  * Output: Array sorted in order of most used to least used
  */
 function order_apps(json) {
-    var d_json = _.map(json, sum_duration_per_app);
-    return _.sortBy(d_json, function(app) {
-        //return -app.durations;
-        console.log(app_durations);
-        return app_durations;
-    });
+  var d_json = _.map(json, sum_duration_per_app);
+  var n = _.sortBy(d_json, function(app) {
+      //return -app.durations;
+      console.log(app.durations);
+      return -app.durations || 0;
+  });
+  return n;
 }
 
 /*
@@ -82,9 +83,14 @@ function order_apps(json) {
  */
 function sum_duration_per_app(app) {
     //app.durations = _.reduce(_.zip(app.open, app.close), function(memo, pair) {
-    app_durations = _.reduce(_.zip(app.open, app.close), function(memo, pair) {
+    // console.log('sum_dureatio_perapp')
+    // console.log(app)
+    app.durations = _.reduce(_.zip(app.open, app.close), function(memo, pair) {
+        // console.log(memo)
         return memo + pair[1] - pair[0];
     }, 0);
+    // console.log('returns')
+    // console.log(app)
     return app;
 }
 
