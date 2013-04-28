@@ -15,6 +15,7 @@
     this.name = name;
     this.r = 0;
     this.apps = [];
+    this.app_img_size = 0;
     var that = this;
 
     _.each(json, function(app){
