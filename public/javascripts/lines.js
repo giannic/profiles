@@ -89,13 +89,11 @@ var lines_init = function() {
         $('#container-toggle').click(function() {
             if (!$(this).hasClass("menu-button-active")) { // NOT active
                 $('#container-toggle')[0].src = "img/ui_icons/up.png";
-                $("#container").css("display", "block");
-                $("#appname").css("display", "block");
                 $("#container").stop().animate({
-                    top: $("#container").height() - 25 // fix
+                    top: $("#container").height() - 40 // fix
                 }, 300);
                 $("#appname").stop().animate({
-                    top: $("#container").height() - 25
+                    top: $("#container").height() - 40
                 }, 300);
                 // update the height of the lines
                 lineGraphHeight -= 60;
@@ -104,6 +102,8 @@ var lines_init = function() {
                     .attr("height", lineGraphHeight);
                 calculateRender($("#timeline").rangeSlider("min"),
                     $("#timeline").rangeSlider("max"), 1);
+                $("#container").css("position", "relative");
+                $("#appname").css("display", "block");
             } else { // active already
                 // update the height of the lines
                 $('#container-toggle')[0].src = "img/ui_icons/down.png";
@@ -120,10 +120,10 @@ var lines_init = function() {
                 $("#appname").stop().animate({
                     top: $("#header").height() - $("#container").height() - 85
                 }, 300);
-                setTimeout( function(){ $("#container").css("display", "none");
-                    $("#appname").css("display", "none"); }, 200 );
-                }
-            });
+                $("#container").css("position", "absolute");
+                setTimeout( function(){ $("#appname").css("display", "none"); }, 200 );
+            }
+        }); 
     });
 
     /*************************************************************************

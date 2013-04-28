@@ -109,7 +109,7 @@ function render_icon(item) {
     // need to consider apps with no images
 
     console.log(img_copy);
-    $("#durations-sidebar").prepend('<img class="durations-icon" src="img/app_icons/' + img_copy + '-square.png"/>');
+    $("#durations-sidebar").append('<img class="durations-icon" src="img/app_icons/' + img_copy + '-square.png"/>');
 }
 
 /*
@@ -151,9 +151,10 @@ function render_app(item, index) {
  */
 function render_all_apps_from_json(data) {
     ordered_apps = order_apps(data.apps);
-    _.each(ordered_apps, function(item, index) {
-        render_app(item, index);
-    });
+    // is underscore async?
+    for(var index in ordered_apps)
+        render_app(ordered_apps[index], index);
+    
 }
 
 })();
