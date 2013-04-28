@@ -224,16 +224,15 @@ var lines_init = function() {
 
     function initViewControls() {
         $('#timeline_day_view').click(function () {
-            var left = Math.floor(100-((1/((endTime-startTime) / (MS_IN_DAY/1000)))*100));
-            updateSliderDates(getDate(left), getDate(100));
+            viewActivity('DAY');
         });
 
         $('#timeline_week_view').click(function () {
-            //console.log('week')
+            viewActivity('WEEK');
         });
 
         $('#timeline_month_view').click(function () {
-            //console.log('month')
+            viewActivity('MONTH');
         });
     }
 
@@ -248,7 +247,7 @@ var lines_init = function() {
     //Gets the date of a certain index on the slider
     function getDate(index) {
         var date = startTime + (difference * index) / (100);
-        return new Date(date * 1000);g
+        return new Date(date * 1000);
     }
 
     //Given an index which is slider_min < index < slider_max
@@ -276,21 +275,32 @@ var lines_init = function() {
     }
 
     /*
-     * Date Selector Controls
+     * Date Selector: view activity in the past day, week, or month
+     * 
      */
-
-    /*
-     * View activity in the past day 
-     */
-    function getDayActivity () {
-        var afld = Math.floor(100-((1/((endTime-startTime) / (MS_IN_DAY/1000)))*100));
-        console.log(afld);
-        updateSliderDates(afld, 100);
-     }
-
-    function getWeekActivity () {
-
-     }
+    function viewActivity(time_range) {
+        var ms, //milliseconds
+        result;
+        switch (time_range) {
+            case 'DAY': 
+                ms = MS_IN_DAY;   
+                break;
+            case 'WEEK':
+                ms = MS_IN_WEEK;
+                break;
+            case 'MONTH': 
+                ms = MS_IN_MONTH;
+                break;
+            default:
+                ms = MS_IN_DAY;
+                break;
+        }
+        result = Math.floor(100-((1/((endTime-startTime) / (ms/1000)))*100));
+        result = result >= 0 ? result : 0;
+        $("#timeline").rangeSlider("max", 100);
+        $("#timeline").rangeSlider("min", result);
+        updateSliderDates(getDate(result), getDate(100));
+    }
 
     /*
      * Animation Controls

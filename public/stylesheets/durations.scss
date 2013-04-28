@@ -5,15 +5,9 @@
     position: relative;
 
     #durations-wrapper {
+        display: block;
         width: 960px;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin: auto;
-
-        background-color: #F00;
+        margin: 0 auto;
 
         &:after {
             content: " ";
@@ -32,6 +26,9 @@
         float: left;
         width: 20px;
         height: auto;
+        margin: {
+            right:10px;
+        }
 
         .durations-icon {
             display: block;
