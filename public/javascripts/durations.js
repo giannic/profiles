@@ -1,25 +1,27 @@
+/*
+ * PLEASE LOOK IN CONFIG FILE FOR CONSTANTS FOR OFFSETS
+ */
+
 (function() {
-    /*
-     * PLEASE LOOK IN CONFIG FILE FOR CONSTANTS FOR OFFSETS
-     */
-    var sample_data = [
-        {
-            focus: [10, 30, 50, 70],
-            unfocus: [20, 40, 60, 80]
-        },
-        {
-            focus: [20, 40, 60],
-            unfocus: [30, 50, 70]
-        },
-        {
-            focus: [0],
-            unfocus: [10]
-        },
-        {
-            focus: [80],
-            unfocus: [100]
-        }
-    ];
+
+var sample_data = [
+    {
+        focus: [10, 30, 50, 70],
+        unfocus: [20, 40, 60, 80]
+    },
+    {
+        focus: [20, 40, 60],
+        unfocus: [30, 50, 70]
+    },
+    {
+        focus: [0],
+        unfocus: [10]
+    },
+    {
+        focus: [80],
+        unfocus: [100]
+    }
+];
 
 var apps_durations;
 // mapping of apps to their total
@@ -30,8 +32,20 @@ var canvas,
     end_time,
     total_time,
     duration_width = WINDOW_WIDTH, // not used
-    duration_height = WINDOW_HEIGHT;
+    duration_height = WINDOW_HEIGHT,
+    duration_line_width;
 var ordered_apps;
+
+/*
+ * Action events
+ */
+$(document).ready(function() {
+    $("#durations-compress").click(function() {
+        duration_line_width = ICON_HEIGHT/4;
+        canvas_ctx.clearRect(0, 0, canvas.width, canvas.height);
+        render_all_apps_from_json(APP_DATA);
+    });
+});
 
 /*
  * main setup function for durations
@@ -55,6 +69,7 @@ function initialize() {
     //console.log(duration_height);
     //console.log(WINDOW_HEIGHT);
 
+    duration_line_width = ICON_HEIGHT;
     start_time = startTime; // change to startTime, endTime
     end_time = endTime;
     total_time = end_time - start_time;
@@ -130,7 +145,7 @@ function render_app_segment(y, focus_time, unfocus_time) {
     canvas_ctx.beginPath();
     canvas_ctx.moveTo(start_x, y);
     canvas_ctx.lineTo(end_x, y);
-    canvas_ctx.lineWidth = ICON_HEIGHT;
+    canvas_ctx.lineWidth = duration_line_width;
     canvas_ctx.strokeStyle = "black";
     canvas_ctx.stroke();
     canvas_ctx.closePath();
@@ -162,6 +177,7 @@ function render_app(item, index) {
  * Output: Draws paints entire canvas
  */
 function render_all_apps_from_json(data) {
+    $("#durations-sidebar").html('');
     ordered_apps = order_apps(data.apps);
     // is underscore async?
     for (var index in ordered_apps) {
