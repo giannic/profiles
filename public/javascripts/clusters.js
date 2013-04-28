@@ -11,7 +11,7 @@ clusters_init = function(){
         collision_padding = 15, // padding for collisions
         svg,
         drag_category = "",
-        selecting_clicked_category,
+        selecting_clicked_category = "",
         selected_category_name = ""; // TODO: should probably change this
 
     $(document).ready(function() {
@@ -359,6 +359,8 @@ clusters_init = function(){
                 break;
             }
         }
+        console.log("new category is " + new_category);
+        console.log("old category is " + old_category);
         // add the app to the add cluster
         add_cluster.apps.push(app);
 
