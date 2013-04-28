@@ -318,7 +318,6 @@ var lines_init = function() {
         string = string.replace('.', '-');
         string = string.replace('.', '-');
 
-        console.log(lineGraphHeight);
         for ( i = 0; i < renderArray.length; i++) {
             currentLine = lineGraph.append("a")
                 .attr("xlink:href", "http://www." + nameArray[index])

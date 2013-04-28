@@ -23,14 +23,19 @@
     #durations-sidebar {
         float: left;
         width: 20px;
-        height: 100;
+        height: 240px;
 
         .durations-icon {
+            display: block;
             width: 20px;
             height: 20px;
             margin: {
+                top: 0;
                 bottom: $DURATION_Y_SPACING;
+                left: 0;
+                right: 0;
             }
+            padding: 0 !important;
         }
     }
 
