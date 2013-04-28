@@ -13,6 +13,13 @@
 #container {
     position: relative; 
     margin: 0px auto;
+    width: 100%;
+}
+
+#appname {
+    text-align: center;
+    height: 25px;
+    margin: 0px auto;
 }
 
 .vis-shape {
@@ -85,27 +92,41 @@
         line-height: 20px;
         margin-bottom: -4px;
     }
+
+    input {
+        opacity: $MENU_BUTTON_OPACITY;
+        transition: opacity $MENU_BUTTON_ANIM_TIME ease-in;
+
+        &:hover {
+            opacity: 1.0;
+            cursor: pointer;
+        }
+    }
 }
 
 .timeline_controls {
     height: 20px;
+    position: absolute;
+    left: 110px;
     background: {
         repeat: no-repeat;
         position: 0 0;
     }
-    &:hover {
-        background-position: -31px 0;
-    }
+}
+
+.timeline_view_controls {
+    position: absolute;
+    right: 110px;
 }
 
 #timeline_dateLeft {
-    color: rgba(165, 21, 21, .7);
+    color: $LIGHT_GREY;
     position: absolute;
     left: 0;
 }
 
 #timeline_dateRight {
-    color: rgba(165, 21, 21, .7);
+    color: $LIGHT_GREY;
     position: absolute;
     right: 0;
 }

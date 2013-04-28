@@ -252,7 +252,7 @@ exports.get_apps_on_whitelist = (req, res) ->
   #userid = "515e00a1b84f094dd5000001"
   helpers.loadUser req, res, ->
     # get all applications for this user
-    Application.find({userid: req.session.user_id}, 'category img url open close open_count close_count',
+    Application.find({userid: req.session.user_id}, 'category img url open close focus unfocus focus_count unfocus_count open_count close_count',
       (err, result) ->
         # render error if there is one
         if err
