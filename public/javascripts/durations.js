@@ -41,7 +41,15 @@ var ordered_apps;
  */
 $(document).ready(function() {
     $("#durations-compress").click(function() {
-        duration_line_width = ICON_HEIGHT/4;
+        if ($(this).hasClass("durations-compressed")) {
+            duration_line_width = ICON_HEIGHT;
+            $(this).removeClass("durations-compressed");
+            $(this).addClass("durations-expanded");
+        } else {
+            duration_line_width = ICON_HEIGHT/4;
+            $(this).removeClass("durations-expanded");
+            $(this).addClass("durations-compressed");
+        }
         canvas_ctx.clearRect(0, 0, canvas.width, canvas.height);
         render_all_apps_from_json(APP_DATA);
     });
