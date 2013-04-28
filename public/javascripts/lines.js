@@ -297,6 +297,7 @@ var lines_init = function() {
         }
         result = Math.floor(100-((1/((endTime-startTime) / (ms/1000)))*100));
         result = result >= 0 ? result : 0;
+        $("#timeline").rangeSlider("max", 100);
         $("#timeline").rangeSlider("min", result);
         updateSliderDates(getDate(result), getDate(100));
     }
