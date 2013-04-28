@@ -130,6 +130,30 @@ var lines_init = function() {
      * Timeline
      */
 
+    //Given an index which is slider_min < index < slider_max
+    //Calculates number of active apps at that index
+    function calcFreq(index) {
+        var start = index;
+        var end = index + 1;
+        left = startTime + (difference * start) / (100);
+        right = startTime + (difference * end) / (100);
+        diff = right - left;
+
+        for (var i = 0; i < appArray.length; i++) {
+            if (activeArray[i]) {
+                var app = appArray[i];
+                openings = stats[app]['open'];
+                closings = stats[app]['close'];
+
+                for (var j = 0; j < openings.length; j++) {
+                    if ((openings[j] > left) && (closings[j] < right)) {
+                        frequencies[index] = frequencies[index] + 1;
+                    }
+                }
+            }
+        }
+    }
+
     function initFreqLine() {
 
         var w = lineGraphWidth + 22, h = 25;
@@ -248,30 +272,6 @@ var lines_init = function() {
     function getDate(index) {
         var date = startTime + (difference * index) / (100);
         return new Date(date * 1000);
-    }
-
-    //Given an index which is slider_min < index < slider_max
-    //Calculates number of active apps at that index
-    function calcFreq(index) {
-        var start = index;
-        var end = index + 1;
-        left = startTime + (difference * start) / (100);
-        right = startTime + (difference * end) / (100);
-        diff = right - left;
-
-        for (var i = 0; i < appArray.length; i++) {
-            if (activeArray[i]) {
-                var app = appArray[i];
-                openings = stats[app]['open'];
-                closings = stats[app]['close'];
-
-                for (var j = 0; j < openings.length; j++) {
-                    if ((openings[j] > left) && (closings[j] < right)) {
-                        frequencies[index] = frequencies[index] + 1;
-                    }
-                }
-            }
-        }
     }
 
     /*
