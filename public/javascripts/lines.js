@@ -11,8 +11,8 @@ var lines_init = function() {
     minRange, maxRange, interval, boxes, activeArray, playTimeline = false, 
     layer, toggle = false, frequencies = [],
     MS_IN_DAY = 86400000,               // milliseconds in a day
-    MS_IN_WEEK = 604800000;             // milliseconds in a week 
-    //MS_IN_MONTH = 26297000000000;
+    MS_IN_WEEK = 604800000,             // milliseconds in a week 
+    MS_IN_MONTH = 26297000000000;
 
     $(document).ready(function() {
         var data = APP_DATA.apps;
@@ -223,9 +223,17 @@ var lines_init = function() {
     }
 
     function initViewControls() {
-
         $('#timeline_day_view').click(function () {
-            getDayActivity();
+            var left = Math.floor(100-((1/((endTime-startTime) / (MS_IN_DAY/1000)))*100));
+            updateSliderDates(getDate(left), getDate(100));
+        });
+
+        $('#timeline_week_view').click(function () {
+            //console.log('week')
+        });
+
+        $('#timeline_month_view').click(function () {
+            //console.log('month')
         });
     }
 
@@ -274,19 +282,13 @@ var lines_init = function() {
     /*
      * View activity in the past day 
      */
-     function getDayActivity () {
-        //var diff = 100 - (1/((endTime-startTime) / (MS_IN_DAY/1000)));
-        var diff = ((endTime-startTime) / (MS_IN_DAY/1000));
-        console.log(diff)
-
-        //updateSliderDates(dateLeft, dateRight)
+    function getDayActivity () {
+        var afld = Math.floor(100-((1/((endTime-startTime) / (MS_IN_DAY/1000)))*100));
+        console.log(afld);
+        updateSliderDates(afld, 100);
      }
 
-     function getWeekActivity () {
-
-     }
-
-     function getMonthActivity () {
+    function getWeekActivity () {
 
      }
 
