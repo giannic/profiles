@@ -12,7 +12,8 @@ clusters_init = function(){
         foci = 0, // to keep track of focal pos for each node
         collision_padding = 15, // padding for collisions
         svg,
-        drag_category = "";
+        drag_category = "",
+        selected_category_name = "";
 
     $(document).ready(function() {
         svg = d3.select("#circles")
@@ -111,6 +112,7 @@ clusters_init = function(){
                                 deselect_old_cluster(selected_category);
                             }
                         selected_category = x.id;
+                        selected_category_name = x.name;
                         select_new_cluster(x, i);
                     }
                 }
@@ -282,11 +284,21 @@ clusters_init = function(){
     function dragend(d, i) {
         if (selected_category != drag_category && drag_category != ""
             && selected_category != "") {
-            // change the category of d to the selected category
-            console.log("test");
-            console.log("selected cat is " + selected_category);
-            console.log("drag is " + drag_category);
             selected_category == "";
+            $.post("/apps/category", {
+                "url": d.url,
+                "category": selected_category_name
+            },
+            function(data) {
+                if ("error" in data) {
+                    console.log("error in change category: " + data["error"]);
+                }
+                else {
+                    console.log(data); 
+                    // update the clusters
+                    create_apps();
+                }
+            });
         }
         else {
             d3.select("#link" + i + "_img_" + drag_category)
@@ -309,7 +321,6 @@ clusters_init = function(){
             var d = x.apps,
                 category = svg.selectAll("#" + x.id);
 
-            //console.log("catid is " + x.id);
             var length = x.apps.length;
             if (length > cap_apps)
                 length = cap_apps;
