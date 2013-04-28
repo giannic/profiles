@@ -9,8 +9,10 @@ var lines_init = function() {
     pad, // this is for when there are tons of apps
     allTheLines, hsl, colorArray, diff, appArray, nameArray, 
     minRange, maxRange, interval, boxes, activeArray, playTimeline = false, 
-    layer, toggle = false, frequencies = [];
-
+    layer, toggle = false, frequencies = [],
+    MS_IN_DAY = 86400000,               // milliseconds in a day
+    MS_IN_WEEK = 604800000,             // milliseconds in a week 
+    MS_IN_MONTH = 26297000000000;
 
     $(document).ready(function() {
         var data = APP_DATA.apps;
@@ -82,6 +84,7 @@ var lines_init = function() {
 
         initSlider();
         initFreqLine();
+        initViewControls();
 
         $('#container-toggle').click(function() {
             if (!$(this).hasClass("menu-button-active")) { // NOT active
@@ -117,15 +120,10 @@ var lines_init = function() {
                 $("#appname").stop().animate({
                     top: $("#header").height() - $("#container").height() - 85
                 }, 300);
-                // update the position of the lines
-                $("#D3line").stop().animate({
-                    top: $("#header").height() - $("#D3line").height() - 85
-                }, 300);
                 $("#container").css("position", "absolute");
                 setTimeout( function(){ $("#appname").css("display", "none"); }, 200 );
             }
         }); 
-
     });
 
     /*************************************************************************
@@ -224,6 +222,21 @@ var lines_init = function() {
             .prepend("<div class='frequency-container'></div>");
     }
 
+    function initViewControls() {
+        $('#timeline_day_view').click(function () {
+            var left = Math.floor(100-((1/((endTime-startTime) / (MS_IN_DAY/1000)))*100));
+            updateSliderDates(getDate(left), getDate(100));
+        });
+
+        $('#timeline_week_view').click(function () {
+            //console.log('week')
+        });
+
+        $('#timeline_month_view').click(function () {
+            //console.log('month')
+        });
+    }
+
     function updateSliderDates(dateLeft, dateRight) {
         var dl = dateLeft, dr = dateRight;
         $("#timeline_dateLeft")
@@ -261,6 +274,23 @@ var lines_init = function() {
             }
         }
     }
+
+    /*
+     * Date Selector Controls
+     */
+
+    /*
+     * View activity in the past day 
+     */
+    function getDayActivity () {
+        var afld = Math.floor(100-((1/((endTime-startTime) / (MS_IN_DAY/1000)))*100));
+        console.log(afld);
+        updateSliderDates(afld, 100);
+     }
+
+    function getWeekActivity () {
+
+     }
 
     /*
      * Animation Controls
