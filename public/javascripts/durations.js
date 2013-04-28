@@ -17,6 +17,7 @@ var canvas,
     duration_y_spacing;
 var ordered_apps;
 
+// html5 animation
 window.requestAnimFrame = (function(){
     return window.requestAnimationFrame       ||
            window.webkitRequestAnimationFrame ||
@@ -25,8 +26,6 @@ window.requestAnimFrame = (function(){
         window.setTimeout(callback, 1000 / 60);
     };
 })();
-
-
 
 function my_animate(num_frames, num_frames_remain, increment) {
     var line_width_change = ICON_HEIGHT * (3/4),
@@ -45,15 +44,13 @@ function my_animate(num_frames, num_frames_remain, increment) {
         }
     });
 }
+
 /*
  * Action events
  */
 $(document).ready(function() {
-
     $("#durations-compress").click(function() {
         if ($(this).hasClass("durations-compressed")) {
-            //duration_line_width = ICON_HEIGHT;
-            //duration_y_spacing = DURATIONS_Y_SPACING;
             my_animate(10, 10, 1);
 
             $(this).removeClass("durations-compressed")
@@ -67,9 +64,6 @@ $(document).ready(function() {
             }, ANIMATE_TIME);
 
         } else {
-            //duration_line_width = ICON_HEIGHT/4;
-            //duration_y_spacing = DURATIONS_Y_SPACING/4;
-
             my_animate(10, 10, -1);
 
             $(this).removeClass("durations-expanded")
@@ -81,8 +75,6 @@ $(document).ready(function() {
                 $(this).css('visibility', 'hidden');
             });
         }
-        //canvas_ctx.clearRect(0, 0, canvas.width, canvas.height);
-        //render_all_apps_from_json(APP_DATA);
     });
 
 
