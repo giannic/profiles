@@ -5,6 +5,10 @@ $(document).ready(function() {
 
 $("#allow-button").click(function() {
     var domain = $("#input-domain").val();
+    if(domain == "") {
+        return;
+    }
+    $("#input-domain").val("");
     console.log(domain);
     $.post(allowEndpoint,
     {
@@ -17,9 +21,15 @@ $("#allow-button").click(function() {
             console.log("error in allow: " + data["error"]);
         } 
         else {
-            console.log("success");
-            $("#app-list").prepend(getListElement(domain));
+            // append the list element and fade it in
+            var li = getListElement(domain);
+            li.css('display', 'none');
+            $("#app-list").prepend(li);
+            li.fadeIn(300);
+
             setTypeImage();
+            bindXButtonListener();
+            bindSelectionListener();
             $("#app-saved").toggle();
         }
     });
@@ -106,7 +116,8 @@ function bindXButtonListener() {
             }
             else {
                 console.log(data);
-                row.remove();
+                row.fadeOut(200);
+                setTimeout(function(){row.remove()}, 200);
             }
         })
     });

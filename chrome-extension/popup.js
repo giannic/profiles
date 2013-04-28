@@ -1,5 +1,5 @@
-//var baseUrl = "http://davidxu.me:3000";
-var baseUrl = "http://localhost:3000";
+var baseUrl = "http://davidxu.me:3000";
+//var baseUrl = "http://localhost:3000";
 var url = baseUrl + "/login";
 var _recording = true;
 
