@@ -29,8 +29,8 @@ var canvas,
     start_time,
     end_time,
     total_time,
-    duration_width = WINDOW_WIDTH,
-    timeline_height = WINDOW_HEIGHT;
+    duration_width = WINDOW_WIDTH, // not used
+    duration_height = WINDOW_HEIGHT;
 var ordered_apps;
 
 /*
@@ -47,15 +47,17 @@ app.util.vis.durations_init = function() {
  * internal setup function. Sets up canvas
  */
 function initialize() {
-    $("#durations").width(WINDOW_WIDTH - 100);
+    $("#durations").width(duration_width);
     canvas = document.getElementById('durations-canvas');
-    canvas.height = WINDOW_HEIGHT - $('#header').height(); // subtract size of menubar
-    canvas.width = 800;
+    //canvas.height = WINDOW_HEIGHT - $('#header').height(); // subtract size of menubar
+    canvas.height = duration_height; // subtract size of menubar
+    canvas.width = 940;
+    console.log(duration_height);
+    console.log(WINDOW_HEIGHT);
 
     start_time = startTime; // change to startTime, endTime
     end_time = endTime;
     total_time = end_time - start_time;
-    duration_width = 900;
     canvas_ctx = canvas.getContext('2d');
 }
 
@@ -67,7 +69,9 @@ function initialize() {
 function order_apps(json) {
     var d_json = _.map(json, sum_duration_per_app);
     return _.sortBy(d_json, function(app) {
-        return -app.durations;
+        //return -app.durations;
+        console.log(app_durations);
+        return app_durations;
     });
 }
 
@@ -77,7 +81,8 @@ function order_apps(json) {
  * Output: Duration of the app, array of duration times
  */
 function sum_duration_per_app(app) {
-    app.durations = _.reduce(_.zip(app.open, app.close), function(memo, pair) {
+    //app.durations = _.reduce(_.zip(app.open, app.close), function(memo, pair) {
+    app_durations = _.reduce(_.zip(app.open, app.close), function(memo, pair) {
         return memo + pair[1] - pair[0];
     }, 0);
     return app;
@@ -90,8 +95,15 @@ function sum_duration_per_app(app) {
  *         x: 0
  *         y: app_ranking * height_per_row
  */
-function render_icon(app_id) {
-    $("#durations-sidebar").prepend('<img class="durations-icon" src="img/app_icons/linkedin-square.png"/>');
+function render_icon(item) {
+    var img_copy = item.url;
+    var parts = img_copy.split(".");
+    img_copy = parts[0];
+
+    // need to consider apps with no images
+
+    console.log(img_copy);
+    $("#durations-sidebar").prepend('<img class="durations-icon" src="img/app_icons/' + img_copy + '-square.png"/>');
 }
 
 /*
@@ -100,17 +112,8 @@ function render_icon(app_id) {
  * Output: Draws only one line segment of an app
  */
 function render_app_segment(y, focus_time, unfocus_time) {
-    var start_x = (focus_time - start_time) / total_time * duration_width,
-        end_x = (unfocus_time - start_time) / total_time * duration_width;
-
-    /*
-    console.log("focus_time: " + focus_time);
-    console.log("unfocus_time: " + unfocus_time);
-    console.log("start_x: " + start_x);
-    console.log("end_x: " + end_x);
-    console.log("width: " + duration_width);
-    console.log("total-time: " + total_time);
-    */
+    var start_x = (focus_time - start_time) / total_time * canvas.width,
+        end_x = (unfocus_time - start_time) / total_time * canvas.width;
 
     canvas_ctx.beginPath();
     canvas_ctx.moveTo(start_x, y);
@@ -131,9 +134,9 @@ function render_app(item, index) {
     _.each(focus_pairs, function(pair){
         render_app_segment(y_by_rank, pair[0], pair[1]);
     });
-    render_icon(0);
-    console.log(y_by_rank);
-    //console.log(item);
+
+    console.log(item);
+    render_icon(item);
 }
 
 /* Render all lines for all apps

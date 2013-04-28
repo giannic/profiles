@@ -14,16 +14,24 @@
         margin: auto;
 
         background-color: #F00;
+
+        &:after {
+            content: " ";
+            display: block;
+            height: 0;
+            clear: both;
+        }
     }
 
-    #durations-canvas {
+    #durations-canvas { // width is set in css because canvas has width attr
         float: left;
+        height: auto;
     }
 
     #durations-sidebar {
         float: left;
         width: 20px;
-        height: 240px;
+        height: auto;
 
         .durations-icon {
             display: block;
@@ -38,6 +46,4 @@
             padding: 0 !important;
         }
     }
-
-
 }
