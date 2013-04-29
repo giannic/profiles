@@ -8,6 +8,7 @@ var apps_durations;
 var canvas,
     canvas_ctx,
     canvas_height,
+    line_colors,
     start_time,
     end_time,
     total_time,
@@ -37,7 +38,6 @@ function my_animate(num_frames, num_frames_remain, increment) {
     canvas_ctx.clearRect(0, 0, canvas.width, canvas.height);
     render_all_apps_from_json(APP_DATA);
 
-    console.log("doing some crazy shiz");
     requestAnimFrame(function() {
         if (num_frames_remain > 0) {
             my_animate(num_frames, num_frames_remain - 1, increment);
@@ -104,6 +104,12 @@ function initialize() {
     start_time = startTime; // change to startTime, endTime
     end_time = endTime;
     total_time = end_time - start_time;
+
+    // generate colors
+    line_colors = generate_colors(APP_DATA.apps.length);
+    console.log(line_colors);
+    console.log(APP_DATA.apps.length);
+
     canvas_ctx = canvas.getContext('2d');
 }
 
@@ -170,8 +176,8 @@ function render_app_segment(y, focus_time, unfocus_time) {
     canvas_ctx.beginPath();
     canvas_ctx.moveTo(start_x, y);
     canvas_ctx.lineTo(end_x, y);
-    canvas_ctx.lineWidth = duration_line_width;
-    canvas_ctx.strokeStyle = "black";
+    //canvas_ctx.lineWidth = duration_line_width;
+    //canvas_ctx.strokeStyle = line_colors[index];
     canvas_ctx.stroke();
     canvas_ctx.closePath();
 }
@@ -187,12 +193,17 @@ function render_app(item, index) {
         console.log("focus or unfocus time missing");
     }
 
+    //canvas_ctx.beginPath();
+    canvas_ctx.lineWidth = duration_line_width;
+    canvas_ctx.strokeStyle = line_colors[index];
+
     var focus_pairs = _.zip(item.focus, item.unfocus);
     _.each(focus_pairs, function(pair) {
         if (pair[0] !== undefined && pair[1] !== undefined) {
             render_app_segment(y_by_rank, pair[0], pair[1]);
         }
     });
+    //canvas_ctx.closePath();
 
     render_icon(item);
 }
@@ -209,4 +220,29 @@ function render_all_apps_from_json(data) {
         render_app(ordered_apps[index], index);
     }
 }
+
+/*
+ * Generates random colors in hex for each value in the colored matrix
+ */
+function generate_colors(num_apps)
+{
+    var i, j, max_index,    // iteration vars and bound on byte choices
+        hex, colors;        // color byte choices, map from value to hex
+
+    hex = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+           'A', 'B', 'C', 'D', 'E', 'F'];
+    max_index = hex.length - 1;
+
+    colors = [];
+    colors[0] = '#FFFFFF'; // set blank color
+    for (i = 1; i <= num_apps; ++i) {
+        colors[i] = "#";
+        for (j = 0; j < 6; ++j) {
+            colors[i] += hex[Math.round(Math.random()*max_index)];
+        }
+    }
+    return colors;
+}
+
+
 })();
