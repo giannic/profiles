@@ -5,18 +5,15 @@
 (function() {
 var apps_durations;
 // mapping of apps to their total
-var canvas,
-    canvas_ctx,
-    canvas_height,
+var canvas, canvas_ctx, canvas_height,
     line_colors,
-    start_time,
-    end_time,
-    total_time,
+    start_time, end_time, total_time,
     duration_width = WINDOW_WIDTH, // not used
     duration_height = WINDOW_HEIGHT,
-    duration_line_width,
-    duration_y_spacing,
-    animate_time;
+    duration_line_width, duration_y_spacing,
+    animate_time,
+    min_render_time, max_render_time,
+    freq;
 var ordered_apps;
 
 // html5 animation
@@ -99,6 +96,7 @@ function initialize() {
     canvas = document.getElementById('durations-canvas');
     canvas.height = duration_height; // subtract size of menubar
     canvas.width = 930; // 10 margin
+    canvas_ctx = canvas.getContext('2d');
 
     duration_line_width = ICON_HEIGHT;
     duration_y_spacing = DURATIONS_Y_SPACING;
@@ -106,14 +104,21 @@ function initialize() {
 
     start_time = startTime; // change to startTime, endTime
     end_time = endTime;
+    min_render_time = start_time;
+    max_render_time = end_time;
     total_time = end_time - start_time;
 
     // generate colors
     line_colors = generate_colors(APP_DATA.apps.length);
-    console.log(line_colors);
-    console.log(APP_DATA.apps.length);
 
-    canvas_ctx = canvas.getContext('2d');
+    // init freq array
+    freq = [];
+    for (var i = 0; i <= 100; i += 1) {
+        freq[i] = 0;
+    }
+    freq[101] = -1; // flag for first render
+                    // if this is -1, then it is the first render
+                    // if it is 0, then it is a re-render
 }
 
 /*
@@ -141,12 +146,21 @@ function sum_duration_per_app(app) {
         return 0;
     }
     app.durations = _.reduce(_.zip(app.focus, app.unfocus), function(memo, pair) {
-        // console.log(memo)
         return memo + pair[1] - pair[0];
     }, 0);
-    // console.log('returns')
-    // console.log(app)
+
     return app;
+}
+
+/*
+ * Calculates the frequency array for the slider line
+ * Called in render_app_segment
+ */
+function add_to_frequencies(focus_time) {
+    var freq_index;
+
+    freq_index = Math.floor(((focus_time - start_time)/(end_time - start_time)) * 100);
+    freq[freq_index] += 1;
 }
 
 /*
@@ -163,7 +177,6 @@ function render_icon(item) {
 
     // need to consider apps with no images
 
-    //console.log(img_copy);
     $("#durations-sidebar").append('<a href="http://' + item.url + '"><img class="durations-icon" src="img/app_icons/' + img_copy + '-square.png" onError="this.src = \'img/app_icons/social-networks-square.png\'"/></a>');
 }
 
@@ -173,16 +186,27 @@ function render_icon(item) {
  * Output: Draws only one line segment of an app
  */
 function render_app_segment(y, focus_time, unfocus_time) {
+    if (focus_time < min_render_time) { // clip min time
+        focus_time = min_render_time;
+    }
+
+    if (unfocus_time > max_render_time) { // clip max time
+        unfocus_time = max_render_time;
+    }
+
     var start_x = (focus_time - start_time) / total_time * canvas.width,
         end_x = (unfocus_time - start_time) / total_time * canvas.width;
 
     canvas_ctx.beginPath();
     canvas_ctx.moveTo(start_x, y);
     canvas_ctx.lineTo(end_x, y);
-    //canvas_ctx.lineWidth = duration_line_width;
-    //canvas_ctx.strokeStyle = line_colors[index];
     canvas_ctx.stroke();
     canvas_ctx.closePath();
+
+    // add to frequencies array
+    if (freq[101] === -1) {
+        add_to_frequencies(focus_time);
+    }
 }
 
 /* Renders all the line segments for app
@@ -222,6 +246,7 @@ function render_all_apps_from_json(data) {
     for (var index in ordered_apps) {
         render_app(ordered_apps[index], index);
     }
+    freq[101] = 0; // set flag that we've already rendered once
 }
 
 /*
