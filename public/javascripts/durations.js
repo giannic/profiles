@@ -218,6 +218,8 @@ function render_app(item, index) {
 function render_all_apps_from_json(data) {
     $("#durations-sidebar").html('');
     ordered_apps = order_apps(data.apps);
+    console.log('should be ordered')
+    console.log(ordered_apps)
     // is underscore async?
     for (var index in ordered_apps) {
         render_app(ordered_apps[index], index);

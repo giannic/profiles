@@ -94,6 +94,33 @@ exports.close = (req, res) ->
   )
 
 ###
+# /apps/focus_pair
+# req.body:
+# url, userid, focus_time, unfocus_time
+###
+exports.focus_pair = (req, res) ->
+  console.log req.body
+  userid = req.body.userid
+  focus_time = req.body.focus_time
+  unfocus_time = req.body.unfocus_time
+
+  Application.findOneAndUpdate(
+    { userid: req.body.userid, url: req.body.url },
+    {
+      $push: {focus: req.body.focus_time, unfocus: req.body.unfocus_time},
+      $inc: {focus_count: 1},
+    },
+    {upsert: false},
+    (err, results) ->
+      if err
+        res.send(error: "Could not update database: /focus_pair")
+        console.log('error: ' + err)
+      else
+        console.log('focus pair updated')
+        console.log('results: ' + results)
+        res.send(results)
+  )
+###
 # /apps/focus
 # req.body:
 # url, userid, time
@@ -120,7 +147,7 @@ exports.focus = (req, res) ->
         res.send(results)
   )
 
-###  
+###
 # /apps/unfocus
 # req.body:
 # url, userid, time

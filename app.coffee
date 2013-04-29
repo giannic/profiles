@@ -91,6 +91,7 @@ app.post "/apps/open", application.open
 app.post "/apps/close", application.close
 app.post "/apps/focus", application.focus
 app.post "/apps/unfocus", application.unfocus
+app.post "/apps/focus_pair", application.focus_pair
 app.post "/apps/delete", application.delete
 app.post "/apps/create", application.create
 app.get "/apps/new", application.new_test  # just for testing
