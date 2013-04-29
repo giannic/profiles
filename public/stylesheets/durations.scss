@@ -17,9 +17,14 @@
         }
     }
 
+    .durations-clear {
+            display: block;
+            height: 0;
+            clear: both;
+    }
+
     #durations-canvas { // width is set in css because canvas has width attr
         float: left;
-        height: auto;
     }
 
     #durations-sidebar {
@@ -41,6 +46,13 @@
                 right: 0;
             }
             padding: 0 !important;
+        }
+    }
+
+    #durations-panel {
+        #durations-slider {
+            margin: 0 auto;
+            background-color: #F00;
         }
     }
 }

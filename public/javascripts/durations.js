@@ -86,6 +86,8 @@ app.util.vis.durations_init = function() {
     initialize();
     //render_all_apps_from_json(sample_data);
     render_all_apps_from_json(APP_DATA);
+
+    init_durations_slider();
 };
 
 /*
@@ -94,7 +96,8 @@ app.util.vis.durations_init = function() {
 function initialize() {
     $("#durations").width(duration_width);
     canvas = document.getElementById('durations-canvas');
-    canvas.height = duration_height; // subtract size of menubar
+    //canvas.height = duration_height; // subtract size of menubar
+    canvas.height = 200; // subtract size of menubar
     canvas.width = 930; // 10 margin
     canvas_ctx = canvas.getContext('2d');
 
