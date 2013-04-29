@@ -12,7 +12,8 @@ var lines_init = function() {
     layer, toggle = false, frequencies = [],
     MS_IN_DAY = 86400000,               // milliseconds in a day
     MS_IN_WEEK = 604800000,             // milliseconds in a week 
-    MS_IN_MONTH = 26297000000000;
+    MS_IN_MONTH = 26297000000000,
+    frequency_line;
 
     $(document).ready(function() {
         var data = APP_DATA.apps;
@@ -130,44 +131,105 @@ var lines_init = function() {
      * Timeline
      */
 
-    function initFreqLine() {
+    //Given an index which is slider_min < index < slider_max
+    //Calculates number of active apps at that index
+    function calcFreq(index) {
+        var start = index;
+        var end = index + 1;
+        left = startTime + (difference * start) / (100);
+        right = startTime + (difference * end) / (100);
+        diff = right - left;
 
-        var w = lineGraphWidth + 22, h = 25;
+        for (var i = 0; i < appArray.length; i++) {
+            if (activeArray[i]) {
+                var app = appArray[i];
+                openings = stats[app]['open'];
+                closings = stats[app]['close'];
 
-        $("#timeline_panel").css("width", lineGraphWidth);
+                for (var j = 0; j < openings.length; j++) {
+                    if ((openings[j] > left) && (closings[j] < right)) {
+                        frequencies[index] = frequencies[index] + 1;
+                    }
+                }
+            }
+        }
+    }
 
+    function updateFrequencies () {
         for (var i = minRange; i < maxRange - 1; i++) {
             frequencies[i] = 0;
             calcFreq(i);
         }
-        var freqMax = Math.max.apply(null, frequencies);
+    }
 
-        var graph = d3.select(".frequency-container")
-          .append("svg")
-          .attr("width", w)
-          .attr("height", h);
+    function tweenPath() {
+    var w = lineGraphWidth + 22, 
+        h = 25,
 
-        var x = d3.scale.linear().domain([0, 100]).range([0, w]);
-        var y = d3.scale
-            .linear()
-            .domain([-freqMax / 10, freqMax]).range([h, 0]);
+        freqMax = Math.max.apply(null, frequencies),
 
-        var line = d3.svg.line()
-            .x(function(d, i) {
-              return x(i);
-            })
-            .y(function(d) {
-              return y(d);
-            })
+        x = d3.scale.linear()
+                .domain([0, 100])
+                .range([0, w]),
 
-        var data = frequencies;
+        y = d3.scale.linear()
+                .domain([-freqMax / 10, freqMax])
+                .range([h, 0]);
+
+        line = d3.svg.line()
+                .x(function(d, i) {
+                  return x(i);
+                })
+                .y(function(d) {
+                  return y(d);
+                });
+
+        d3.selectAll("path")
+            .data([frequencies])
+            .transition()
+            .duration(500)
+            .attr("d", line);
+    }
+
+    function initFreqLine() {
+        updateFrequencies();
+        $("#timeline_panel").css("width", lineGraphWidth);
+
+    var w = lineGraphWidth + 22, 
+        h = 25,
+
+        freqMax = Math.max.apply(null, frequencies),
+
+        x = d3.scale.linear()
+                .domain([0, 100])
+                .range([0, w]),
+
+        y = d3.scale.linear()
+                .domain([-freqMax / 10, freqMax])
+                .range([h, 0]),
+
+        line = d3.svg.line()
+                .x(function(d, i) {
+                  return x(i);
+                })
+                .y(function(d) {
+                  return y(d);
+                });
+
+    var graph = d3.select(".frequency-container")
+                .append("svg")
+                .attr("width", w)
+                .attr("height", h);
+
         graph.append("svg:path")
-            .attr("d", line(data))
+            .attr("d", line(frequencies))
             .attr("class", "frequency-line");
     }
 
     function initSlider() {
-        minRange = 0, maxRange = 100;
+        minRange = 0, 
+        maxRange = 100;
+
         $("#timeline").rangeSlider({
             arrows : false,
             defaultValues : {
@@ -224,16 +286,15 @@ var lines_init = function() {
 
     function initViewControls() {
         $('#timeline_day_view').click(function () {
-            var left = Math.floor(100-((1/((endTime-startTime) / (MS_IN_DAY/1000)))*100));
-            updateSliderDates(getDate(left), getDate(100));
+            viewActivity('DAY');
         });
 
         $('#timeline_week_view').click(function () {
-            //console.log('week')
+            viewActivity('WEEK');
         });
 
         $('#timeline_month_view').click(function () {
-            //console.log('month')
+            viewActivity('MONTH');
         });
     }
 
@@ -248,49 +309,36 @@ var lines_init = function() {
     //Gets the date of a certain index on the slider
     function getDate(index) {
         var date = startTime + (difference * index) / (100);
-        return new Date(date * 1000);g
+        return new Date(date * 1000);
     }
 
-    //Given an index which is slider_min < index < slider_max
-    //Calculates number of active apps at that index
-    function calcFreq(index) {
-        var start = index;
-        var end = index + 1;
-        left = startTime + (difference * start) / (100);
-        right = startTime + (difference * end) / (100);
-        diff = right - left;
-
-        for (var i = 0; i < appArray.length; i++) {
-            if (activeArray[i]) {
-                var app = appArray[i];
-                openings = stats[app]['open'];
-                closings = stats[app]['close'];
-
-                for (var j = 0; j < openings.length; j++) {
-                    if ((openings[j] > left) && (closings[j] < right)) {
-                        frequencies[index] = frequencies[index] + 1;
-                    }
-                }
-            }
+    /*
+     * Date Selector: view activity in the past day, week, or month
+     * 
+     */
+    function viewActivity(time_range) {
+    var ms,     //milliseconds
+        result;
+        switch (time_range) {
+            case 'DAY': 
+                ms = MS_IN_DAY;   
+                break;
+            case 'WEEK':
+                ms = MS_IN_WEEK;
+                break;
+            case 'MONTH': 
+                ms = MS_IN_MONTH;
+                break;
+            default:
+                ms = MS_IN_DAY;
+                break;
         }
+        result = Math.floor(100-((1/((endTime-startTime) / (ms/1000)))*100));
+        result = result >= 0 ? result : 0;
+        $("#timeline").rangeSlider("max", 100);
+        $("#timeline").rangeSlider("min", result);
+        updateSliderDates(getDate(result), getDate(100));
     }
-
-    /*
-     * Date Selector Controls
-     */
-
-    /*
-     * View activity in the past day 
-     */
-    function getDayActivity () {
-        var afld = Math.floor(100-((1/((endTime-startTime) / (MS_IN_DAY/1000)))*100));
-        console.log(afld);
-        updateSliderDates(afld, 100);
-     }
-
-    function getWeekActivity () {
-
-     }
 
     /*
      * Animation Controls
@@ -417,6 +465,7 @@ var lines_init = function() {
     }
 
     function toggleApps(circ) {
+        console.log("yo")
         //initial loading of lines
         if (toggle == true) {
             circ.setFillRadialGradientColorStops([0, '#C6C9D0', 1, 'white']);
@@ -441,6 +490,8 @@ var lines_init = function() {
             calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
             toggle = true;
         }
+        updateFrequencies();
+        tweenPath();
     }
 
     function findMostUsedApp() {
@@ -558,6 +609,9 @@ var lines_init = function() {
                         }
                         printApp(this.getName());
                         layer.draw();
+
+                        updateFrequencies();
+                        tweenPath();
                     });
                     box.on('mouseover', function() {
                         this.setFill(colorset);

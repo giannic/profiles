@@ -23,7 +23,8 @@ var X_LINE_OFFSET = 0,
     ICON_WIDTH = 20,
     ICON_HEIGHT = 20,
     DURATIONS_Y_SPACING = 10, // same as in definitions.scss
-    STROKE_WIDTH = ICON_HEIGHT; // add more as necessary
+    STROKE_WIDTH = ICON_HEIGHT,
+    ANIMATE_TIME = 300; // add more as necessary
 
 show_stats = function(id) {
     $("#stats").show();
@@ -71,5 +72,4 @@ var init = function() {
     lines_init();
     grid_init();
     app.util.vis.durations_init(); // uncomment when function is implemented
-
 };

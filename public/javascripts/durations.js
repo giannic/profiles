@@ -1,37 +1,85 @@
-(function() {
-    /*
-     * PLEASE LOOK IN CONFIG FILE FOR CONSTANTS FOR OFFSETS
-     */
-    var sample_data = [
-        {
-            focus: [10, 30, 50, 70],
-            unfocus: [20, 40, 60, 80]
-        },
-        {
-            focus: [20, 40, 60],
-            unfocus: [30, 50, 70]
-        },
-        {
-            focus: [0],
-            unfocus: [10]
-        },
-        {
-            focus: [80],
-            unfocus: [100]
-        }
-    ];
+/*
+ * PLEASE LOOK IN CONFIG FILE FOR CONSTANTS FOR OFFSETS
+ */
 
+(function() {
 var apps_durations;
 // mapping of apps to their total
 var canvas,
     canvas_ctx,
     canvas_height,
+    line_colors,
     start_time,
     end_time,
     total_time,
     duration_width = WINDOW_WIDTH, // not used
-    duration_height = WINDOW_HEIGHT;
+    duration_height = WINDOW_HEIGHT,
+    duration_line_width,
+    duration_y_spacing,
+    animate_time;
 var ordered_apps;
+
+// html5 animation
+window.requestAnimFrame = (function(){
+    return window.requestAnimationFrame       ||
+           window.webkitRequestAnimationFrame ||
+           window.mozRequestAnimationFrame    ||
+    function( callback ){
+        window.setTimeout(callback, 1000 / 60);
+    };
+})();
+
+function my_animate(num_frames, num_frames_remain, increment) {
+    var line_width_change = ICON_HEIGHT * (3/4),
+        y_space_change = DURATIONS_Y_SPACING * (3/4);
+
+    duration_line_width += increment * line_width_change/num_frames;
+    duration_y_spacing += increment * y_space_change/num_frames;
+
+    canvas_ctx.clearRect(0, 0, canvas.width, canvas.height);
+    render_all_apps_from_json(APP_DATA);
+
+    requestAnimFrame(function() {
+        if (num_frames_remain > 0) {
+            my_animate(num_frames, num_frames_remain - 1, increment);
+        }
+    });
+}
+
+/*
+ * Action events
+ */
+$(document).ready(function() {
+    $("#durations-compress").click(function() {
+        if ($(this).hasClass("durations-compressed")) {
+            my_animate(animate_time, animate_time, 1);
+
+            $(this).removeClass("durations-compressed")
+                   .addClass("durations-expanded")
+                   .attr("src", "img/ui_icons/up.png");
+
+            $("#durations-sidebar")
+            .css('visibility', 'visible')
+            .animate({
+                opacity: 1.0
+            }, ANIMATE_TIME);
+
+        } else {
+            my_animate(animate_time, animate_time, -1);
+
+            $(this).removeClass("durations-expanded")
+                   .addClass("durations-compressed")
+                   .attr("src", "img/ui_icons/down.png");
+            $("#durations-sidebar").animate({
+                opacity: 0.0
+            }, ANIMATE_TIME, function() {
+                $(this).css('visibility', 'hidden');
+            });
+        }
+    });
+
+
+});
 
 /*
  * main setup function for durations
@@ -49,15 +97,22 @@ app.util.vis.durations_init = function() {
 function initialize() {
     $("#durations").width(duration_width);
     canvas = document.getElementById('durations-canvas');
-    //canvas.height = WINDOW_HEIGHT - $('#header').height(); // subtract size of menubar
     canvas.height = duration_height; // subtract size of menubar
-    canvas.width = 940;
-    console.log(duration_height);
-    console.log(WINDOW_HEIGHT);
+    canvas.width = 930; // 10 margin
+
+    duration_line_width = ICON_HEIGHT;
+    duration_y_spacing = DURATIONS_Y_SPACING;
+    animate_time = 10.0;
 
     start_time = startTime; // change to startTime, endTime
     end_time = endTime;
     total_time = end_time - start_time;
+
+    // generate colors
+    line_colors = generate_colors(APP_DATA.apps.length);
+    console.log(line_colors);
+    console.log(APP_DATA.apps.length);
+
     canvas_ctx = canvas.getContext('2d');
 }
 
@@ -69,8 +124,6 @@ function initialize() {
 function order_apps(json) {
   var d_json = _.map(json, sum_duration_per_app);
   var n = _.sortBy(d_json, function(app) {
-      //return -app.durations;
-      console.log(app.durations);
       return -app.durations || 0;
   });
   return n;
@@ -82,10 +135,12 @@ function order_apps(json) {
  * Output: Duration of the app, array of duration times
  */
 function sum_duration_per_app(app) {
-    //app.durations = _.reduce(_.zip(app.open, app.close), function(memo, pair) {
-    // console.log('sum_dureatio_perapp')
-    // console.log(app)
-    app.durations = _.reduce(_.zip(app.open, app.close), function(memo, pair) {
+    if (app.focus === undefined || app.unfocus === undefined) {
+        console.log("Failed to get focus data for:");
+        console.log(app);
+        return 0;
+    }
+    app.durations = _.reduce(_.zip(app.focus, app.unfocus), function(memo, pair) {
         // console.log(memo)
         return memo + pair[1] - pair[0];
     }, 0);
@@ -108,8 +163,8 @@ function render_icon(item) {
 
     // need to consider apps with no images
 
-    console.log(img_copy);
-    $("#durations-sidebar").append('<img class="durations-icon" src="img/app_icons/' + img_copy + '-square.png"/>');
+    //console.log(img_copy);
+    $("#durations-sidebar").append('<a href="http://' + item.url + '"><img class="durations-icon" src="img/app_icons/' + img_copy + '-square.png" onError="this.src = \'img/app_icons/social-networks-square.png\'"/></a>');
 }
 
 /*
@@ -124,8 +179,8 @@ function render_app_segment(y, focus_time, unfocus_time) {
     canvas_ctx.beginPath();
     canvas_ctx.moveTo(start_x, y);
     canvas_ctx.lineTo(end_x, y);
-    canvas_ctx.lineWidth = ICON_HEIGHT;
-    canvas_ctx.strokeStyle = "black";
+    //canvas_ctx.lineWidth = duration_line_width;
+    //canvas_ctx.strokeStyle = line_colors[index];
     canvas_ctx.stroke();
     canvas_ctx.closePath();
 }
@@ -135,13 +190,24 @@ function render_app_segment(y, focus_time, unfocus_time) {
  * Output: Draws all the line segments of an app, as well as its icon
  */
 function render_app(item, index) {
-    var y_by_rank = index * (ICON_HEIGHT + DURATIONS_Y_SPACING) + STROKE_WIDTH/2;
-    var focus_pairs = _.zip(item.open, item.close);
-    _.each(focus_pairs, function(pair){
-        render_app_segment(y_by_rank, pair[0], pair[1]);
-    });
+    var y_by_rank = index * (duration_line_width + duration_y_spacing) + STROKE_WIDTH/2;
+    //var focus_pairs = _.zip(item.open, item.close);
+    if (item.focus === undefined || item.unfocus === undefined) {
+        console.log("focus or unfocus time missing");
+    }
 
-    console.log(item);
+    //canvas_ctx.beginPath();
+    canvas_ctx.lineWidth = duration_line_width;
+    canvas_ctx.strokeStyle = line_colors[index];
+
+    var focus_pairs = _.zip(item.focus, item.unfocus);
+    _.each(focus_pairs, function(pair) {
+        if (pair[0] !== undefined && pair[1] !== undefined) {
+            render_app_segment(y_by_rank, pair[0], pair[1]);
+        }
+    });
+    //canvas_ctx.closePath();
+
     render_icon(item);
 }
 
@@ -150,11 +216,36 @@ function render_app(item, index) {
  * Output: Draws paints entire canvas
  */
 function render_all_apps_from_json(data) {
+    $("#durations-sidebar").html('');
     ordered_apps = order_apps(data.apps);
     // is underscore async?
-    for(var index in ordered_apps)
+    for (var index in ordered_apps) {
         render_app(ordered_apps[index], index);
-    
+    }
 }
+
+/*
+ * Generates random colors in hex for each value in the colored matrix
+ */
+function generate_colors(num_apps)
+{
+    var i, j, max_index,    // iteration vars and bound on byte choices
+        hex, colors;        // color byte choices, map from value to hex
+
+    hex = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+           'A', 'B', 'C', 'D', 'E', 'F'];
+    max_index = hex.length - 1;
+
+    colors = [];
+    colors[0] = '#FFFFFF'; // set blank color
+    for (i = 1; i <= num_apps; ++i) {
+        colors[i] = "#";
+        for (j = 0; j < 6; ++j) {
+            colors[i] += hex[Math.round(Math.random()*max_index)];
+        }
+    }
+    return colors;
+}
+
 
 })();
