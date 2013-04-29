@@ -15,7 +15,8 @@ var canvas,
     duration_width = WINDOW_WIDTH, // not used
     duration_height = WINDOW_HEIGHT,
     duration_line_width,
-    duration_y_spacing;
+    duration_y_spacing,
+    animate_time;
 var ordered_apps;
 
 // html5 animation
@@ -51,7 +52,7 @@ function my_animate(num_frames, num_frames_remain, increment) {
 $(document).ready(function() {
     $("#durations-compress").click(function() {
         if ($(this).hasClass("durations-compressed")) {
-            my_animate(10, 10, 1);
+            my_animate(animate_time, animate_time, 1);
 
             $(this).removeClass("durations-compressed")
                    .addClass("durations-expanded")
@@ -64,7 +65,7 @@ $(document).ready(function() {
             }, ANIMATE_TIME);
 
         } else {
-            my_animate(10, 10, -1);
+            my_animate(animate_time, animate_time, -1);
 
             $(this).removeClass("durations-expanded")
                    .addClass("durations-compressed")
@@ -101,6 +102,8 @@ function initialize() {
 
     duration_line_width = ICON_HEIGHT;
     duration_y_spacing = DURATIONS_Y_SPACING;
+    animate_time = 10.0;
+
     start_time = startTime; // change to startTime, endTime
     end_time = endTime;
     total_time = end_time - start_time;
