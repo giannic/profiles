@@ -12,7 +12,8 @@ var lines_init = function() {
     layer, toggle = false, frequencies = [],
     MS_IN_DAY = 86400000,               // milliseconds in a day
     MS_IN_WEEK = 604800000,             // milliseconds in a week 
-    MS_IN_MONTH = 26297000000000;
+    MS_IN_MONTH = 26297000000000,
+    frequency_line;
 
     $(document).ready(function() {
         var data = APP_DATA.apps;
@@ -154,44 +155,81 @@ var lines_init = function() {
         }
     }
 
-    function initFreqLine() {
-
-        var w = lineGraphWidth + 22, h = 25;
-
-        $("#timeline_panel").css("width", lineGraphWidth);
-
+    function updateFrequencies () {
         for (var i = minRange; i < maxRange - 1; i++) {
             frequencies[i] = 0;
             calcFreq(i);
         }
-        var freqMax = Math.max.apply(null, frequencies);
+    }
 
-        var graph = d3.select(".frequency-container")
-          .append("svg")
-          .attr("width", w)
-          .attr("height", h);
+    function tweenPath() {
+    var w = lineGraphWidth + 22, 
+        h = 25,
 
-        var x = d3.scale.linear().domain([0, 100]).range([0, w]);
-        var y = d3.scale
-            .linear()
-            .domain([-freqMax / 10, freqMax]).range([h, 0]);
+        freqMax = Math.max.apply(null, frequencies),
 
-        var line = d3.svg.line()
-            .x(function(d, i) {
-              return x(i);
-            })
-            .y(function(d) {
-              return y(d);
-            })
+        x = d3.scale.linear()
+                .domain([0, 100])
+                .range([0, w]),
 
-        var data = frequencies;
+        y = d3.scale.linear()
+                .domain([-freqMax / 10, freqMax])
+                .range([h, 0]);
+
+        line = d3.svg.line()
+                .x(function(d, i) {
+                  return x(i);
+                })
+                .y(function(d) {
+                  return y(d);
+                });
+
+        d3.selectAll("path")
+            .data([frequencies])
+            .transition()
+            .duration(500)
+            .attr("d", line);
+    }
+
+    function initFreqLine() {
+        updateFrequencies();
+        $("#timeline_panel").css("width", lineGraphWidth);
+
+    var w = lineGraphWidth + 22, 
+        h = 25,
+
+        freqMax = Math.max.apply(null, frequencies),
+
+        x = d3.scale.linear()
+                .domain([0, 100])
+                .range([0, w]),
+
+        y = d3.scale.linear()
+                .domain([-freqMax / 10, freqMax])
+                .range([h, 0]),
+
+        line = d3.svg.line()
+                .x(function(d, i) {
+                  return x(i);
+                })
+                .y(function(d) {
+                  return y(d);
+                });
+
+    var graph = d3.select(".frequency-container")
+                .append("svg")
+                .attr("width", w)
+                .attr("height", h);
+
         graph.append("svg:path")
-            .attr("d", line(data))
+            .attr("d", line(frequencies))
             .attr("class", "frequency-line");
     }
 
     function initSlider() {
-        minRange = 0, maxRange = 100;
+        minRange = 0, 
+        maxRange = 100;
+
         $("#timeline").rangeSlider({
             arrows : false,
             defaultValues : {
@@ -279,7 +317,7 @@ var lines_init = function() {
      * 
      */
     function viewActivity(time_range) {
-        var ms, //milliseconds
+    var ms,     //milliseconds
         result;
         switch (time_range) {
             case 'DAY': 
@@ -427,6 +465,7 @@ var lines_init = function() {
     }
 
     function toggleApps(circ) {
+        console.log("yo")
         //initial loading of lines
         if (toggle == true) {
             circ.setFillRadialGradientColorStops([0, '#C6C9D0', 1, 'white']);
@@ -451,6 +490,8 @@ var lines_init = function() {
             calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
             toggle = true;
         }
+        updateFrequencies();
+        tweenPath();
     }
 
     function findMostUsedApp() {
@@ -568,6 +609,9 @@ var lines_init = function() {
                         }
                         printApp(this.getName());
                         layer.draw();
+
+                        updateFrequencies();
+                        tweenPath();
                     });
                     box.on('mouseover', function() {
                         this.setFill(colorset);
