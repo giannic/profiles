@@ -555,7 +555,7 @@ var numberOfLines, openArray, renderArray, closeArray,
 
             img.onerror = function(evt) {
                 this.onerror = null;
-                this.src = '/img/app_icons/favicon-default.gif';
+                this.src = 'img/app_icons/social-networks-square.png';
             };
         }
     }
@@ -578,8 +578,10 @@ var numberOfLines, openArray, renderArray, closeArray,
         boxes = [];
 
         var sources = {};
+
         for (var j = 0; j < lines_appArray.length; j++) {
-            sources[nameArray[j]] = "http://" + nameArray[j] + "/favicon.ico";
+            var img_name = nameArray[j].split(".")[0];
+            sources[nameArray[j]] = "img/app_icons/" + img_name + "-square.png";
         }
 
         // create images
