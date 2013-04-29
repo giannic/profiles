@@ -529,14 +529,16 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 
     focus_close_time = time;
 
-    if(focus_close_time && focus_open_time && focus_close_time !== focus_open_time) {
+    if(focus_close_time && focus_open_time && focus_close_time !== focus_open_time && old_focus_domain) {
       $.post(baseUrl + "/apps/focus_pair", 
-        {"userid": userid, "url": domain, "focus_time": focus_open_time, "unfocus_time": focus_close_time}, 
+        {"userid": userid, "url": old_focus_domain, "focus_time": focus_open_time, "unfocus_time": focus_close_time}, 
         function(data) {
           // focusedTabDomain = null;
           // storage.set({"focusedTabDomain": null});
           console.log('successfully ofcused!')
           console.log(data);
+          console.log(focus_open_time);
+          console.log(focus_close_time);
           console.log("unfocus " + data["url"] + " #" + data["unfocus_count"]);
           // update old focus time on success
           focus_open_time = focus_close_time;
