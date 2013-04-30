@@ -763,9 +763,16 @@ clusters_init = function(){
     }
 
     function hoverFunction(x){
+        if(x.attributes.close_id.value != "undefined NaN, NaN"){
         printClusterStats(x.attributes.url_id.value, "username",
                         x.attributes.close_id.value,
                         x.attributes.timeStamp.value);
+    }
+    else{
+         printClusterStats(x.attributes.url_id.value, "username",
+                        "No Visits",
+                        "");       
+    }
         show_stats();
         // TODO: change so it will just be in the css
         document.body.style.cursor = 'pointer';
