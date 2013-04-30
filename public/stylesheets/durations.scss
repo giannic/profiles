@@ -17,9 +17,14 @@
         }
     }
 
+    .durations-clear {
+            display: block;
+            height: 0;
+            clear: both;
+    }
+
     #durations-canvas { // width is set in css because canvas has width attr
         float: left;
-        height: auto;
     }
 
     #durations-sidebar {
@@ -41,6 +46,32 @@
                 right: 0;
             }
             padding: 0 !important;
+        }
+    }
+
+    #durations-panel {
+        #durations-slider {
+            margin: 0 auto;
+            z-index: 99;
+        }
+
+        #durations-details {
+            width: 960px;
+            height: 70px;
+            position: relative;
+            z-index: 0;
+
+            #durations-dateLeft {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+            }
+
+            #durations-dateRight {
+                position: absolute;
+                right: 0;
+                bottom: 0;
+            }
         }
     }
 }
