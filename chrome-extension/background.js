@@ -9,6 +9,11 @@ var activeDomains = {}; // domains that are open already
 var whitelist = [];
 var _recording = true;
 var focusedTabDomain = null;
+// david
+var old_focus_domain;
+var current_focus_domain;
+var focus_open_time;
+var focus_close_time;
 
 // the time of the significant focus last changed
 var focusChangeTime = null; 
@@ -69,7 +74,8 @@ function checkDirtyClose() {
 
       // record close for tab that was not unfocused, if exists
       if (focusedTabDomain) {
-        postToUnfocus(focusedTabDomain, posixTime); 
+        // TODO: DAVID
+        // postToUnfocus(focusedTabDomain, posixTime); 
       }
 
       // Reset stored active domains
@@ -350,17 +356,25 @@ function postToFocus(domain, time) {
     //console.log("no domain in post to focus");
     return;
   }
-    $.post(baseUrl + "/apps/focus", 
-      {"userid": userid, "url": domain, "time": time}, 
-      function(data) {
-        focusedTabDomain = domain;
-        storage.set({"focusedTabDomain": focusedTabDomain});
-        //console.log(data);
-        console.log("focus " + data["url"] + " #" + data["focus_count"]);
-      });
+  current_focus_domain = domain;
+  // record domain in global variable
+  // TODO: DAVID
+    // $.post(baseUrl + "/apps/focus", 
+    //   {"userid": userid, "url": domain, "time": time}, 
+    //   function(data) {
+    //     focusedTabDomain = domain;
+    //     storage.set({"focusedTabDomain": focusedTabDomain});
+    //     //console.log(data);
+    //     console.log("focus " + data["url"] + " #" + data["focus_count"]);
+    //   });
 }
 
 function postToUnfocus(domain, time) {
+  console.log("this is the domain")
+  console.log(domain)
+  console.log("this is the domain focus")
+  console.log(current_focus_domain)
+  console.log(current_focus_domain)
   if (!domain || !isInWhitelist(domain)) {
     //console.log("no domain in unfocus");
     return;
@@ -498,13 +512,39 @@ chrome.tabs.onCreated.addListener(function(tab) {
 
 // Tab focused listener
 chrome.tabs.onActivated.addListener(function(activeInfo) {
+  
   var tabId = activeInfo["tabId"];
   chrome.tabs.get(tabId, function(tab) {
+    
     var domain = getDomain(tab.url);
     if (!userid) {
       console.log("Not logged in");
       return;
     }
+
+    var time = getCurrentTime();
+    old_focus_domain = current_focus_domain;
+    current_focus_domain = domain;
+    // SUBMIT REQUEST, but only if both focus close time and focus open time are defined
+
+    focus_close_time = time;
+
+    if(focus_close_time && focus_open_time && focus_close_time !== focus_open_time) {
+      $.post(baseUrl + "/apps/focus_pair", 
+        {"userid": userid, "url": domain, "focus_time": focus_open_time, "unfocus_time": focus_close_time}, 
+        function(data) {
+          // focusedTabDomain = null;
+          // storage.set({"focusedTabDomain": null});
+          console.log('successfully ofcused!')
+          console.log(data);
+          console.log("unfocus " + data["url"] + " #" + data["unfocus_count"]);
+          // update old focus time on success
+          focus_open_time = focus_close_time;
+      });
+    }
+    focus_open_time = focus_close_time;
+
+    console.log(current_focus_domain)
     var oldFocused = focusedTabDomain;
     updateFocus(domain, oldFocused);
   });
@@ -512,6 +552,9 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 
 // update focus
 function updateFocus(newDomain, oldFocused) {
+  // console.log('inside updatefocus')
+    // console.log(oldFocused)
+    // console.log(newDomain)
   if (newDomain == oldFocused) {
     return;
   }
@@ -522,13 +565,14 @@ function updateFocus(newDomain, oldFocused) {
   // POST to end focus of current domain
   if (oldFocused) {
     //console.log("calling postToUnfocus");
-    postToUnfocus(oldFocused, time);
+    // TODO: DAVID
+    // postToUnfocus(oldFocused, time);
   }
   else {
   //  console.log("no oldfocused in updatefocus");
   }
   if (isInWhitelist(newDomain)) {
-    postToFocus(newDomain, time);
+    // postToFocus(newDomain, time);
   }
 }
 
@@ -543,6 +587,10 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   if (!("url" in changeInfo) || changeInfo["url"] == "chrome://newtab/") {
     return;
   }
+  // console.log('inside tabs updated')
+  // console.log(tabId)
+  // console.log(tab)
+  // console.log(changeInfo)
   processUrl(tabId, tab["url"]);
 });
 
@@ -571,12 +619,14 @@ chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
 
 // Window focus change listener
 chrome.windows.onFocusChanged.addListener(function(windowId) {
+  console.log('ONFOCUSCHANGED')
   if (!userid || !_recording) {
     return;
   }
   // Unfocused from chrome; record unfocus for current focused tab
   if (windowId == -1) {
-    postToUnfocus(focusedTabDomain, getCurrentTime());
+    // TODO: DAVID
+    // postToUnfocus(focusedTabDomain, getCurrentTime());
     return;
   }
   // Get the new focused window

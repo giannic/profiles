@@ -248,7 +248,7 @@ function render_app(item, index) {
 
     //canvas_ctx.beginPath();
     canvas_ctx.lineWidth = duration_line_width;
-    canvas_ctx.strokeStyle = line_colors[index];
+    canvas_ctx.strokeStyle = COLORS[index];
 
     var focus_pairs = _.zip(item.focus, item.unfocus);
     _.each(focus_pairs, function(pair) {
@@ -268,6 +268,8 @@ function render_app(item, index) {
 function render_all_apps_from_json(data) {
     $("#durations-sidebar").html('');
     ordered_apps = order_apps(data.apps);
+    console.log('should be ordered')
+    console.log(ordered_apps)
     // is underscore async?
     for (var index in ordered_apps) {
         render_app(ordered_apps[index], index);
