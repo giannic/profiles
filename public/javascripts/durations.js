@@ -172,9 +172,15 @@ function sum_duration_per_app(app) {
         console.log(app);
         return 0;
     }
-    app.durations = _.reduce(_.zip(app.focus, app.unfocus), function(memo, pair) {
-        return memo + pair[1] - pair[0];
-    }, 0);
+    var sum_dur = 0;
+    for(index in app.focus) {
+      if(app.unfocus[index])
+        sum_dur += app.unfocus[index] - app.focus[index];
+    }
+    // app.durations = _.reduce(_.zip(app.focus, app.unfocus), function(memo, pair) {
+    //     return memo + pair[1] - pair[0];
+    // }, 0);
+    app.durations = sum_dur
 
     return app;
 }
@@ -276,9 +282,14 @@ function render_app(item, index) {
  */
 function render_all_apps_from_json(data) {
     $("#durations-sidebar").html('');
-    ordered_apps = order_apps(data.apps);
+    var ready = data.apps;
+    // ready = _.filter(data.apps, function(item) {
+    //   return item.focus && item.unfocus && item.focus.length == item.unfocus.length;
+    // });
+    ordered_apps = order_apps(ready);
+
     console.log('should be ordered')
-    console.log(ordered_apps)
+    console.log(ready)
     // is underscore async?
     for (var index in ordered_apps) {
         render_app(ordered_apps[index], index);
