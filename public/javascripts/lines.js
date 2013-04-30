@@ -114,10 +114,10 @@ var numberOfLines, openArray, renderArray, closeArray,
             if (!$(this).hasClass("menu-button-active")) { // NOT active
                 $('#container-toggle')[0].src = "img/ui_icons/up.png";
                 $("#container").stop().animate({
-                    top: $("#container").height() - 40 // fix
+                    top: $("#container").height() - 23 // fix
                 }, 300);
                 $("#appname").stop().animate({
-                    top: $("#container").height() - 40
+                    top: $("#container").height() - 23
                 }, 300);
                 // update the height of the lines
                 lineGraphHeight -= 60;
