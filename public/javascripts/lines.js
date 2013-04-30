@@ -613,6 +613,7 @@ var numberOfLines, openArray, renderArray, closeArray,
                         height : 20,
                         id : lines_appArray[k - 1],
                         name : nameArray[k - 1],
+                        colorHover: colorArray[k - 1],
                         active : true,
                         opacity : opac,
                         fillPatternImage : img,
@@ -638,7 +639,7 @@ var numberOfLines, openArray, renderArray, closeArray,
                         tweenPath();
                     });
                     box.on('mouseover', function() {
-                        this.setFill(colorset);
+                        this.setFill("hsl(" + this.attrs.colorHover + ",50%, 50%)");
                         if (lines_activeArray[this.getId()] == false) {
                             this.setOpacity(1.0);
                             lines_activeArray[this.getId()] = true;
@@ -731,11 +732,11 @@ var numberOfLines, openArray, renderArray, closeArray,
         var val = new Date(date * 1000);
         //console.log(val.format("dd-m-yy"));
         printThelines_stats(x.attributes.name.value, "username", $.datepicker.formatDate('MM dd, yy', val), val.toLocaleTimeString());
-        show_lines_stats();
+        show_stats();
     }
 
     function myFunction2(x) {
-        hide_lines_stats();
+        hide_stats();
     }
 
     function createAllTheHovers() {
