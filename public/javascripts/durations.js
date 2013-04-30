@@ -248,7 +248,7 @@ function render_app(item, index) {
 
     //canvas_ctx.beginPath();
     canvas_ctx.lineWidth = duration_line_width;
-    canvas_ctx.strokeStyle = line_colors[index];
+    canvas_ctx.strokeStyle = COLORS[index];
 
     var focus_pairs = _.zip(item.focus, item.unfocus);
     _.each(focus_pairs, function(pair) {
