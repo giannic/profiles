@@ -227,7 +227,7 @@ var numberOfLines, openArray, renderArray, closeArray,
     function toggleApps(circ) {
         //initial loading of lines
         if (toggle == true) {
-            circ.setFillRadialGradientColorStops([0, '#C6C9D0', 1, 'white']);
+            circ.setFill('black');
             for (var k = 0; k < lines_activeArray.length; k++) {
                 lines_activeArray[k] = true;
                 this.active = true;
@@ -238,7 +238,8 @@ var numberOfLines, openArray, renderArray, closeArray,
             calculateRender($("#timeline").rangeSlider("min"), $("#timeline").rangeSlider("max"), 1);
             toggle = false;
         } else {
-            circ.setFillRadialGradientColorStops([0, 'white', 1, '#C6C9D0']);
+            circ.setFill('');
+            circ.setStroke('black');
             for (var k = 0; k < lines_activeArray.length; k++) {
                 lines_activeArray[k] = false;
                 this.active = false;
@@ -421,12 +422,8 @@ var numberOfLines, openArray, renderArray, closeArray,
             var circle = new Kinetic.Circle({
                 x : 10,
                 y : 10,
-                radius : 10,
-                fillRadialGradientStartPoint : 0,
-                fillRadialGradientStartRadius : 0,
-                fillRadialGradientEndPoint : 0,
-                fillRadialGradientEndRadius : 10,
-                fillRadialGradientColorStops : [0, '#C6C9D0', 1, 'white'],
+                radius : 9,
+                fill: 'black',
                 stroke : 'white',
                 name : "Toggle",
                 strokeWidth : 1
