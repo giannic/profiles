@@ -58,9 +58,10 @@ $(document).ready(function() {
             $("#durations-sidebar")
             .css('visibility', 'visible')
             .animate({
-                opacity: 1.0
+                opacity: 1.0,
+                height: APP_DATA.apps.length * (ICON_HEIGHT + DURATIONS_Y_SPACING)
             }, ANIMATE_TIME);
-
+            canvas.height = APP_DATA.apps.length * (ICON_HEIGHT + DURATIONS_Y_SPACING); // subtract size of menubar
         } else {
             my_animate(animate_time, animate_time, -1);
 
@@ -68,12 +69,13 @@ $(document).ready(function() {
                    .addClass("durations-compressed")
                    .attr("src", "img/ui_icons/down.png");
             $("#durations-sidebar").animate({
-                opacity: 0.0
+                opacity: 0.0,
+                height: (1/4) * APP_DATA.apps.length * (ICON_HEIGHT + DURATIONS_Y_SPACING)
             }, ANIMATE_TIME, function() {
                 $(this).css('visibility', 'hidden');
             });
+            canvas.height = (1/4) * APP_DATA.apps.length * (ICON_HEIGHT + DURATIONS_Y_SPACING); // subtract size of menubar
         }
-        //canvas.height = APP_DATA.apps.length * (ICON_HEIGHT + DURATIONS_Y_SPACING); // subtract size of menubar
     });
 
     $("#durations-slider").on("valuesChanged", function(e, data) {
