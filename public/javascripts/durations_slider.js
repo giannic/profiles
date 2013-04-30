@@ -1,9 +1,17 @@
+$("#durations-slider").on("valuesChanged", function(e, data) {
+    calculateRender(
+        Math.round(data.values.min),
+        Math.round(data.values.max),
+    0);
+});
+
+//
 //Given an index which is slider_min < index < slider_max
 //Calculates number of active apps at that index
-function init_durations_freq() {
-    //$("#timeline_panel").css("width", lineGraphWidth);
+function init_durations_freq(frequencies) {
+    $("#durations_panel").css("width", 960);
 
-    var w = lineGraphWidth + 22,
+    var w = 960,
         h = 25,
 
         freqMax = Math.max.apply(null, frequencies),
@@ -24,7 +32,7 @@ function init_durations_freq() {
                   return y(d);
                 }),
 
-        graph = d3.select(".frequency-container")
+        graph = d3.select(".durations-frequency-container")
                 .append("svg")
                 .attr("width", w)
                 .attr("height", h);
@@ -52,21 +60,21 @@ function init_durations_slider() {
     });
 
     //Set slider label dates to the min and max
-    updateSliderDates(
+    update_durations_dates(
         getDate($("#durations-slider").rangeSlider("min")),
         getDate($("#durations-slider").rangeSlider("max"))
     );
 
     //slight edit to the jQRange html
-    //$(".ui-rangeSlider-container")
-        //.prepend("<div class='frequency-container'></div>");
+    $("#durations-slider > .ui-rangeSlider-container")
+        .prepend("<div class='durations-frequency-container'></div>");
 }
 
-function updateSliderDates(dateLeft, dateRight) {
+function update_durations_dates(dateLeft, dateRight) {
     var dl = dateLeft, dr = dateRight;
-    $("#timeline_dateLeft")
+    $("#durations_dateLeft")
         .text($.datepicker.formatDate('MM dd, yy', dl));
-    $("#timeline_dateRight")
+    $("#durations_dateRight")
         .text($.datepicker.formatDate('MM dd, yy', dr));
 }
 

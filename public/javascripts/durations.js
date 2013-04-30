@@ -75,6 +75,23 @@ $(document).ready(function() {
         }
     });
 
+    $("#durations-slider").on("valuesChanged", function(e, data) {
+        var percent_of_range_min, percent_of_range_max, range,
+            offset_min, offset_max;
+        range = end_time - start_time;
+        percent_of_range_min = data.values.min/100.0;
+        percent_of_range_max = data.values.max/100.0;
+        offset_min = range * percent_of_range_min;
+        offset_max = range * percent_of_range_max;
+
+        min_render_time = start_time + offset_min;
+        max_render_time = start_time + offset_max;
+
+        total_time = max_render_time - min_render_time;
+
+        canvas_ctx.clearRect(0, 0, canvas.width, canvas.height);
+        render_all_apps_from_json(APP_DATA);
+    });
 
 });
 
@@ -88,6 +105,7 @@ app.util.vis.durations_init = function() {
     render_all_apps_from_json(APP_DATA);
 
     init_durations_slider();
+    init_durations_freq(freq);
 };
 
 /*
@@ -109,7 +127,7 @@ function initialize() {
     end_time = endTime;
     min_render_time = start_time;
     max_render_time = end_time;
-    total_time = end_time - start_time;
+    total_time = max_render_time - min_render_time;
 
     // generate colors
     line_colors = generate_colors(APP_DATA.apps.length);
@@ -197,8 +215,13 @@ function render_app_segment(y, focus_time, unfocus_time) {
         unfocus_time = max_render_time;
     }
 
+    /*
     var start_x = (focus_time - start_time) / total_time * canvas.width,
         end_x = (unfocus_time - start_time) / total_time * canvas.width;
+    */
+    var start_x = (focus_time - min_render_time) / total_time * canvas.width,
+        end_x = (unfocus_time - min_render_time) / total_time * canvas.width;
+
 
     canvas_ctx.beginPath();
     canvas_ctx.moveTo(start_x, y);
@@ -265,8 +288,8 @@ function generate_colors(num_apps)
     max_index = hex.length - 1;
 
     colors = [];
-    colors[0] = '#FFFFFF'; // set blank color
-    for (i = 1; i <= num_apps; ++i) {
+    //colors[0] = '#FFFFFF'; // set blank color
+    for (i = 0; i < num_apps; ++i) {
         colors[i] = "#";
         for (j = 0; j < 6; ++j) {
             colors[i] += hex[Math.round(Math.random()*max_index)];
