@@ -108,7 +108,7 @@ exports.focus_pair = (req, res) ->
     { userid: req.body.userid, url: req.body.url },
     {
       $push: {focus: req.body.focus_time, unfocus: req.body.unfocus_time},
-      $inc: {focus_count: 1},
+      $inc: {focus_count: 1, unfocus_count: 1},
     },
     {upsert: false},
     (err, results) ->
