@@ -38,7 +38,6 @@ exports.open = (req, res) ->
       $push: {open: req.body.open_date},
       $inc: {open_count: 1},
       $set: {
-              category: req.body.category,
               userid: req.body.userid,
               url: url,
               img: req.body.img_url
