@@ -193,9 +193,6 @@ function add_to_frequencies(focus_time) {
     var freq_index;
 
     freq_index = Math.floor(((focus_time - start_time)/(end_time - start_time)) * 100);
-    if (freq_index > 50) {
-        console.log(freq_index);
-    }
     freq[freq_index] += 1;
 }
 
