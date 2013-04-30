@@ -1,5 +1,9 @@
 @import "definitions";
 
+#durations::-webkit-scrollbar {
+    display: none;
+}
+
 #durations {
     height: 100%;
     position: relative;
