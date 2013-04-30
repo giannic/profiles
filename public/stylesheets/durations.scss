@@ -7,7 +7,11 @@
     #durations-wrapper {
         display: block;
         width: 960px;
+        height: 200px;
+        overflow-y: scroll;
+        overflow-x: hidden;
         margin: 0 auto;
+
 
         &:after {
             content: " ";
@@ -50,6 +54,15 @@
     }
 
     #durations-panel {
+        display: block;
+        margin: {
+            top: 20px;
+            right: auto;
+            bottom: 0px;
+            left: auto;
+        }
+
+        width: 960px;
         #durations-slider {
             margin: 0 auto;
             z-index: 99;

@@ -73,6 +73,7 @@ $(document).ready(function() {
                 $(this).css('visibility', 'hidden');
             });
         }
+        //canvas.height = APP_DATA.apps.length * (ICON_HEIGHT + DURATIONS_Y_SPACING); // subtract size of menubar
     });
 
     $("#durations-slider").on("valuesChanged", function(e, data) {
@@ -93,6 +94,8 @@ $(document).ready(function() {
         render_all_apps_from_json(APP_DATA);
     });
 
+    //hacky adjust heiight
+    $("#durations-wrapper").height(WINDOW_HEIGHT - 180);
 });
 
 /*
@@ -115,7 +118,8 @@ function initialize() {
     $("#durations").width(duration_width);
     canvas = document.getElementById('durations-canvas');
     //canvas.height = duration_height; // subtract size of menubar
-    canvas.height = 200; // subtract size of menubar
+    //canvas.height = WINDOW_HEIGHT - 250; // subtract size of menubar
+    canvas.height = APP_DATA.apps.length * (ICON_HEIGHT + DURATIONS_Y_SPACING); // subtract size of menubar
     canvas.width = 930; // 10 margin
     canvas_ctx = canvas.getContext('2d');
 
@@ -181,6 +185,9 @@ function add_to_frequencies(focus_time) {
     var freq_index;
 
     freq_index = Math.floor(((focus_time - start_time)/(end_time - start_time)) * 100);
+    if (freq_index > 50) {
+        console.log(freq_index);
+    }
     freq[freq_index] += 1;
 }
 
