@@ -52,6 +52,26 @@
     #durations-panel {
         #durations-slider {
             margin: 0 auto;
+            z-index: 99;
+        }
+
+        #durations-details {
+            width: 960px;
+            height: 70px;
+            position: relative;
+            z-index: 0;
+
+            #durations-dateLeft {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+            }
+
+            #durations-dateRight {
+                position: absolute;
+                right: 0;
+                bottom: 0;
+            }
         }
     }
 }

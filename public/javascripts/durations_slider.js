@@ -72,9 +72,9 @@ function init_durations_slider() {
 
 function update_durations_dates(dateLeft, dateRight) {
     var dl = dateLeft, dr = dateRight;
-    $("#durations_dateLeft")
+    $("#durations-dateLeft")
         .text($.datepicker.formatDate('MM dd, yy', dl));
-    $("#durations_dateRight")
+    $("#durations-dateRight")
         .text($.datepicker.formatDate('MM dd, yy', dr));
 }
 
